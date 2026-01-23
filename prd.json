@@ -13,42 +13,42 @@
           "text": "Next.js 14 with App Router initialized",
           "testCommand": "test -f package.json && grep -q \"next\" package.json",
           "passes": false,
-          "lastRun": null
+          "lastRun": "2026-01-23T06:38:11.564Z"
         },
         {
           "id": "AC-S1.1-2",
           "text": "TypeScript in strict mode",
           "testCommand": "test -f tsconfig.json && grep -q \"strict.*true\" tsconfig.json",
           "passes": false,
-          "lastRun": null
+          "lastRun": "2026-01-23T06:38:11.564Z"
         },
         {
           "id": "AC-S1.1-3",
           "text": "ESLint + Prettier configured",
           "testCommand": "test -f .eslintrc.json || test -f eslint.config.js",
           "passes": false,
-          "lastRun": null
+          "lastRun": "2026-01-23T06:38:11.564Z"
         },
         {
           "id": "AC-S1.1-4",
           "text": "Tailwind CSS configured with Twilight Studio theme colors",
           "testCommand": "test -f tailwind.config.ts && grep -q \"tailwindcss\" package.json",
           "passes": false,
-          "lastRun": null
+          "lastRun": "2026-01-23T06:38:11.564Z"
         },
         {
           "id": "AC-S1.1-5",
           "text": "npm run dev starts without errors",
           "testCommand": "grep -q \"\"dev\":\" package.json",
           "passes": false,
-          "lastRun": null
+          "lastRun": "2026-01-23T06:38:11.564Z"
         },
         {
           "id": "AC-S1.1-6",
           "text": "npm run build succeeds",
           "testCommand": "grep -q \"\"build\":\" package.json",
           "passes": false,
-          "lastRun": null
+          "lastRun": "2026-01-23T06:38:11.564Z"
         }
       ],
       "complexity": "simple",

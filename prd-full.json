@@ -1,0 +1,6 @@
+{
+  "project": "rdy",
+  "description": "A coaching and self-development platform with two applications: (1) Desktop/Web app for Superadmin, Admin, and Mentor management, (2) Mobile PWA for Mentees with simplified daily exercise tracking, calendar views, and reminder notifications.",
+  "branchName": "ralph/rdy-foundation",
+  "userStories": []
+}
