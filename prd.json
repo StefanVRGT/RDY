@@ -1,0 +1,99 @@
+{
+  "project": "rdy",
+  "description": "A coaching and self-development platform with desktop/web app for management and mobile PWA for mentees with daily exercise tracking.",
+  "branchName": "ralph/rdy-foundation",
+  "userStories": [
+    {
+      "id": "S1.1",
+      "title": "Initialize Next.js Project with TypeScript",
+      "description": "Set up Next.js 14 with App Router, TypeScript strict mode, ESLint, Prettier, and Tailwind CSS following Cerebro patterns.",
+      "acceptanceCriteria": [
+        "Next.js 14 with App Router initialized",
+        "TypeScript in strict mode",
+        "ESLint + Prettier configured",
+        "Tailwind CSS configured with Twilight Studio theme colors",
+        "npm run dev starts without errors",
+        "npm run build succeeds"
+      ],
+      "complexity": "simple",
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "S1.2",
+      "title": "Set Up PostgreSQL with Drizzle ORM",
+      "description": "Configure PostgreSQL database connection and Drizzle ORM. Use docker-compose for local PostgreSQL on port 5434.",
+      "acceptanceCriteria": [
+        "docker-compose.yml for PostgreSQL in infrastructure/postgres",
+        "Drizzle ORM configured with PostgreSQL",
+        "Database connection with connection pooling",
+        "Environment variables for DB credentials",
+        "npm run db:push works"
+      ],
+      "complexity": "simple",
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "S1.3",
+      "title": "Create Keycloak Realm Bootstrap Script",
+      "description": "Create bootstrap-keycloak.sh script that will create 'rdy' realm in shared Keycloak. Script should configure client and create roles: superadmin, admin, mentor, mentee. DO NOT execute the script - it will be run manually.",
+      "acceptanceCriteria": [
+        "Bootstrap script exists at scripts/bootstrap-keycloak.sh",
+        "Script is executable (chmod +x)",
+        "Script creates realm 'rdy'",
+        "Client 'rdy-app' configured with proper redirect URIs",
+        "Roles created: superadmin, admin, mentor, mentee",
+        "Test users created for each role"
+      ],
+      "complexity": "simple",
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "S1.4",
+      "title": "Integrate Keycloak Authentication",
+      "description": "Set up NextAuth v5 with Keycloak provider. Implement authentication configuration, login/logout flows, JWT validation, and role-based middleware.",
+      "acceptanceCriteria": [
+        "NextAuth v5 configured with Keycloak provider",
+        "Login and logout flows working",
+        "Session management with JWT",
+        "Role-based middleware for route protection",
+        "Protected routes redirect unauthenticated users",
+        "User info available in React context"
+      ],
+      "complexity": "simple",
+      "priority": 4,
+      "passes": false
+    },
+    {
+      "id": "S1.5",
+      "title": "Set Up tRPC with Type-Safe API",
+      "description": "Configure tRPC v10 with base routers for tenants, users, classes, and exercises.",
+      "acceptanceCriteria": [
+        "tRPC v10 installed and configured",
+        "API route handler at /api/trpc",
+        "React Query provider configured",
+        "Base routers: tenants, users, classes, exercises",
+        "Type-safe client imports working"
+      ],
+      "complexity": "simple",
+      "priority": 5,
+      "passes": false
+    },
+    {
+      "id": "S1.6",
+      "title": "Install and Configure shadcn/ui",
+      "description": "Set up shadcn/ui with Twilight Studio theme colors and install base components.",
+      "acceptanceCriteria": [
+        "shadcn/ui configured with components.json",
+        "Twilight Studio colors in tailwind.config.ts",
+        "Base components installed: button, card, input, select, table, tabs, dialog, calendar",
+        "Components render correctly"
+      ],
+      "complexity": "simple",
+      "priority": 6,
+      "passes": false
+    }
+  ]
+}
