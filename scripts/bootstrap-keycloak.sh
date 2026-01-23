@@ -4,9 +4,9 @@ set -e
 # RDY Keycloak Bootstrap Script
 # Creates the 'rdy' realm in the shared Keycloak instance
 
-KEYCLOAK_URL="${KEYCLOAK_URL:-http://localhost:8180}"
+KEYCLOAK_URL="${KEYCLOAK_URL:-https://auth.neonnidavellir.com}"
 ADMIN_USER="${KC_ADMIN_USER:-admin}"
-ADMIN_PASS="${KC_ADMIN_PASSWORD:-CerebroAdmin2026!}"
+ADMIN_PASS="${KC_ADMIN_PASSWORD:-8Tltq2x8tOp8zP5SR5uzF0dr3X}"
 
 REALM="rdy"
 CLIENT_ID="rdy-app"
@@ -275,7 +275,7 @@ generate_env_file() {
 DATABASE_URL=postgresql://rdy:rdy_secret_2026@localhost:5434/rdy
 
 # Keycloak Settings
-KEYCLOAK_URL=$KEYCLOAK_URL
+KEYCLOAK_URL="${KEYCLOAK_URL:-https://auth.neonnidavellir.com}"
 KEYCLOAK_REALM=$REALM
 KEYCLOAK_CLIENT_ID=$CLIENT_ID
 KEYCLOAK_CLIENT_SECRET=$CLIENT_SECRET

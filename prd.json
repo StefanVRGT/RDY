@@ -63,40 +63,40 @@
           "id": "AC-S1.2-1",
           "text": "docker-compose.yml for PostgreSQL in infrastructure/postgres",
           "testCommand": "test -f infrastructure/postgres/docker-compose.yml",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T07:43:04.138Z"
         },
         {
           "id": "AC-S1.2-2",
           "text": "Drizzle ORM configured with PostgreSQL",
           "testCommand": "test -f infrastructure/postgres/docker-compose.yml",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T07:43:04.138Z"
         },
         {
           "id": "AC-S1.2-3",
           "text": "Database connection with connection pooling",
           "testCommand": "true",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T07:43:04.138Z"
         },
         {
           "id": "AC-S1.2-4",
           "text": "Environment variables for DB credentials",
           "testCommand": "true",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T07:43:04.138Z"
         },
         {
           "id": "AC-S1.2-5",
           "text": "npm run db:push works",
           "testCommand": "grep -q \"db:push\" package.json",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T07:43:04.138Z"
         }
       ],
       "complexity": "simple",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S1.3",
@@ -107,47 +107,47 @@
           "id": "AC-S1.3-1",
           "text": "Realm rdy created in Keycloak",
           "testCommand": "curl -sf https://auth.neonnidavellir.com/realms/rdy > /dev/null",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T10:21:47.326Z"
         },
         {
           "id": "AC-S1.3-2",
           "text": "Client rdy-app configured",
           "testCommand": "test -f scripts/bootstrap-keycloak.sh && grep -q \"rdy-app\" scripts/bootstrap-keycloak.sh",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T10:21:47.326Z"
         },
         {
           "id": "AC-S1.3-3",
           "text": "Redirect URIs configured for both dev and prod",
           "testCommand": "grep -q \"localhost:3001\" scripts/bootstrap-keycloak.sh && grep -q \"rdy.neonnidavellir.com\" scripts/bootstrap-keycloak.sh",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T10:21:47.326Z"
         },
         {
           "id": "AC-S1.3-4",
           "text": "Roles created: superadmin, admin, mentor, mentee",
           "testCommand": "grep -q \"superadmin\" scripts/bootstrap-keycloak.sh && grep -q \"admin\" scripts/bootstrap-keycloak.sh && grep -q \"mentor\" scripts/bootstrap-keycloak.sh && grep -q \"mentee\" scripts/bootstrap-keycloak.sh",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T10:21:47.326Z"
         },
         {
           "id": "AC-S1.3-5",
           "text": "Test users created for each role",
-          "testCommand": "grep -q \"testsuperadmin|testadmin|testmentor|testmentee\" scripts/bootstrap-keycloak.sh",
-          "passes": false,
-          "lastRun": null
+          "testCommand": "grep -q \"testsuperadmin\" scripts/bootstrap-keycloak.sh && grep -q \"testadmin\" scripts/bootstrap-keycloak.sh && grep -q \"testmentor\" scripts/bootstrap-keycloak.sh && grep -q \"testmentee\" scripts/bootstrap-keycloak.sh",
+          "passes": true,
+          "lastRun": "2026-01-23T10:21:47.326Z"
         },
         {
           "id": "AC-S1.3-6",
           "text": "Environment variables updated with Keycloak config",
           "testCommand": "grep -q \"KEYCLOAK_CLIENT_SECRET\" .env.local",
-          "passes": false,
-          "lastRun": null
+          "passes": true,
+          "lastRun": "2026-01-23T10:21:47.326Z"
         }
       ],
       "complexity": "simple",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S1.4",
