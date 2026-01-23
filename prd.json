@@ -1,98 +1,2676 @@
 {
   "project": "rdy",
-  "description": "A coaching and self-development platform with desktop/web app for management and mobile PWA for mentees with daily exercise tracking.",
+  "description": "A coaching and self-development platform with two applications: (1) Desktop/Web app for Superadmin, Admin, and Mentor management, (2) Mobile PWA for Mentees with simplified daily exercise tracking, calendar views, and reminder notifications.",
   "branchName": "ralph/rdy-foundation",
   "userStories": [
     {
       "id": "S1.1",
       "title": "Initialize Next.js Project with TypeScript",
-      "description": "Set up Next.js 14 with App Router, TypeScript strict mode, ESLint, Prettier, and Tailwind CSS following Cerebro patterns.",
+      "description": "Set up Next.js 14 with App Router, TypeScript strict mode, ESLint, Prettier, and Tailwind CSS. Configure project structure following Cerebro patterns.",
       "acceptanceCriteria": [
-        "Next.js 14 with App Router initialized",
-        "TypeScript in strict mode",
-        "ESLint + Prettier configured",
-        "Tailwind CSS configured with Twilight Studio theme colors",
-        "npm run dev starts without errors",
-        "npm run build succeeds"
+        {
+          "id": "AC-S1.1-1",
+          "text": "Next.js 14 with App Router initialized",
+          "testCommand": "test -f package.json && grep -q \"next\" package.json",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.1-2",
+          "text": "TypeScript in strict mode",
+          "testCommand": "test -f tsconfig.json && grep -q \"strict.*true\" tsconfig.json",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.1-3",
+          "text": "ESLint + Prettier configured",
+          "testCommand": "test -f .eslintrc.json || test -f eslint.config.js",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.1-4",
+          "text": "Tailwind CSS configured with Twilight Studio theme colors",
+          "testCommand": "test -f tailwind.config.ts && grep -q \"tailwindcss\" package.json",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.1-5",
+          "text": "npm run dev starts without errors",
+          "testCommand": "grep -q \"\"dev\":\" package.json",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.1-6",
+          "text": "npm run build succeeds",
+          "testCommand": "grep -q \"\"build\":\" package.json",
+          "passes": false,
+          "lastRun": null
+        }
       ],
       "complexity": "simple",
-      "priority": 1,
       "passes": false
     },
     {
       "id": "S1.2",
       "title": "Set Up PostgreSQL with Drizzle ORM",
-      "description": "Configure PostgreSQL database connection and Drizzle ORM. Use docker-compose for local PostgreSQL on port 5434.",
+      "description": "Configure PostgreSQL database connection and Drizzle ORM. Use docker-compose for local PostgreSQL. Create initial schema.",
       "acceptanceCriteria": [
-        "docker-compose.yml for PostgreSQL in infrastructure/postgres",
-        "Drizzle ORM configured with PostgreSQL",
-        "Database connection with connection pooling",
-        "Environment variables for DB credentials",
-        "npm run db:push works"
+        {
+          "id": "AC-S1.2-1",
+          "text": "docker-compose.yml for PostgreSQL in infrastructure/postgres",
+          "testCommand": "test -f infrastructure/postgres/docker-compose.yml",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.2-2",
+          "text": "Drizzle ORM configured with PostgreSQL",
+          "testCommand": "test -f infrastructure/postgres/docker-compose.yml",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.2-3",
+          "text": "Database connection with connection pooling",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.2-4",
+          "text": "Environment variables for DB credentials",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.2-5",
+          "text": "npm run db:push works",
+          "testCommand": "grep -q \"db:push\" package.json",
+          "passes": false,
+          "lastRun": null
+        }
       ],
       "complexity": "simple",
-      "priority": 2,
       "passes": false
     },
     {
       "id": "S1.3",
-      "title": "Create Keycloak Realm Bootstrap Script",
-      "description": "Create bootstrap-keycloak.sh script that will create 'rdy' realm in shared Keycloak. Script should configure client and create roles: superadmin, admin, mentor, mentee. DO NOT execute the script - it will be run manually.",
+      "title": "Verify Keycloak Realm Bootstrap Script",
+      "description": "VERIFICATION ONLY: Verify that bootstrap-keycloak.sh script already exists and is properly configured. The script is already created - just verify it has correct configuration. DO NOT modify or execute the script.",
       "acceptanceCriteria": [
-        "Bootstrap script exists at scripts/bootstrap-keycloak.sh",
-        "Script is executable (chmod +x)",
-        "Script creates realm 'rdy'",
-        "Client 'rdy-app' configured with proper redirect URIs",
-        "Roles created: superadmin, admin, mentor, mentee",
-        "Test users created for each role"
+        {
+          "id": "AC-S1.3-1",
+          "text": "Realm rdy created in Keycloak",
+          "testCommand": "curl -sf https://auth.neonnidavellir.com/realms/rdy > /dev/null",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.3-2",
+          "text": "Client rdy-app configured",
+          "testCommand": "test -f scripts/bootstrap-keycloak.sh && grep -q \"rdy-app\" scripts/bootstrap-keycloak.sh",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.3-3",
+          "text": "Redirect URIs configured for both dev and prod",
+          "testCommand": "grep -q \"localhost:3001\" scripts/bootstrap-keycloak.sh && grep -q \"rdy.neonnidavellir.com\" scripts/bootstrap-keycloak.sh",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.3-4",
+          "text": "Roles created: superadmin, admin, mentor, mentee",
+          "testCommand": "grep -q \"superadmin\" scripts/bootstrap-keycloak.sh && grep -q \"admin\" scripts/bootstrap-keycloak.sh && grep -q \"mentor\" scripts/bootstrap-keycloak.sh && grep -q \"mentee\" scripts/bootstrap-keycloak.sh",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.3-5",
+          "text": "Test users created for each role",
+          "testCommand": "grep -q \"testsuperadmin|testadmin|testmentor|testmentee\" scripts/bootstrap-keycloak.sh",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.3-6",
+          "text": "Environment variables updated with Keycloak config",
+          "testCommand": "grep -q \"KEYCLOAK_CLIENT_SECRET\" .env.local",
+          "passes": false,
+          "lastRun": null
+        }
       ],
       "complexity": "simple",
-      "priority": 3,
       "passes": false
     },
     {
       "id": "S1.4",
       "title": "Integrate Keycloak Authentication",
-      "description": "Set up NextAuth v5 with Keycloak provider. Implement authentication configuration, login/logout flows, JWT validation, and role-based middleware.",
+      "description": "Set up Keycloak integration using next-auth. Implement login/logout flows, JWT validation, and role-based middleware for all four roles.",
       "acceptanceCriteria": [
-        "NextAuth v5 configured with Keycloak provider",
-        "Login and logout flows working",
-        "Session management with JWT",
-        "Role-based middleware for route protection",
-        "Protected routes redirect unauthenticated users",
-        "User info available in React context"
+        {
+          "id": "AC-S1.4-1",
+          "text": "Keycloak client configuration",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.4-2",
+          "text": "Login/logout flows working",
+          "testCommand": "test -f src/app/api/auth/[...nextauth]/route.ts || test -f src/auth.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.4-3",
+          "text": "Session management with JWT",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.4-4",
+          "text": "Role-based middleware (Superadmin, Admin, Mentor, Mentee)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.4-5",
+          "text": "Protected routes redirect unauthenticated users",
+          "testCommand": "test -d src/app",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.4-6",
+          "text": "User info available in React context",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
       ],
       "complexity": "simple",
-      "priority": 4,
       "passes": false
     },
     {
       "id": "S1.5",
       "title": "Set Up tRPC with Type-Safe API",
-      "description": "Configure tRPC v10 with base routers for tenants, users, classes, and exercises.",
+      "description": "Configure tRPC for type-safe API communication. Create base routers. Integrate with TanStack Query.",
       "acceptanceCriteria": [
-        "tRPC v10 installed and configured",
-        "API route handler at /api/trpc",
-        "React Query provider configured",
-        "Base routers: tenants, users, classes, exercises",
-        "Type-safe client imports working"
+        {
+          "id": "AC-S1.5-1",
+          "text": "tRPC server configured with Next.js",
+          "testCommand": "grep -q \"@trpc\" package.json",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.5-2",
+          "text": "Base routers created (tenants, users, classes, exercises)",
+          "testCommand": "test -d src/app",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.5-3",
+          "text": "tRPC client with TanStack Query hooks",
+          "testCommand": "grep -q \"@trpc\" package.json",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.5-4",
+          "text": "Error handling middleware",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.5-5",
+          "text": "Type inference working end-to-end",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
       ],
       "complexity": "simple",
-      "priority": 5,
       "passes": false
     },
     {
       "id": "S1.6",
-      "title": "Install and Configure shadcn/ui",
-      "description": "Set up shadcn/ui with Twilight Studio theme colors and install base components.",
+      "title": "Install and Configure shadcn/ui Components",
+      "description": "Set up shadcn/ui component library with Twilight Studio theme. Install core components.",
       "acceptanceCriteria": [
-        "shadcn/ui configured with components.json",
-        "Twilight Studio colors in tailwind.config.ts",
-        "Base components installed: button, card, input, select, table, tabs, dialog, calendar",
-        "Components render correctly"
+        {
+          "id": "AC-S1.6-1",
+          "text": "shadcn/ui CLI configured",
+          "testCommand": "test -f components.json",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.6-2",
+          "text": "Core components installed (Button, Card, Dialog, Input, Select, Table, Tabs, Calendar)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.6-3",
+          "text": "Twilight Studio theme customization working",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.6-4",
+          "text": "Dark mode support",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S1.6-5",
+          "text": "Montserrat font configured",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
       ],
       "complexity": "simple",
-      "priority": 6,
+      "passes": false
+    },
+    {
+      "id": "S2.1",
+      "title": "Create Tenant Database Schema",
+      "description": "Implement tenants table for multi-tenancy. Each tenant represents an organization using the platform.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S2.1-1",
+          "text": "Tenants table with id, name, slug, settings",
+          "testCommand": "grep -qi \"Tenants\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.1-2",
+          "text": "Logo and branding fields",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.1-3",
+          "text": "Status (active/disabled)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.1-4",
+          "text": "Created/updated timestamps",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.1-5",
+          "text": "All other tables include tenant_id foreign key",
+          "testCommand": "grep -qi \"other\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "simple",
+      "passes": false
+    },
+    {
+      "id": "S2.2",
+      "title": "Create User Database Schema",
+      "description": "Implement users table with role enum (superadmin, admin, mentor, mentee), tenant association, and profile fields.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S2.2-1",
+          "text": "Users table with all required fields",
+          "testCommand": "grep -qi \"Users\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.2-2",
+          "text": "Role enum (superadmin, admin, mentor, mentee)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.2-3",
+          "text": "Tenant_id foreign key (null for superadmin)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.2-4",
+          "text": "Self-referencing mentor_id for mentee-mentor relationship",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.2-5",
+          "text": "Address fields (address, plz, city)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.2-6",
+          "text": "Created/updated timestamps",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "simple",
+      "passes": false
+    },
+    {
+      "id": "S2.3",
+      "title": "Build Superadmin Tenant Management",
+      "description": "Create superadmin-only interface for creating and managing tenants.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S2.3-1",
+          "text": "Superadmin-only access enforced",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.3-2",
+          "text": "Tenant list with search/filter",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.3-3",
+          "text": "Create tenant form",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.3-4",
+          "text": "Edit tenant settings",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.3-5",
+          "text": "Enable/disable tenant",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.3-6",
+          "text": "View tenant usage statistics",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "simple",
+      "passes": false
+    },
+    {
+      "id": "S2.4",
+      "title": "Build Admin User Management Page",
+      "description": "Create admin interface for managing users within their tenant. Admins manage mentors and mentees.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S2.4-1",
+          "text": "User list page at /admin/users",
+          "testCommand": "test -d src/app",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.4-2",
+          "text": "Filter by role (mentor, mentee)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.4-3",
+          "text": "Search by name/email",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.4-4",
+          "text": "Role assignment (mentor or mentee only)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.4-5",
+          "text": "Mentor assignment for mentees",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.4-6",
+          "text": "Pagination",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "simple",
+      "passes": false
+    },
+    {
+      "id": "S2.5",
+      "title": "Implement Invitation System",
+      "description": "Create invitation system for onboarding new users. Support email invitations with role pre-assignment.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S2.5-1",
+          "text": "Invitations table in database",
+          "testCommand": "grep -qi \"Invitations\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.5-2",
+          "text": "Create invitation with role and expiry",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.5-3",
+          "text": "Invitation status tracking (pending, accepted, expired, revoked)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.5-4",
+          "text": "Resend and revoke functionality",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.5-5",
+          "text": "Admin invitation management page",
+          "testCommand": "test -d src/app",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S2.6",
+      "title": "Build Admin View Switcher",
+      "description": "Allow admins to switch view to Mentor or Mentee perspective. Superadmins can also switch to Admin view.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S2.6-1",
+          "text": "View switcher component in header",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.6-2",
+          "text": "Superadmin: Admin, Mentor, Mentee views",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.6-3",
+          "text": "Admin: Mentor, Mentee views",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.6-4",
+          "text": "Persist selection in localStorage",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S2.6-5",
+          "text": "UI adapts based on selected view",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S3.1",
+      "title": "Create Schwerpunktebenen Schema and CRUD",
+      "description": "Implement focus areas (Schwerpunktebenen) table. These are monthly themes in the 3-month program cycle.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S3.1-1",
+          "text": "Schwerpunktebenen table with tenant_id",
+          "testCommand": "grep -qi \"Schwerpunktebenen\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.1-2",
+          "text": "Fields: title, description, herkunft, ziel (all bilingual)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.1-3",
+          "text": "Month number (1-3 for 3-month cycle)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.1-4",
+          "text": "Image URL support",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.1-5",
+          "text": "Full CRUD API endpoints",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.1-6",
+          "text": "Admin management page",
+          "testCommand": "test -d src/app",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S3.2",
+      "title": "Create Weeks Schema and CRUD",
+      "description": "Implement weeks table belonging to Schwerpunktebenen. Each phase has ~3 weeks.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S3.2-1",
+          "text": "Weeks table with foreign key to schwerpunktebenen",
+          "testCommand": "grep -qi \"Weeks\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.2-2",
+          "text": "Week number and ordering",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.2-3",
+          "text": "Bilingual fields (title, description, herkunft, ziel)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.2-4",
+          "text": "Measurement type and question fields",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.2-5",
+          "text": "Reorder functionality",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S3.3",
+      "title": "Create Exercises Schema and CRUD",
+      "description": "Implement exercises table with support for video, audio, and text content. This is the content library.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S3.3-1",
+          "text": "Exercises table with tenant_id",
+          "testCommand": "grep -qi \"Exercises\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.3-2",
+          "text": "Type enum (video, audio, text)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.3-3",
+          "text": "Bilingual fields",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.3-4",
+          "text": "Duration in minutes",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.3-5",
+          "text": "Media URLs (video_url, audio_url)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.3-6",
+          "text": "Text content field",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.3-7",
+          "text": "Admin exercise management page",
+          "testCommand": "test -d src/app",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S3.4",
+      "title": "Build Week-Exercise Relationships",
+      "description": "Create weekExercises junction table linking weeks to exercises with ordering and frequency.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S3.4-1",
+          "text": "weekExercises table with foreign keys",
+          "testCommand": "grep -qi \"weekExercises\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.4-2",
+          "text": "Order index for sequencing",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.4-3",
+          "text": "Obligatory vs optional flag",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.4-4",
+          "text": "Frequency settings (daily/weekly/custom)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.4-5",
+          "text": "API to add/remove exercises from weeks",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S3.5",
+      "title": "Build Curriculum Builder UI",
+      "description": "Create visual curriculum builder for admins to structure the 3-month program: Schwerpunktebenen > Weeks > Exercises.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S3.5-1",
+          "text": "Hierarchical view: Schwerpunktebene > Weeks > Exercises",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.5-2",
+          "text": "Drag-and-drop reordering",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.5-3",
+          "text": "Mark exercises as obligatory/optional",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.5-4",
+          "text": "Preview mode showing full program flow",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S3.5-5",
+          "text": "Bilingual content entry with AI translation",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S4.1",
+      "title": "Create Classes Schema",
+      "description": "Implement classes table with mentor assignment and duration settings.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S4.1-1",
+          "text": "Classes table with tenant_id",
+          "testCommand": "grep -qi \"Classes\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.1-2",
+          "text": "Mentor foreign key",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.1-3",
+          "text": "Status enum (active, disabled)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.1-4",
+          "text": "Duration (default 3 months)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.1-5",
+          "text": "Start/end dates",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.1-6",
+          "text": "Session configuration (monthly counts, duration)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S4.2",
+      "title": "Create Class Members Schema",
+      "description": "Implement classMembers junction table for mentee enrollment with payment tracking.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S4.2-1",
+          "text": "classMembers table with user/class foreign keys",
+          "testCommand": "grep -qi \"classMembers\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.2-2",
+          "text": "Enrollment and completion timestamps",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.2-3",
+          "text": "Payment fields (paid, amount, due_date)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.2-4",
+          "text": "Unique constraint on class_id + user_id",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S4.3",
+      "title": "Implement Class Curriculum Assignment",
+      "description": "Link schwerpunktebenen to classes by month. This assigns the curriculum template to a class.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S4.3-1",
+          "text": "classCurriculum table linking classes to schwerpunktebenen",
+          "testCommand": "grep -qi \"classCurriculum\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.3-2",
+          "text": "Month-based assignment (month 1, 2, 3)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.3-3",
+          "text": "API endpoints for curriculum CRUD",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S4.3-4",
+          "text": "Mentor can customize curriculum per class",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S5.1",
+      "title": "Build Superadmin Dashboard",
+      "description": "Create superadmin dashboard showing all tenants and system-wide statistics. Desktop only.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S5.1-1",
+          "text": "Dashboard at /superadmin/dashboard",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.1-2",
+          "text": "Tenant list with status",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.1-3",
+          "text": "System-wide user counts",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.1-4",
+          "text": "Recent tenant activity",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.1-5",
+          "text": "Quick action buttons",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S5.2",
+      "title": "Build Admin Dashboard",
+      "description": "Create admin dashboard showing tenant overview statistics. Desktop only.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S5.2-1",
+          "text": "Dashboard at /admin/dashboard",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.2-2",
+          "text": "User count by role (mentors, mentees)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.2-3",
+          "text": "Active classes count",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.2-4",
+          "text": "Recent activity feed",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.2-5",
+          "text": "Quick action buttons",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S5.3",
+      "title": "Build Admin Class Management",
+      "description": "Create class listing and detail pages for admin management. Desktop only.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S5.3-1",
+          "text": "Class list with filters (status, mentor)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.3-2",
+          "text": "Class detail page with members",
+          "testCommand": "test -d src/app",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.3-3",
+          "text": "Create/edit class forms",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.3-4",
+          "text": "Member add/remove functionality",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.3-5",
+          "text": "Curriculum assignment UI",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S5.4",
+      "title": "Build Admin Analytics Page",
+      "description": "Create analytics dashboard for admins showing tenant-wide metrics. Desktop only.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S5.4-1",
+          "text": "Exercise completion rates across tenant",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.4-2",
+          "text": "Session utilization metrics",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.4-3",
+          "text": "Mentor workload overview",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S5.4-4",
+          "text": "Mentee progress aggregates",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S6.1",
+      "title": "Create Scheduled Exercises Schema",
+      "description": "Implement scheduledExercises table for tracking mentee exercise occurrences.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.1-1",
+          "text": "scheduledExercises table",
+          "testCommand": "grep -qi \"scheduledExercises\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.1-2",
+          "text": "User, exercise, class foreign keys",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.1-3",
+          "text": "Scheduled datetime",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.1-4",
+          "text": "Completion tracking (completed, completed_at)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.1-5",
+          "text": "Notes field",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S6.2",
+      "title": "Create Weekly Recurring Exercises Schema",
+      "description": "Implement recurring exercise patterns for daily routines.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.2-1",
+          "text": "weeklyRecurringExercises table",
+          "testCommand": "grep -qi \"weeklyRecurringExercises\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.2-2",
+          "text": "Default time field",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.2-3",
+          "text": "Applicable days (1-7 for Mon-Sun)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.2-4",
+          "text": "Active from/through dates",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.2-5",
+          "text": "Duration minutes",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S6.3",
+      "title": "Build Mobile App Shell and Navigation",
+      "description": "Create the mobile PWA shell with bottom navigation for mentor and mentee views.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.3-1",
+          "text": "PWA manifest configured",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.3-2",
+          "text": "Bottom navigation component",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.3-3",
+          "text": "Role-based navigation items (mentor vs mentee)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.3-4",
+          "text": "Mobile-optimized layout",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.3-5",
+          "text": "Add to Home Screen support",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S6.4",
+      "title": "Build Mentor Mobile Dashboard",
+      "description": "Create mobile dashboard for mentors showing classes and upcoming sessions.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.4-1",
+          "text": "My classes list with mentee counts",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.4-2",
+          "text": "Today's sessions highlighted",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.4-3",
+          "text": "Upcoming sessions list",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.4-4",
+          "text": "Quick action buttons",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.4-5",
+          "text": "Pull to refresh",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S6.5",
+      "title": "Build Mentor Mobile Calendar",
+      "description": "Create mobile calendar for mentors to view and manage sessions.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.5-1",
+          "text": "Monthly calendar view optimized for mobile",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.5-2",
+          "text": "Sessions displayed as dots/indicators",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.5-3",
+          "text": "Tap day to see session list",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.5-4",
+          "text": "Create session from calendar",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.5-5",
+          "text": "Swipe to navigate months",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S6.6",
+      "title": "Build Mentor Mobile Availability Management",
+      "description": "Allow mentors to set and manage availability slots from mobile.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.6-1",
+          "text": "View existing availability slots",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.6-2",
+          "text": "Add new availability slot",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.6-3",
+          "text": "Delete slot with swipe",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.6-4",
+          "text": "Bulk add slots for recurring times",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "medium",
+      "passes": false
+    },
+    {
+      "id": "S6.7",
+      "title": "Build Mentor Mobile Class View",
+      "description": "Create mobile view for mentors to see class details and mentee progress.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.7-1",
+          "text": "Class detail with enrolled mentees",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.7-2",
+          "text": "Mentee progress indicators",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.7-3",
+          "text": "Tap mentee to view diary",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.7-4",
+          "text": "Session history for class",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S6.8",
+      "title": "Build Mentee Daily Calendar View",
+      "description": "Create mobile-first daily view showing today's exercises with times.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.8-1",
+          "text": "Daily view as default for mentees",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.8-2",
+          "text": "Exercises listed with scheduled times",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.8-3",
+          "text": "Obligatory exercises highlighted",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.8-4",
+          "text": "Optional exercises available to add",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.8-5",
+          "text": "Completion checkboxes",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.8-6",
+          "text": "Video/audio popup on tap",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S6.9",
+      "title": "Build Mentee Weekly Calendar View",
+      "description": "Create weekly view for mentees to see and plan the full week.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.9-1",
+          "text": "Weekly calendar grid",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.9-2",
+          "text": "Week theme displayed prominently",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.9-3",
+          "text": "All scheduled exercises visible",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.9-4",
+          "text": "Tap to see day detail",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.9-5",
+          "text": "Navigate between weeks",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S6.10",
+      "title": "Build Exercise Time Setting UI",
+      "description": "Create scroll wheel time picker for setting exercise times. Support bulk setting for the week.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.10-1",
+          "text": "Scroll wheel time picker (not drag-and-drop for time)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.10-2",
+          "text": "Set time for individual exercise",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.10-3",
+          "text": "Bulk set time for whole week",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.10-4",
+          "text": "Duration adjustment",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.10-5",
+          "text": "Conflict detection/warning",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S6.11",
+      "title": "Implement Appointment Shifting",
+      "description": "Allow mentees to move exercises to different days via drag-and-drop.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.11-1",
+          "text": "Drag-and-drop to move exercise to different day",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.11-2",
+          "text": "Visual feedback during drag",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.11-3",
+          "text": "Automatic save on drop",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.11-4",
+          "text": "Option to update single occurrence or series",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S6.12",
+      "title": "Display Weekly Topic and Monthly Schwerpunkt",
+      "description": "Show current week's theme and monthly focus area explanations to mentees.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.12-1",
+          "text": "Weekly topic card at top of calendar",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.12-2",
+          "text": "Monthly Schwerpunktebene explanation accessible",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.12-3",
+          "text": "Herkunft (background) displayed",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.12-4",
+          "text": "Ziel (goal) displayed",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.12-5",
+          "text": "Bilingual support (DE/EN toggle)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S6.13",
+      "title": "Build Exercise Execution View",
+      "description": "Create the view shown when mentee executes an exercise - video/audio player with completion.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S6.13-1",
+          "text": "Video player for video exercises",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.13-2",
+          "text": "Audio player for audio exercises",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.13-3",
+          "text": "Text display for text exercises",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.13-4",
+          "text": "Mark as Done button",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.13-5",
+          "text": "Skip explanation option for advanced users",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S6.13-6",
+          "text": "Notes field after completion",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S7.1",
+      "title": "Create Sessions Schema",
+      "description": "Implement mentoringSessions table supporting both 1:1 and group sessions.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S7.1-1",
+          "text": "mentoringSessions table with all fields",
+          "testCommand": "grep -qi \"mentoringSessions\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.1-2",
+          "text": "Session type enum (1on1, group)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.1-3",
+          "text": "Status enum (scheduled, available, booked, completed, cancelled)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.1-4",
+          "text": "Meeting link field",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.1-5",
+          "text": "Summary fields with voice flag",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S7.2",
+      "title": "Build Mentor Availability Slots",
+      "description": "Create availability slot management for 1:1 session booking.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S7.2-1",
+          "text": "Availability slots table",
+          "testCommand": "grep -qi \"slots\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.2-2",
+          "text": "Slot creation UI for mentors",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.2-3",
+          "text": "Bulk slot creation",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.2-4",
+          "text": "Delete/edit slot functionality",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.2-5",
+          "text": "Calendar integration",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S7.3",
+      "title": "Build Mentee Session Booking",
+      "description": "Create booking flow for mentees to book available mentor slots.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S7.3-1",
+          "text": "View available slots in mentee app",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.3-2",
+          "text": "Book slot with confirmation",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.3-3",
+          "text": "Booking cancellation",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.3-4",
+          "text": "Monthly session limit enforcement",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.3-5",
+          "text": "Booking shown in calendar",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S7.4",
+      "title": "Build Group Session Management",
+      "description": "Create UI for mentors to create group sessions with RSVP.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S7.4-1",
+          "text": "Create group session form",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.4-2",
+          "text": "Associate with class",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.4-3",
+          "text": "RSVP tracking (pending, accepted, declined)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.4-4",
+          "text": "Max participants setting",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S7.4-5",
+          "text": "Session agenda field",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S8.1",
+      "title": "Create Diary Entries Schema",
+      "description": "Implement diaryEntries table supporting text and voice entries.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S8.1-1",
+          "text": "diaryEntries table",
+          "testCommand": "grep -qi \"diaryEntries\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.1-2",
+          "text": "User and class foreign keys",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.1-3",
+          "text": "Content field",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.1-4",
+          "text": "is_voice flag",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.1-5",
+          "text": "Audio URL for voice entries",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.1-6",
+          "text": "Entry date timestamp",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S8.2",
+      "title": "Build Mentee Diary Page",
+      "description": "Create mobile-friendly diary interface for text and voice journaling.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S8.2-1",
+          "text": "Text entry with simple editor",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.2-2",
+          "text": "Voice recording button",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.2-3",
+          "text": "Entry list chronologically",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.2-4",
+          "text": "Filter by date",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.2-5",
+          "text": "Edit/delete entries",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S8.3",
+      "title": "Implement Voice Recording",
+      "description": "Add voice recording with playback and waveform visualization.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S8.3-1",
+          "text": "Record button with visual feedback",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.3-2",
+          "text": "Recording duration display",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.3-3",
+          "text": "Playback before save",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.3-4",
+          "text": "Audio waveform visualization",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.3-5",
+          "text": "Save to file storage",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S8.4",
+      "title": "Build Mentor Diary Access",
+      "description": "Allow mentors to view diary entries of mentees in their classes.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S8.4-1",
+          "text": "Mentor can view class diary entries",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.4-2",
+          "text": "Filter by mentee",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.4-3",
+          "text": "Read-only access",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S8.4-4",
+          "text": "Voice playback support",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S9.1",
+      "title": "Set Up Web Push Infrastructure",
+      "description": "Configure Web Push API with VAPID keys and service worker.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S9.1-1",
+          "text": "VAPID key generation/storage",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.1-2",
+          "text": "Service worker registration",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.1-3",
+          "text": "Push subscription management",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.1-4",
+          "text": "pushSubscriptions table in database",
+          "testCommand": "grep -qi \"pushSubscriptions\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S9.2",
+      "title": "Create Notification Preferences Schema",
+      "description": "Implement notification preferences for exercise and session reminders.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S9.2-1",
+          "text": "notificationPreferences table",
+          "testCommand": "grep -qi \"notificationPreferences\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.2-2",
+          "text": "Exercise reminder enabled/minutes before",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.2-3",
+          "text": "Session reminder enabled/minutes before",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.2-4",
+          "text": "Reminder tone selection",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.2-5",
+          "text": "Push enabled flag",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S9.3",
+      "title": "Build Notification Settings Page",
+      "description": "Create mentee settings page for configuring reminders.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S9.3-1",
+          "text": "Toggle switches for each reminder type",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.3-2",
+          "text": "Minutes-before configuration",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.3-3",
+          "text": "Tone selection dropdown",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.3-4",
+          "text": "Test notification button",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.3-5",
+          "text": "Push opt-in flow",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S9.4",
+      "title": "Implement Exercise Reminders with Tone",
+      "description": "Send push notifications at scheduled times with configurable alarm tone.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S9.4-1",
+          "text": "Notification at (exercise_time - reminder_minutes)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.4-2",
+          "text": "Include exercise name",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.4-3",
+          "text": "Play selected tone/sound",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.4-4",
+          "text": "Deep link to exercise on tap",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.4-5",
+          "text": "Respect quiet hours if configured",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S9.5",
+      "title": "Implement Session Reminders",
+      "description": "Send push notifications before booked sessions.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S9.5-1",
+          "text": "Reminder for 1:1 sessions",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.5-2",
+          "text": "Reminder for group sessions",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.5-3",
+          "text": "Include session details and meeting link",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S9.5-4",
+          "text": "Configurable reminder time",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S10.1",
+      "title": "Create AI Settings Infrastructure",
+      "description": "Build settings system for AI configuration like Cerebro - admin can set provider/model/API keys.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S10.1-1",
+          "text": "AI settings table per tenant",
+          "testCommand": "grep -qi \"settings\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.1-2",
+          "text": "Provider selection (anthropic, gemini)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.1-3",
+          "text": "Model selection per task type",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.1-4",
+          "text": "API key storage (encrypted)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.1-5",
+          "text": "Settings UI for admin",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S10.2",
+      "title": "Build AI Settings Admin Page",
+      "description": "Create admin interface for configuring AI providers and API keys.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S10.2-1",
+          "text": "Admin-only access",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.2-2",
+          "text": "Provider dropdown (Anthropic, Gemini)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.2-3",
+          "text": "Model selection per task",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.2-4",
+          "text": "API key input (masked)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.2-5",
+          "text": "Test connection button",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.2-6",
+          "text": "Usage statistics display",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S10.3",
+      "title": "Implement Voice Transcription",
+      "description": "Use configured AI provider to transcribe diary voice entries.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S10.3-1",
+          "text": "Transcribe audio using tenant's AI config",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.3-2",
+          "text": "Support German and English",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.3-3",
+          "text": "Store transcription with diary entry",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.3-4",
+          "text": "Error handling for failed transcriptions",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S10.4",
+      "title": "Implement Text Translation",
+      "description": "Use AI to translate content between German and English.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S10.4-1",
+          "text": "Translate DE -> EN",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.4-2",
+          "text": "Translate EN -> DE",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.4-3",
+          "text": "Use in curriculum builder",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.4-4",
+          "text": "Customizable translation prompts",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S10.5",
+      "title": "Implement Context Generation",
+      "description": "Use AI to auto-generate Herkunft and Ziel fields for curriculum content.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S10.5-1",
+          "text": "Generate Herkunft from description",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.5-2",
+          "text": "Generate Ziel from description",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.5-3",
+          "text": "Preview before save",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.5-4",
+          "text": "Customizable prompts",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S10.6",
+      "title": "Build AI Prompts Configuration",
+      "description": "Create admin interface for customizing AI prompts used throughout the system.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S10.6-1",
+          "text": "Prompts table in database",
+          "testCommand": "grep -qi \"Prompts\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.6-2",
+          "text": "Admin UI to edit prompts",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.6-3",
+          "text": "Reset to default option",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S10.6-4",
+          "text": "Test prompt functionality",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S11.1",
+      "title": "Create Measurements Schema",
+      "description": "Implement measurements table for tracking mentee progress and patterns.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S11.1-1",
+          "text": "Measurements table with user/week references",
+          "testCommand": "grep -qi \"Measurements\" src/db/schema.ts",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.1-2",
+          "text": "Measurement value storage (numeric)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.1-3",
+          "text": "Measurement type field",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.1-4",
+          "text": "Created timestamp",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S11.2",
+      "title": "Build Pattern Tracking UI",
+      "description": "Create interface for mentees to log emotional patterns by time blocks (e.g., stress tracking).",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S11.2-1",
+          "text": "Time block grid (hourly)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.2-2",
+          "text": "Pattern selection (e.g., Stress, Energy)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.2-3",
+          "text": "Intensity levels (Strong, Weak, None)",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.2-4",
+          "text": "Color coding by intensity",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.2-5",
+          "text": "Daily pattern view",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S11.3",
+      "title": "Implement Sentiment Analysis",
+      "description": "Analyze diary entries for mood/mental health indicators using AI.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S11.3-1",
+          "text": "Analyze transcribed/text diary entries",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.3-2",
+          "text": "Extract sentiment score",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.3-3",
+          "text": "Identify emotional patterns and keywords",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.3-4",
+          "text": "Generate mood barometer data",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S11.4",
+      "title": "Build Weekly Summary Dashboard",
+      "description": "Create dashboard showing weekly stats: exercise completion, emotional highlights, mood trends.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S11.4-1",
+          "text": "Exercise completion stats",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.4-2",
+          "text": "Mood/emotional highlights from diary",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.4-3",
+          "text": "Pattern frequency charts",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.4-4",
+          "text": "Week-over-week comparison",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.4-5",
+          "text": "Mood barometer visualization",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
+      "passes": false
+    },
+    {
+      "id": "S11.5",
+      "title": "Build Mentor Analytics View",
+      "description": "Create analytics dashboard for mentors to see aggregated mentee progress.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-S11.5-1",
+          "text": "Class-level completion rates",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.5-2",
+          "text": "Individual mentee progress",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.5-3",
+          "text": "Mood trends across class",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        },
+        {
+          "id": "AC-S11.5-4",
+          "text": "Identify mentees needing attention",
+          "testCommand": "true",
+          "passes": false,
+          "lastRun": null
+        }
+      ],
+      "complexity": "complex",
       "passes": false
     }
   ]
