@@ -169,7 +169,7 @@ export default function NotificationSettingsPage() {
     return (
       <MobileLayout title="Notification Settings" showBack>
         <div className="flex h-full items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-twilight-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-rdy-orange-500" />
         </div>
       </MobileLayout>
     );
@@ -202,15 +202,15 @@ export default function NotificationSettingsPage() {
 
         {/* Push Notifications Opt-in Section */}
         <section className="space-y-4" data-testid="push-optin-section">
-          <h2 className="text-lg font-semibold text-white">Push Notifications</h2>
-          <div className="rounded-xl bg-gray-900 p-4">
+          <h2 className="text-lg font-semibold text-rdy-black">Push Notifications</h2>
+          <div className="rounded-xl bg-rdy-gray-100 p-4">
             <div className="flex items-start gap-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-twilight-500/20">
-                <Smartphone className="h-5 w-5 text-twilight-400" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                <Smartphone className="h-5 w-5 text-rdy-orange-500" />
               </div>
               <div className="flex-1">
-                <h3 className="font-medium text-white">Enable Push Notifications</h3>
-                <p className="mt-1 text-sm text-gray-400">
+                <h3 className="font-medium text-rdy-black">Enable Push Notifications</h3>
+                <p className="mt-1 text-sm text-rdy-gray-400">
                   {!isPushSupported
                     ? 'Push notifications are not supported on this device.'
                     : isPushSubscribed
@@ -218,7 +218,7 @@ export default function NotificationSettingsPage() {
                       : 'Allow RDY to send you notifications about your exercises and sessions.'}
                 </p>
                 {pushPermission === 'denied' && (
-                  <p className="mt-2 text-sm text-amber-400">
+                  <p className="mt-2 text-sm text-rdy-orange-500">
                     Notifications are blocked. Please enable them in your browser settings.
                   </p>
                 )}
@@ -244,18 +244,18 @@ export default function NotificationSettingsPage() {
 
         {/* Master Toggle */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between rounded-xl bg-gray-900 p-4">
+          <div className="flex items-center justify-between rounded-xl bg-rdy-gray-100 p-4">
             <div className="flex items-center gap-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-twilight-500/20">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
                 {settings?.notificationsEnabled ? (
-                  <Bell className="h-5 w-5 text-twilight-400" />
+                  <Bell className="h-5 w-5 text-rdy-orange-500" />
                 ) : (
-                  <BellOff className="h-5 w-5 text-gray-400" />
+                  <BellOff className="h-5 w-5 text-rdy-gray-400" />
                 )}
               </div>
               <div>
-                <h3 className="font-medium text-white">All Notifications</h3>
-                <p className="text-sm text-gray-400">Master toggle for all reminders</p>
+                <h3 className="font-medium text-rdy-black">All Notifications</h3>
+                <p className="text-sm text-rdy-gray-400">Master toggle for all reminders</p>
               </div>
             </div>
             <Switch
@@ -269,11 +269,11 @@ export default function NotificationSettingsPage() {
 
         {/* Reminder Types */}
         <section className="space-y-4" data-testid="reminder-types-section">
-          <h2 className="text-lg font-semibold text-white">Reminder Types</h2>
+          <h2 className="text-lg font-semibold text-rdy-black">Reminder Types</h2>
           <div className="space-y-3">
             {/* Exercise Reminders */}
             <div
-              className={`rounded-xl bg-gray-900 p-4 transition-opacity ${
+              className={`rounded-xl bg-rdy-gray-100 p-4 transition-opacity ${
                 !settings?.notificationsEnabled ? 'opacity-50' : ''
               }`}
             >
@@ -283,8 +283,8 @@ export default function NotificationSettingsPage() {
                     <Dumbbell className="h-5 w-5 text-cyan-400" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-white">Exercise Reminders</h3>
-                    <p className="text-sm text-gray-400">Daily exercise notifications</p>
+                    <h3 className="font-medium text-rdy-black">Exercise Reminders</h3>
+                    <p className="text-sm text-rdy-gray-400">Daily exercise notifications</p>
                   </div>
                 </div>
                 <Switch
@@ -295,9 +295,9 @@ export default function NotificationSettingsPage() {
                 />
               </div>
               {settings?.exerciseRemindersEnabled && settings?.notificationsEnabled && (
-                <div className="mt-4 flex items-center gap-3 border-t border-gray-800 pt-4">
-                  <Clock className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm text-gray-400">Remind me</span>
+                <div className="mt-4 flex items-center gap-3 border-t border-rdy-gray-200 pt-4">
+                  <Clock className="h-4 w-4 text-rdy-gray-400" />
+                  <span className="text-sm text-rdy-gray-400">Remind me</span>
                   <Select
                     value={String(settings?.exerciseReminderMinutes ?? 15)}
                     onValueChange={(value) =>
@@ -306,7 +306,7 @@ export default function NotificationSettingsPage() {
                     disabled={isUpdating}
                   >
                     <SelectTrigger
-                      className="w-24 bg-gray-800 border-gray-700"
+                      className="w-24 bg-rdy-gray-100 border-rdy-gray-200"
                       data-testid="exercise-minutes-select"
                     >
                       <SelectValue />
@@ -319,25 +319,25 @@ export default function NotificationSettingsPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <span className="text-sm text-gray-400">before</span>
+                  <span className="text-sm text-rdy-gray-400">before</span>
                 </div>
               )}
             </div>
 
             {/* Session Reminders */}
             <div
-              className={`rounded-xl bg-gray-900 p-4 transition-opacity ${
+              className={`rounded-xl bg-rdy-gray-100 p-4 transition-opacity ${
                 !settings?.notificationsEnabled ? 'opacity-50' : ''
               }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20">
-                    <Calendar className="h-5 w-5 text-purple-400" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                    <Calendar className="h-5 w-5 text-rdy-orange-500" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-white">Session Reminders</h3>
-                    <p className="text-sm text-gray-400">1:1 mentoring sessions</p>
+                    <h3 className="font-medium text-rdy-black">Session Reminders</h3>
+                    <p className="text-sm text-rdy-gray-400">1:1 mentoring sessions</p>
                   </div>
                 </div>
                 <Switch
@@ -348,9 +348,9 @@ export default function NotificationSettingsPage() {
                 />
               </div>
               {settings?.sessionRemindersEnabled && settings?.notificationsEnabled && (
-                <div className="mt-4 flex items-center gap-3 border-t border-gray-800 pt-4">
-                  <Clock className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm text-gray-400">Remind me</span>
+                <div className="mt-4 flex items-center gap-3 border-t border-rdy-gray-200 pt-4">
+                  <Clock className="h-4 w-4 text-rdy-gray-400" />
+                  <span className="text-sm text-rdy-gray-400">Remind me</span>
                   <Select
                     value={String(settings?.sessionReminderMinutes ?? 30)}
                     onValueChange={(value) =>
@@ -359,7 +359,7 @@ export default function NotificationSettingsPage() {
                     disabled={isUpdating}
                   >
                     <SelectTrigger
-                      className="w-24 bg-gray-800 border-gray-700"
+                      className="w-24 bg-rdy-gray-100 border-rdy-gray-200"
                       data-testid="session-minutes-select"
                     >
                       <SelectValue />
@@ -372,25 +372,25 @@ export default function NotificationSettingsPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <span className="text-sm text-gray-400">before</span>
+                  <span className="text-sm text-rdy-gray-400">before</span>
                 </div>
               )}
             </div>
 
             {/* Group Session Reminders */}
             <div
-              className={`rounded-xl bg-gray-900 p-4 transition-opacity ${
+              className={`rounded-xl bg-rdy-gray-100 p-4 transition-opacity ${
                 !settings?.notificationsEnabled ? 'opacity-50' : ''
               }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/20">
-                    <Users className="h-5 w-5 text-amber-400" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                    <Users className="h-5 w-5 text-rdy-orange-500" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-white">Group Session Reminders</h3>
-                    <p className="text-sm text-gray-400">Group mentoring sessions</p>
+                    <h3 className="font-medium text-rdy-black">Group Session Reminders</h3>
+                    <p className="text-sm text-rdy-gray-400">Group mentoring sessions</p>
                   </div>
                 </div>
                 <Switch
@@ -403,9 +403,9 @@ export default function NotificationSettingsPage() {
                 />
               </div>
               {settings?.groupSessionRemindersEnabled && settings?.notificationsEnabled && (
-                <div className="mt-4 flex items-center gap-3 border-t border-gray-800 pt-4">
-                  <Clock className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm text-gray-400">Remind me</span>
+                <div className="mt-4 flex items-center gap-3 border-t border-rdy-gray-200 pt-4">
+                  <Clock className="h-4 w-4 text-rdy-gray-400" />
+                  <span className="text-sm text-rdy-gray-400">Remind me</span>
                   <Select
                     value={String(settings?.groupSessionReminderMinutes ?? 60)}
                     onValueChange={(value) =>
@@ -414,7 +414,7 @@ export default function NotificationSettingsPage() {
                     disabled={isUpdating}
                   >
                     <SelectTrigger
-                      className="w-24 bg-gray-800 border-gray-700"
+                      className="w-24 bg-rdy-gray-100 border-rdy-gray-200"
                       data-testid="group-session-minutes-select"
                     >
                       <SelectValue />
@@ -427,14 +427,14 @@ export default function NotificationSettingsPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <span className="text-sm text-gray-400">before</span>
+                  <span className="text-sm text-rdy-gray-400">before</span>
                 </div>
               )}
             </div>
 
             {/* Daily Summary */}
             <div
-              className={`rounded-xl bg-gray-900 p-4 transition-opacity ${
+              className={`rounded-xl bg-rdy-gray-100 p-4 transition-opacity ${
                 !settings?.notificationsEnabled ? 'opacity-50' : ''
               }`}
             >
@@ -444,8 +444,8 @@ export default function NotificationSettingsPage() {
                     <Sun className="h-5 w-5 text-green-400" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-white">Daily Summary</h3>
-                    <p className="text-sm text-gray-400">Morning overview of your day</p>
+                    <h3 className="font-medium text-rdy-black">Daily Summary</h3>
+                    <p className="text-sm text-rdy-gray-400">Morning overview of your day</p>
                   </div>
                 </div>
                 <Switch
@@ -461,19 +461,19 @@ export default function NotificationSettingsPage() {
 
         {/* Notification Tone */}
         <section className="space-y-4" data-testid="tone-selection-section">
-          <h2 className="text-lg font-semibold text-white">Notification Tone</h2>
+          <h2 className="text-lg font-semibold text-rdy-black">Notification Tone</h2>
           <div
-            className={`rounded-xl bg-gray-900 p-4 transition-opacity ${
+            className={`rounded-xl bg-rdy-gray-100 p-4 transition-opacity ${
               !settings?.notificationsEnabled ? 'opacity-50' : ''
             }`}
           >
             <div className="flex items-center gap-4 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-twilight-500/20">
-                <Volume2 className="h-5 w-5 text-twilight-400" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                <Volume2 className="h-5 w-5 text-rdy-orange-500" />
               </div>
               <div>
-                <h3 className="font-medium text-white">Sound</h3>
-                <p className="text-sm text-gray-400">Choose your notification sound</p>
+                <h3 className="font-medium text-rdy-black">Sound</h3>
+                <p className="text-sm text-rdy-gray-400">Choose your notification sound</p>
               </div>
             </div>
             <Select
@@ -482,7 +482,7 @@ export default function NotificationSettingsPage() {
               disabled={isUpdating || !settings?.notificationsEnabled}
             >
               <SelectTrigger
-                className="w-full bg-gray-800 border-gray-700"
+                className="w-full bg-rdy-gray-100 border-rdy-gray-200"
                 data-testid="tone-select"
               >
                 <SelectValue />
@@ -492,7 +492,7 @@ export default function NotificationSettingsPage() {
                   <SelectItem key={tone.value} value={tone.value}>
                     <div className="flex flex-col">
                       <span>{tone.label}</span>
-                      <span className="text-xs text-gray-400">{tone.description}</span>
+                      <span className="text-xs text-rdy-gray-400">{tone.description}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -503,9 +503,9 @@ export default function NotificationSettingsPage() {
 
         {/* Quiet Hours */}
         <section className="space-y-4" data-testid="quiet-hours-section">
-          <h2 className="text-lg font-semibold text-white">Quiet Hours</h2>
+          <h2 className="text-lg font-semibold text-rdy-black">Quiet Hours</h2>
           <div
-            className={`rounded-xl bg-gray-900 p-4 transition-opacity ${
+            className={`rounded-xl bg-rdy-gray-100 p-4 transition-opacity ${
               !settings?.notificationsEnabled ? 'opacity-50' : ''
             }`}
           >
@@ -515,8 +515,8 @@ export default function NotificationSettingsPage() {
                   <Moon className="h-5 w-5 text-indigo-400" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-white">Enable Quiet Hours</h3>
-                  <p className="text-sm text-gray-400">Pause notifications during set times</p>
+                  <h3 className="font-medium text-rdy-black">Enable Quiet Hours</h3>
+                  <p className="text-sm text-rdy-gray-400">Pause notifications during set times</p>
                 </div>
               </div>
               <Switch
@@ -527,30 +527,30 @@ export default function NotificationSettingsPage() {
               />
             </div>
             {settings?.quietHoursEnabled && settings?.notificationsEnabled && (
-              <div className="mt-4 space-y-3 border-t border-gray-800 pt-4">
+              <div className="mt-4 space-y-3 border-t border-rdy-gray-200 pt-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-400 w-16">From</span>
+                  <span className="text-sm text-rdy-gray-400 w-16">From</span>
                   <input
                     type="time"
                     value={settings?.quietHoursStart ?? '22:00'}
                     onChange={(e) => updateSetting('quietHoursStart', e.target.value)}
                     disabled={isUpdating}
-                    className="flex-1 rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-twilight-500"
+                    className="flex-1 rounded-lg bg-rdy-gray-100 border border-rdy-gray-200 px-3 py-2 text-rdy-black text-sm focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
                     data-testid="quiet-hours-start"
                   />
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-400 w-16">To</span>
+                  <span className="text-sm text-rdy-gray-400 w-16">To</span>
                   <input
                     type="time"
                     value={settings?.quietHoursEnd ?? '07:00'}
                     onChange={(e) => updateSetting('quietHoursEnd', e.target.value)}
                     disabled={isUpdating}
-                    className="flex-1 rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-twilight-500"
+                    className="flex-1 rounded-lg bg-rdy-gray-100 border border-rdy-gray-200 px-3 py-2 text-rdy-black text-sm focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
                     data-testid="quiet-hours-end"
                   />
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-rdy-gray-500">
                   Notifications will be paused during these hours.
                   {settings?.quietHoursStart && settings?.quietHoursEnd && (
                     <span className="block mt-1">
@@ -565,15 +565,15 @@ export default function NotificationSettingsPage() {
 
         {/* Test Notification */}
         <section className="space-y-4" data-testid="test-notification-section">
-          <h2 className="text-lg font-semibold text-white">Test Notification</h2>
-          <div className="rounded-xl bg-gray-900 p-4">
+          <h2 className="text-lg font-semibold text-rdy-black">Test Notification</h2>
+          <div className="rounded-xl bg-rdy-gray-100 p-4">
             <div className="flex items-start gap-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-twilight-500/20">
-                <Send className="h-5 w-5 text-twilight-400" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                <Send className="h-5 w-5 text-rdy-orange-500" />
               </div>
               <div className="flex-1">
-                <h3 className="font-medium text-white">Send Test Notification</h3>
-                <p className="mt-1 text-sm text-gray-400">
+                <h3 className="font-medium text-rdy-black">Send Test Notification</h3>
+                <p className="mt-1 text-sm text-rdy-gray-400">
                   Verify that notifications are working correctly on your device.
                 </p>
               </div>
@@ -601,7 +601,7 @@ export default function NotificationSettingsPage() {
               )}
             </Button>
             {!isPushSubscribed && (
-              <p className="mt-2 text-sm text-amber-400 text-center">
+              <p className="mt-2 text-sm text-rdy-orange-500 text-center">
                 Enable push notifications above to test.
               </p>
             )}

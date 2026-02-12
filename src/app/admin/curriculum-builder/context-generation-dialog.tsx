@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -155,10 +155,10 @@ export function ContextGenerationDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto border-gray-800 bg-gray-900 sm:max-w-2xl">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-white">Generate {getContextTypeName(contextType)}</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogTitle>Generate {getContextTypeName(contextType)}</DialogTitle>
+          <DialogDescription>
             Use AI to auto-generate {getContextTypeName(contextType).toLowerCase()} content in{' '}
             {getLanguageName(language)} based on the description.
           </DialogDescription>
@@ -167,36 +167,36 @@ export function ContextGenerationDialog({
         <div className="space-y-4 py-4">
           {/* Title (optional) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Title (optional)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Title (optional)</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
               placeholder="Enter title for additional context..."
             />
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">
-              Description <span className="text-red-400">*</span>
+            <label className="text-sm font-medium text-rdy-gray-600">
+              Description <span className="text-red-500">*</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-24 w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="min-h-24 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
               placeholder="Enter the description to generate context from..."
             />
           </div>
 
           {/* Additional Context (optional) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Additional Context (optional)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Additional Context (optional)</label>
             <textarea
               value={additionalContext}
               onChange={(e) => setAdditionalContext(e.target.value)}
-              className="min-h-16 w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="min-h-16 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
               placeholder="E.g., 'This is for a week about mindfulness meditation'..."
             />
           </div>
@@ -206,7 +206,7 @@ export function ContextGenerationDialog({
             <Button
               onClick={handleGenerate}
               disabled={isGenerating || !description.trim()}
-              className="w-full"
+              className="w-full bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
               data-testid="generate-context-button"
             >
               {isGenerating ? 'Generating...' : `Generate ${getContextTypeName(contextType)}`}
@@ -217,7 +217,7 @@ export function ContextGenerationDialog({
           {(contextType === 'both' || contextType === 'herkunft') && generatedHerkunft && (
             <div className="space-y-2" data-testid="generated-herkunft-preview">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-amber-400">
+                <label className="text-sm font-medium text-rdy-orange-500">
                   Herkunft (Background) - Preview
                 </label>
                 <Button
@@ -229,8 +229,8 @@ export function ContextGenerationDialog({
                   Copy
                 </Button>
               </div>
-              <div className="rounded-md border border-amber-700/50 bg-amber-900/20 p-3">
-                <p className="text-gray-200 whitespace-pre-wrap">{generatedHerkunft}</p>
+              <div className="rounded-md border border-amber-300/50 bg-amber-50 p-3">
+                <p className="whitespace-pre-wrap">{generatedHerkunft}</p>
               </div>
             </div>
           )}
@@ -239,7 +239,7 @@ export function ContextGenerationDialog({
           {(contextType === 'both' || contextType === 'ziel') && generatedZiel && (
             <div className="space-y-2" data-testid="generated-ziel-preview">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-green-400">
+                <label className="text-sm font-medium text-green-600">
                   Ziel (Goal) - Preview
                 </label>
                 <Button
@@ -251,29 +251,29 @@ export function ContextGenerationDialog({
                   Copy
                 </Button>
               </div>
-              <div className="rounded-md border border-green-700/50 bg-green-900/20 p-3">
-                <p className="text-gray-200 whitespace-pre-wrap">{generatedZiel}</p>
+              <div className="rounded-md border border-green-300/50 bg-green-50 p-3">
+                <p className="whitespace-pre-wrap">{generatedZiel}</p>
               </div>
             </div>
           )}
 
           {/* Error Message */}
           {errorMessage && (
-            <div className="rounded-md bg-red-900/20 p-3 text-sm text-red-400" data-testid="context-generation-error">
+            <div className="rounded-md bg-red-50 p-3 text-sm text-red-500" data-testid="context-generation-error">
               {errorMessage}
             </div>
           )}
 
           {/* Instructions */}
-          <div className="rounded-md bg-gray-800 p-3">
-            <h4 className="text-sm font-medium text-gray-300">About Herkunft & Ziel:</h4>
-            <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-gray-400">
+          <div className="rounded-md bg-rdy-gray-100 p-3">
+            <h4 className="text-sm font-medium text-rdy-gray-600">About Herkunft & Ziel:</h4>
+            <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-rdy-gray-400">
               <li>
-                <span className="text-amber-400">Herkunft</span>: Background/origin - explains where
+                <span className="text-rdy-orange-500">Herkunft</span>: Background/origin - explains where
                 the concept or exercise comes from
               </li>
               <li>
-                <span className="text-green-400">Ziel</span>: Goal/purpose - describes what the
+                <span className="text-green-600">Ziel</span>: Goal/purpose - describes what the
                 participant will achieve
               </li>
             </ul>
@@ -284,11 +284,11 @@ export function ContextGenerationDialog({
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={() => handleClose(false)} className="border-gray-700">
+          <Button variant="outline" onClick={() => handleClose(false)} className="border-rdy-gray-200">
             Cancel
           </Button>
           {hasGeneratedContent && onApply && (
-            <Button onClick={handleApply} data-testid="apply-generated-context-button">
+            <Button onClick={handleApply} className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600" data-testid="apply-generated-context-button">
               Apply to Form
             </Button>
           )}

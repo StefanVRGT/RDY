@@ -1,62 +1,66 @@
 import { auth } from '@/auth';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export default async function Home() {
   const session = await auth();
 
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-950 p-8 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col items-center gap-8">
-        <h1 className="text-4xl font-bold text-white">RDY</h1>
-        <p className="text-gray-400">Mentorship Program Course Tracking</p>
+  // If user is logged in, redirect based on role
+  if (session?.user) {
+    const { user } = session;
 
-        {session?.user ? (
-          <div className="flex flex-col items-center gap-4">
-            <div className="rounded-lg bg-gray-900 p-6 text-center">
-              <p className="text-lg text-white">
-                Welcome, {session.user.name || session.user.email}
-              </p>
-              <p className="mt-2 text-sm text-gray-400">{session.user.email}</p>
-              {session.user.roles.length > 0 && (
-                <div className="mt-3 flex flex-wrap justify-center gap-2">
-                  {session.user.roles.map((role) => (
-                    <span
-                      key={role}
-                      className="rounded-full bg-purple-600/20 px-3 py-1 text-xs font-medium text-purple-300"
-                    >
-                      {role}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="flex gap-4">
-              <Link
-                href="/dashboard"
-                className="rounded-lg bg-purple-600 px-6 py-2 text-white transition-colors hover:bg-purple-700"
-              >
-                Go to Dashboard
-              </Link>
-              <Link
-                href="/api/auth/signout"
-                className="rounded-lg border border-gray-700 px-6 py-2 text-gray-300 transition-colors hover:bg-gray-800"
-              >
-                Sign Out
-              </Link>
-            </div>
+    // Determine redirect path based on primary role
+    if (user.roles.includes('superadmin')) {
+      redirect('/superadmin');
+    } else if (user.roles.includes('admin')) {
+      redirect('/admin');
+    } else if (user.roles.includes('mentor') && !user.roles.includes('mentee')) {
+      redirect('/mentor');
+    } else {
+      redirect('/mentee/calendar');
+    }
+  }
+
+  // Landing page for non-authenticated users - RDY Design
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden bg-rdy-white">
+      {/* Background Video - Full screen */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover"
+        >
+          <source src="/videos/background.mp4" type="video/mp4" />
+        </video>
+        {/* Subtle white overlay for readability */}
+        <div className="absolute inset-0 bg-rdy-white/40"></div>
+      </div>
+
+      {/* Content - Centered */}
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-rdy-lg">
+        <main className="flex flex-col items-center gap-rdy-2xl text-center">
+          {/* RDY Logo */}
+          <div className="space-y-rdy-md">
+            <h1 className="text-[80px] md:text-[120px] font-bold text-rdy-black tracking-wider">
+              RDY
+            </h1>
+            <p className="rdy-heading-lg text-rdy-gray-500">
+              START YOUR JOURNEY
+            </p>
           </div>
-        ) : (
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-gray-400">Sign in to access the platform</p>
-            <Link
-              href="/auth/signin"
-              className="rounded-lg bg-purple-600 px-6 py-3 text-white transition-colors hover:bg-purple-700"
-            >
-              Sign In
-            </Link>
-          </div>
-        )}
-      </main>
+
+          {/* CTA Button - Minimal RDY Style */}
+          <Link
+            href="/auth/signin"
+            className="mt-rdy-xl px-rdy-2xl py-rdy-lg text-rdy-lg uppercase font-bold text-rdy-orange-500 active:opacity-60 transition-opacity"
+          >
+            BEGIN →
+          </Link>
+        </main>
+      </div>
     </div>
   );
 }

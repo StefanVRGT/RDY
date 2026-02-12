@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -78,30 +78,30 @@ export function MentorAssignDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-gray-800 bg-gray-900 text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Assign Mentor</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Assign a mentor to {displayName}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Mentor</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Mentor</label>
             {mentorsLoading ? (
-              <div className="py-2 text-sm text-gray-400">Loading mentors...</div>
+              <div className="py-2 text-sm text-rdy-gray-400">Loading mentors...</div>
             ) : (
               <Select value={selectedMentorId} onValueChange={setSelectedMentorId}>
-                <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a mentor" />
                 </SelectTrigger>
-                <SelectContent className="border-gray-700 bg-gray-800">
-                  <SelectItem value={NO_MENTOR_VALUE} className="text-gray-400">
+                <SelectContent>
+                  <SelectItem value={NO_MENTOR_VALUE} className="text-rdy-gray-400">
                     No mentor assigned
                   </SelectItem>
                   {mentors?.map((mentor) => (
-                    <SelectItem key={mentor.id} value={mentor.id} className="text-white">
+                    <SelectItem key={mentor.id} value={mentor.id}>
                       {mentor.name || mentor.email}
                     </SelectItem>
                   ))}
@@ -111,13 +111,13 @@ export function MentorAssignDialog({
           </div>
 
           {!mentorsLoading && mentors?.length === 0 && (
-            <div className="rounded-lg bg-yellow-900/20 p-3 text-sm text-yellow-400">
+            <div className="rounded-lg bg-yellow-50 p-3 text-sm text-yellow-600">
               No mentors available. You need to assign the mentor role to a user first.
             </div>
           )}
 
           {errorMessage && (
-            <div className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">{errorMessage}</div>
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{errorMessage}</div>
           )}
         </div>
 
@@ -125,11 +125,15 @@ export function MentorAssignDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!hasChanges || assignMentorMutation.isPending}>
+          <Button
+            onClick={handleSubmit}
+            disabled={!hasChanges || assignMentorMutation.isPending}
+            className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
+          >
             {assignMentorMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogFooter>

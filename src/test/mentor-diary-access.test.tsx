@@ -334,7 +334,7 @@ describe('S8.4 - Mentor Diary Access', () => {
 
       await waitFor(() => {
         const currentMenteeOption = screen.getByTestId('mentee-option-test-mentee-id');
-        expect(currentMenteeOption).toHaveClass('ring-twilight-500');
+        expect(currentMenteeOption).toHaveClass('ring-rdy-orange-500');
       });
     });
 

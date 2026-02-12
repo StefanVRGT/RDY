@@ -55,7 +55,7 @@ function getMoodInfo(score: number) {
       label: 'Mixed',
       description: 'Some ups and downs this week',
       icon: Cloud,
-      color: 'text-orange-400',
+      color: 'text-rdy-orange-500',
       bgColor: 'bg-orange-500',
       gradientFrom: 'from-orange-500',
       gradientTo: 'to-orange-300',
@@ -82,13 +82,13 @@ export function MoodBarometer({ data, className }: MoodBarometerProps) {
 
   return (
     <div
-      className={cn('rounded-xl bg-gray-900 p-4', className)}
+      className={cn('rounded-xl bg-rdy-gray-100 p-4', className)}
       data-testid="mood-barometer"
     >
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
-        <Gauge className="h-5 w-5 text-twilight-400" />
-        <h3 className="font-semibold text-white">Mood Barometer</h3>
+        <Gauge className="h-5 w-5 text-rdy-orange-500" />
+        <h3 className="font-semibold text-rdy-black">Mood Barometer</h3>
       </div>
 
       {/* Gauge visualization */}
@@ -114,7 +114,7 @@ export function MoodBarometer({ data, className }: MoodBarometerProps) {
           <path
             d="M 10 100 A 90 90 0 0 1 190 100"
             fill="none"
-            stroke="#374151"
+            stroke="#e5e5e5"
             strokeWidth="12"
             strokeLinecap="round"
           />
@@ -164,19 +164,19 @@ export function MoodBarometer({ data, className }: MoodBarometerProps) {
               y1="100"
               x2="100"
               y2="25"
-              stroke="white"
+              stroke="#1a1a1a"
               strokeWidth="3"
               strokeLinecap="round"
               className="transition-all duration-500"
               data-testid="gauge-needle"
             />
-            <circle cx="100" cy="100" r="8" fill="white" />
+            <circle cx="100" cy="100" r="8" fill="#1a1a1a" />
           </g>
         </svg>
 
         {/* Score labels */}
-        <div className="absolute bottom-0 left-0 text-xs text-gray-500">0</div>
-        <div className="absolute bottom-0 right-0 text-xs text-gray-500">100</div>
+        <div className="absolute bottom-0 left-0 text-xs text-rdy-gray-500">0</div>
+        <div className="absolute bottom-0 right-0 text-xs text-rdy-gray-500">100</div>
       </div>
 
       {/* Score display */}
@@ -190,20 +190,20 @@ export function MoodBarometer({ data, className }: MoodBarometerProps) {
         <p className={cn('text-lg font-medium', moodInfo.color)} data-testid="mood-label">
           {moodInfo.label}
         </p>
-        <p className="text-sm text-gray-400" data-testid="mood-description">
+        <p className="text-sm text-rdy-gray-400" data-testid="mood-description">
           {moodInfo.description}
         </p>
       </div>
 
       {/* Positive/Negative breakdown */}
       <div
-        className="rounded-lg bg-gray-800 p-3"
+        className="rounded-lg bg-rdy-gray-100 p-3"
         data-testid="mood-breakdown"
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-gray-400">Emotional Balance</span>
+          <span className="text-xs text-rdy-gray-400">Emotional Balance</span>
         </div>
-        <div className="flex h-3 w-full overflow-hidden rounded-full bg-gray-700">
+        <div className="flex h-3 w-full overflow-hidden rounded-full bg-rdy-gray-200">
           <div
             className="bg-green-500 transition-all duration-300"
             style={{
@@ -235,23 +235,23 @@ export function MoodBarometer({ data, className }: MoodBarometerProps) {
 
       {/* Mood zones legend */}
       <div className="mt-4" data-testid="mood-legend">
-        <p className="mb-2 text-xs font-medium text-gray-400">Mood Zones</p>
+        <p className="mb-2 text-xs font-medium text-rdy-gray-400">Mood Zones</p>
         <div className="flex justify-between text-[10px]">
           <div className="text-center">
             <div className="mx-auto mb-1 h-2 w-8 rounded bg-red-500" />
-            <span className="text-gray-500">0-25</span>
+            <span className="text-rdy-gray-500">0-25</span>
           </div>
           <div className="text-center">
             <div className="mx-auto mb-1 h-2 w-8 rounded bg-orange-500" />
-            <span className="text-gray-500">25-50</span>
+            <span className="text-rdy-gray-500">25-50</span>
           </div>
           <div className="text-center">
             <div className="mx-auto mb-1 h-2 w-8 rounded bg-yellow-500" />
-            <span className="text-gray-500">50-75</span>
+            <span className="text-rdy-gray-500">50-75</span>
           </div>
           <div className="text-center">
             <div className="mx-auto mb-1 h-2 w-8 rounded bg-green-500" />
-            <span className="text-gray-500">75-100</span>
+            <span className="text-rdy-gray-500">75-100</span>
           </div>
         </div>
       </div>

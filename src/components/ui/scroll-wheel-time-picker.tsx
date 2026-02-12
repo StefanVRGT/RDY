@@ -111,17 +111,17 @@ function WheelColumn({
   return (
     <div className="flex flex-col items-center" data-testid={testId}>
       {label && (
-        <span className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+        <span className="mb-2 text-xs font-medium uppercase tracking-wide text-rdy-gray-500">
           {label}
         </span>
       )}
       <div className="relative h-[240px] w-16 overflow-hidden">
         {/* Gradient overlays for depth effect */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 bg-gradient-to-b from-gray-900 to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-gray-900 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 bg-gradient-to-b from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-white to-transparent" />
 
         {/* Selection highlight */}
-        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-5 h-12 -translate-y-1/2 rounded-lg border border-twilight-500/50 bg-twilight-500/20" />
+        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-5 h-12 -translate-y-1/2 rounded-lg border border-rdy-orange-500/50 bg-rdy-orange-500/20" />
 
         {/* Scrollable content */}
         <div
@@ -148,7 +148,7 @@ function WheelColumn({
                 onClick={() => handleItemClick(option, index)}
                 className={cn(
                   'flex h-12 w-full snap-center items-center justify-center text-xl font-semibold transition-all duration-150',
-                  option === value ? 'text-white' : 'text-gray-400'
+                  option === value ? 'text-rdy-black' : 'text-rdy-gray-400'
                 )}
                 style={{
                   opacity,
@@ -256,7 +256,7 @@ export function ScrollWheelTimePicker({
         testId="hour-wheel"
       />
 
-      <span className="text-2xl font-bold text-gray-400">:</span>
+      <span className="text-2xl font-bold text-rdy-gray-400">:</span>
 
       <WheelColumn
         options={MINUTES}

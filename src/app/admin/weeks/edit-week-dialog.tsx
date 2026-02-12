@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -114,10 +114,10 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto border-gray-800 bg-gray-900 text-white sm:max-w-[600px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Edit Week</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Update the week details
           </DialogDescription>
         </DialogHeader>
@@ -125,22 +125,22 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
         <div className="space-y-4 py-4">
           {/* Week Number */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Week Number</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Week Number</label>
             <Select value={weekNumber} onValueChange={setWeekNumber}>
-              <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select week" />
               </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-gray-800">
-                <SelectItem value="1" className="text-white">
+              <SelectContent>
+                <SelectItem value="1">
                   Week 1
                 </SelectItem>
-                <SelectItem value="2" className="text-white">
+                <SelectItem value="2">
                   Week 2
                 </SelectItem>
-                <SelectItem value="3" className="text-white">
+                <SelectItem value="3">
                   Week 3
                 </SelectItem>
-                <SelectItem value="4" className="text-white">
+                <SelectItem value="4">
                   Week 4
                 </SelectItem>
               </SelectContent>
@@ -149,122 +149,120 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
 
           {/* Title (DE) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Title (German) *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Title (German) *</label>
             <Input
               placeholder="Titel auf Deutsch"
               value={titleDe}
               onChange={(e) => setTitleDe(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Title (EN) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Title (English)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Title (English)</label>
             <Input
               placeholder="Title in English"
               value={titleEn}
               onChange={(e) => setTitleEn(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Description (DE) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Description (German)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Description (German)</label>
             <textarea
               placeholder="Beschreibung auf Deutsch"
               value={descriptionDe}
               onChange={(e) => setDescriptionDe(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {/* Description (EN) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Description (English)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Description (English)</label>
             <textarea
               placeholder="Description in English"
               value={descriptionEn}
               onChange={(e) => setDescriptionEn(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {/* Herkunft (DE) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Origin/Herkunft (German)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Origin/Herkunft (German)</label>
             <textarea
               placeholder="Herkunft auf Deutsch"
               value={herkunftDe}
               onChange={(e) => setHerkunftDe(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {/* Herkunft (EN) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Origin/Herkunft (English)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Origin/Herkunft (English)</label>
             <textarea
               placeholder="Origin in English"
               value={herkunftEn}
               onChange={(e) => setHerkunftEn(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {/* Ziel (DE) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Goal/Ziel (German)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Goal/Ziel (German)</label>
             <textarea
               placeholder="Ziel auf Deutsch"
               value={zielDe}
               onChange={(e) => setZielDe(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {/* Ziel (EN) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Goal/Ziel (English)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Goal/Ziel (English)</label>
             <textarea
               placeholder="Goal in English"
               value={zielEn}
               onChange={(e) => setZielEn(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {/* Measurement Type */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Measurement Type</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Measurement Type</label>
             <Select
               value={measurementType}
               onValueChange={(value: MeasurementType) => setMeasurementType(value)}
             >
-              <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select measurement type" />
               </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-gray-800">
-                <SelectItem value="scale_1_10" className="text-white">
+              <SelectContent>
+                <SelectItem value="scale_1_10">
                   Scale 1-10
                 </SelectItem>
-                <SelectItem value="yes_no" className="text-white">
+                <SelectItem value="yes_no">
                   Yes/No
                 </SelectItem>
-                <SelectItem value="frequency" className="text-white">
+                <SelectItem value="frequency">
                   Frequency
                 </SelectItem>
-                <SelectItem value="percentage" className="text-white">
+                <SelectItem value="percentage">
                   Percentage
                 </SelectItem>
-                <SelectItem value="custom" className="text-white">
+                <SelectItem value="custom">
                   Custom
                 </SelectItem>
               </SelectContent>
@@ -273,7 +271,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
 
           {/* Measurement Question (DE) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">
+            <label className="text-sm font-medium text-rdy-gray-600">
               Measurement Question (German)
             </label>
             <textarea
@@ -281,13 +279,13 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={measurementQuestionDe}
               onChange={(e) => setMeasurementQuestionDe(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {/* Measurement Question (EN) */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">
+            <label className="text-sm font-medium text-rdy-gray-600">
               Measurement Question (English)
             </label>
             <textarea
@@ -295,12 +293,12 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={measurementQuestionEn}
               onChange={(e) => setMeasurementQuestionEn(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {errorMessage && (
-            <div className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">{errorMessage}</div>
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{errorMessage}</div>
           )}
         </div>
 
@@ -308,11 +306,15 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!titleDe.trim() || updateMutation.isPending}>
+          <Button
+            onClick={handleSubmit}
+            disabled={!titleDe.trim() || updateMutation.isPending}
+            className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
+          >
             {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogFooter>

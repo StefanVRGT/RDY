@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -75,37 +75,36 @@ export function CreateInvitationDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-gray-800 bg-gray-900 text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Invite New User</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Send an invitation to a new user to join your organization
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Email Address</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Email Address</label>
             <Input
               type="email"
               placeholder="user@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Role</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Role</label>
             <Select value={role} onValueChange={(value: 'mentor' | 'mentee') => setRole(value)}>
-              <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-gray-800">
-                <SelectItem value="mentee" className="text-white">
+              <SelectContent>
+                <SelectItem value="mentee">
                   Mentee
                 </SelectItem>
-                <SelectItem value="mentor" className="text-white">
+                <SelectItem value="mentor">
                   Mentor
                 </SelectItem>
               </SelectContent>
@@ -113,28 +112,28 @@ export function CreateInvitationDialog({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Expires In</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Expires In</label>
             <Select
               value={expiresInDays.toString()}
               onValueChange={(value) => setExpiresInDays(parseInt(value))}
             >
-              <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select expiry" />
               </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-gray-800">
-                <SelectItem value="1" className="text-white">
+              <SelectContent>
+                <SelectItem value="1">
                   1 day
                 </SelectItem>
-                <SelectItem value="3" className="text-white">
+                <SelectItem value="3">
                   3 days
                 </SelectItem>
-                <SelectItem value="7" className="text-white">
+                <SelectItem value="7">
                   7 days
                 </SelectItem>
-                <SelectItem value="14" className="text-white">
+                <SelectItem value="14">
                   14 days
                 </SelectItem>
-                <SelectItem value="30" className="text-white">
+                <SelectItem value="30">
                   30 days
                 </SelectItem>
               </SelectContent>
@@ -142,7 +141,7 @@ export function CreateInvitationDialog({
           </div>
 
           {errorMessage && (
-            <div className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">{errorMessage}</div>
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{errorMessage}</div>
           )}
         </div>
 
@@ -150,11 +149,15 @@ export function CreateInvitationDialog({
           <Button
             variant="outline"
             onClick={() => handleClose(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!email || createMutation.isPending}>
+          <Button
+            onClick={handleSubmit}
+            disabled={!email || createMutation.isPending}
+            className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
+          >
             {createMutation.isPending ? 'Sending...' : 'Send Invitation'}
           </Button>
         </DialogFooter>

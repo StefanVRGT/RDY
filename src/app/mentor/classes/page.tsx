@@ -83,7 +83,7 @@ export default function MentorClassesPage() {
             data-testid="pull-to-refresh-indicator"
           >
             <RefreshCw
-              className={`h-6 w-6 text-twilight-400 ${isRefreshing ? 'animate-spin' : ''}`}
+              className={`h-6 w-6 text-rdy-orange-500 ${isRefreshing ? 'animate-spin' : ''}`}
               style={{
                 transform: isRefreshing ? 'rotate(0deg)' : `rotate(${pullDistance * 3.6}deg)`,
                 opacity: isRefreshing ? 1 : Math.min(pullDistance / 60, 1),
@@ -94,45 +94,45 @@ export default function MentorClassesPage() {
 
         {/* Page header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-white">My Classes</h2>
-          <p className="mt-1 text-gray-400">Manage your classes and mentees</p>
+          <h2 className="text-2xl font-bold text-rdy-black">My Classes</h2>
+          <p className="mt-1 text-rdy-gray-400">Manage your classes and mentees</p>
         </div>
 
         {/* Stats summary */}
         <div className="mb-6 grid grid-cols-2 gap-4" data-testid="classes-stats">
-          <div className="rounded-xl bg-gray-900 p-4">
-            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-twilight-500/20">
-              <Users className="h-5 w-5 text-twilight-400" />
+          <div className="rounded-xl bg-rdy-gray-100 p-4">
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-rdy-orange-500/10">
+              <Users className="h-5 w-5 text-rdy-orange-500" />
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-rdy-black">
               {isLoading ? '-' : activeClasses.length}
             </p>
-            <p className="text-sm text-gray-400">Active Classes</p>
+            <p className="text-sm text-rdy-gray-400">Active Classes</p>
           </div>
-          <div className="rounded-xl bg-gray-900 p-4">
+          <div className="rounded-xl bg-rdy-gray-100 p-4">
             <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/20">
               <TrendingUp className="h-5 w-5 text-cyan-400" />
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-rdy-black">
               {isLoading ? '-' : classes?.reduce((sum, c) => sum + c.memberCount, 0) || 0}
             </p>
-            <p className="text-sm text-gray-400">Total Mentees</p>
+            <p className="text-sm text-rdy-gray-400">Total Mentees</p>
           </div>
         </div>
 
         {/* Active Classes */}
         <div className="mb-6" data-testid="active-classes-section">
-          <h3 className="mb-4 text-lg font-semibold text-white">
+          <h3 className="mb-4 text-lg font-semibold text-rdy-black">
             Active Classes
             {activeClasses.length > 0 && (
-              <span className="ml-2 rounded-full bg-green-600 px-2 py-0.5 text-sm">
+              <span className="ml-2 rounded-full bg-green-600 px-2 py-0.5 text-sm text-white">
                 {activeClasses.length}
               </span>
             )}
           </h3>
           <div className="space-y-3" data-testid="active-classes-list">
             {isLoading ? (
-              <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+              <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                 Loading classes...
               </div>
             ) : activeClasses.length > 0 ? (
@@ -140,12 +140,12 @@ export default function MentorClassesPage() {
                 <Link
                   key={cls.id}
                   href={`/mentor/classes/${cls.id}`}
-                  className="flex items-center justify-between rounded-xl bg-gray-900 p-4 transition-colors hover:bg-gray-800"
+                  className="flex items-center justify-between rounded-xl bg-rdy-gray-100 p-4 transition-colors hover:bg-rdy-gray-200"
                   data-testid={`class-item-${cls.id}`}
                 >
                   <div className="flex-1">
-                    <p className="font-medium text-white">{cls.name}</p>
-                    <div className="mt-1 flex items-center gap-3 text-sm text-gray-400">
+                    <p className="font-medium text-rdy-black">{cls.name}</p>
+                    <div className="mt-1 flex items-center gap-3 text-sm text-rdy-gray-400">
                       <span className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
                         {cls.memberCount} mentee{cls.memberCount !== 1 ? 's' : ''}
@@ -158,12 +158,12 @@ export default function MentorClassesPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="h-2 w-2 rounded-full bg-green-500" />
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                    <ChevronRight className="h-5 w-5 text-rdy-gray-400" />
                   </div>
                 </Link>
               ))
             ) : (
-              <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+              <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                 No active classes
               </div>
             )}
@@ -173,9 +173,9 @@ export default function MentorClassesPage() {
         {/* Disabled Classes */}
         {disabledClasses.length > 0 && (
           <div className="mb-6" data-testid="disabled-classes-section">
-            <h3 className="mb-4 text-lg font-semibold text-white">
+            <h3 className="mb-4 text-lg font-semibold text-rdy-black">
               Past Classes
-              <span className="ml-2 rounded-full bg-gray-600 px-2 py-0.5 text-sm">
+              <span className="ml-2 rounded-full bg-gray-600 px-2 py-0.5 text-sm text-white">
                 {disabledClasses.length}
               </span>
             </h3>
@@ -184,12 +184,12 @@ export default function MentorClassesPage() {
                 <Link
                   key={cls.id}
                   href={`/mentor/classes/${cls.id}`}
-                  className="flex items-center justify-between rounded-xl bg-gray-900 p-4 opacity-75 transition-colors hover:bg-gray-800"
+                  className="flex items-center justify-between rounded-xl bg-rdy-gray-100 p-4 opacity-75 transition-colors hover:bg-rdy-gray-200"
                   data-testid={`class-item-${cls.id}`}
                 >
                   <div className="flex-1">
-                    <p className="font-medium text-gray-300">{cls.name}</p>
-                    <div className="mt-1 flex items-center gap-3 text-sm text-gray-500">
+                    <p className="font-medium text-rdy-gray-600">{cls.name}</p>
+                    <div className="mt-1 flex items-center gap-3 text-sm text-rdy-gray-500">
                       <span className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
                         {cls.memberCount} mentee{cls.memberCount !== 1 ? 's' : ''}
@@ -202,7 +202,7 @@ export default function MentorClassesPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="h-2 w-2 rounded-full bg-gray-500" />
-                    <ChevronRight className="h-5 w-5 text-gray-500" />
+                    <ChevronRight className="h-5 w-5 text-rdy-gray-500" />
                   </div>
                 </Link>
               ))}

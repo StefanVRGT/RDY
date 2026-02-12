@@ -43,12 +43,12 @@ export function DroppableDay({
       className={cn(
         'relative flex min-h-[80px] flex-col items-center rounded-xl p-2 transition-all duration-200',
         isDayToday
-          ? 'bg-twilight-600 ring-2 ring-twilight-400'
-          : 'bg-gray-900',
-        !isDayToday && !isDropTarget && 'hover:bg-gray-800',
+          ? 'bg-rdy-orange-500 ring-2 ring-rdy-orange-500'
+          : 'bg-rdy-gray-100',
+        !isDayToday && !isDropTarget && 'hover:bg-rdy-gray-200',
         // Visual feedback during drag
         isDragActive && !isDropTarget && 'opacity-70',
-        isDropTarget && 'scale-105 bg-twilight-700 ring-2 ring-twilight-400 shadow-lg',
+        isDropTarget && 'scale-105 bg-rdy-orange-600 ring-2 ring-rdy-orange-500 shadow-lg',
         // Cursor
         onClick && 'cursor-pointer'
       )}
@@ -60,7 +60,7 @@ export function DroppableDay({
       {/* Drop indicator overlay */}
       {isDropTarget && (
         <div
-          className="absolute inset-0 rounded-xl border-2 border-dashed border-twilight-400 bg-twilight-500/20"
+          className="absolute inset-0 rounded-xl border-2 border-dashed border-rdy-orange-500 bg-rdy-orange-500/20"
           data-testid={`drop-indicator-${dateKey}`}
         />
       )}
@@ -69,7 +69,7 @@ export function DroppableDay({
       <span
         className={cn(
           'relative z-10 text-lg font-bold',
-          isDayToday ? 'text-white' : 'text-gray-300',
+          isDayToday ? 'text-white' : 'text-rdy-black',
           isDropTarget && 'text-white'
         )}
       >
@@ -83,8 +83,8 @@ export function DroppableDay({
           <span
             className={cn(
               'text-xs',
-              isDayToday ? 'text-twilight-200' : 'text-gray-500',
-              isDropTarget && 'text-twilight-200'
+              isDayToday ? 'text-orange-100' : 'text-rdy-gray-500',
+              isDropTarget && 'text-orange-100'
             )}
             data-testid={`exercise-count-${dateKey}`}
           >
@@ -96,7 +96,7 @@ export function DroppableDay({
             <CheckCircle2
               className={cn(
                 'h-4 w-4',
-                isDayToday ? 'text-green-300' : 'text-green-500'
+                isDayToday ? 'text-green-200' : 'text-green-500'
               )}
               data-testid={`completed-indicator-${dateKey}`}
             />
@@ -105,8 +105,8 @@ export function DroppableDay({
               className={cn(
                 'flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-medium',
                 isDayToday
-                  ? 'bg-twilight-500/50 text-white'
-                  : 'bg-gray-700 text-gray-400'
+                  ? 'bg-white/30 text-white'
+                  : 'bg-rdy-gray-200 text-rdy-gray-500'
               )}
               data-testid={`progress-indicator-${dateKey}`}
             >
@@ -121,8 +121,8 @@ export function DroppableDay({
         <span
           className={cn(
             'relative z-10 mt-1 text-[10px]',
-            isDayToday ? 'text-twilight-300' : 'text-gray-600',
-            isDropTarget && 'text-twilight-200'
+            isDayToday ? 'text-orange-100' : 'text-rdy-gray-400',
+            isDropTarget && 'text-orange-100'
           )}
         >
           {isDropTarget ? 'Drop here' : 'No exercises'}

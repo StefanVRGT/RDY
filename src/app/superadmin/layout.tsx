@@ -14,7 +14,7 @@ export default async function SuperadminLayout({ children }: { children: React.R
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-white">
       <AdminHeader
         title="Superadmin"
         userEmail={session.user.email}

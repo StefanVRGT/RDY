@@ -39,10 +39,10 @@ const PATTERN_CONFIG = {
     label: 'Stress',
     icon: AlertTriangle,
     color: 'text-red-400',
-    bgColor: 'bg-red-900/30',
+    bgColor: 'bg-red-50',
     strongColor: 'bg-red-500',
     weakColor: 'bg-red-300',
-    noneColor: 'bg-gray-700',
+    noneColor: 'bg-rdy-gray-200',
   },
   energy: {
     label: 'Energy',
@@ -51,43 +51,43 @@ const PATTERN_CONFIG = {
     bgColor: 'bg-yellow-900/30',
     strongColor: 'bg-yellow-500',
     weakColor: 'bg-yellow-300',
-    noneColor: 'bg-gray-700',
+    noneColor: 'bg-rdy-gray-200',
   },
   mood: {
     label: 'Mood',
     icon: Smile,
     color: 'text-green-400',
-    bgColor: 'bg-green-900/30',
+    bgColor: 'bg-rdy-orange-500/10',
     strongColor: 'bg-green-500',
     weakColor: 'bg-green-300',
-    noneColor: 'bg-gray-700',
+    noneColor: 'bg-rdy-gray-200',
   },
   focus: {
     label: 'Focus',
     icon: Target,
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-900/30',
+    color: 'text-rdy-orange-500',
+    bgColor: 'bg-rdy-orange-500/10',
     strongColor: 'bg-blue-500',
     weakColor: 'bg-blue-300',
-    noneColor: 'bg-gray-700',
+    noneColor: 'bg-rdy-gray-200',
   },
   anxiety: {
     label: 'Anxiety',
     icon: Activity,
-    color: 'text-purple-400',
-    bgColor: 'bg-purple-900/30',
+    color: 'text-rdy-orange-500',
+    bgColor: 'bg-rdy-orange-500/10',
     strongColor: 'bg-purple-500',
     weakColor: 'bg-purple-300',
-    noneColor: 'bg-gray-700',
+    noneColor: 'bg-rdy-gray-200',
   },
   motivation: {
     label: 'Motivation',
     icon: Flame,
-    color: 'text-orange-400',
-    bgColor: 'bg-orange-900/30',
+    color: 'text-rdy-orange-500',
+    bgColor: 'bg-rdy-orange-500/10',
     strongColor: 'bg-orange-500',
     weakColor: 'bg-orange-300',
-    noneColor: 'bg-gray-700',
+    noneColor: 'bg-rdy-gray-200',
   },
 } as const;
 
@@ -213,7 +213,7 @@ export default function MenteePatternTrackingPage() {
   const getIntensityColorClass = useCallback(
     (patternType: PatternType, intensity: IntensityLevel | null) => {
       const config = PATTERN_CONFIG[patternType];
-      if (!intensity) return 'bg-gray-800 hover:bg-gray-700';
+      if (!intensity) return 'bg-rdy-gray-100 hover:bg-rdy-gray-200';
       switch (intensity) {
         case 'strong':
           return config.strongColor;
@@ -222,7 +222,7 @@ export default function MenteePatternTrackingPage() {
         case 'none':
           return config.noneColor;
         default:
-          return 'bg-gray-800';
+          return 'bg-rdy-gray-100';
       }
     },
     []
@@ -237,14 +237,14 @@ export default function MenteePatternTrackingPage() {
       <div className="flex flex-col px-4 py-4" data-testid="pattern-tracking-page">
         {/* Date Navigation */}
         <div
-          className="mb-4 flex items-center justify-between rounded-xl bg-gray-900 p-3"
+          className="mb-4 flex items-center justify-between rounded-xl bg-rdy-gray-100 p-3"
           data-testid="date-navigation"
         >
           <Button
             variant="ghost"
             size="sm"
             onClick={goToPreviousDay}
-            className="h-10 w-10 p-0 text-gray-400 hover:text-white"
+            className="h-10 w-10 p-0 text-rdy-gray-400 hover:text-rdy-black"
             data-testid="prev-day-button"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -253,7 +253,7 @@ export default function MenteePatternTrackingPage() {
           <Button
             variant="ghost"
             onClick={() => setShowCalendar(true)}
-            className="flex items-center gap-2 text-white hover:bg-gray-800"
+            className="flex items-center gap-2 text-rdy-black hover:bg-rdy-gray-200"
             data-testid="date-selector"
           >
             <CalendarIcon className="h-4 w-4" />
@@ -266,7 +266,7 @@ export default function MenteePatternTrackingPage() {
             variant="ghost"
             size="sm"
             onClick={goToNextDay}
-            className="h-10 w-10 p-0 text-gray-400 hover:text-white"
+            className="h-10 w-10 p-0 text-rdy-gray-400 hover:text-rdy-black"
             data-testid="next-day-button"
           >
             <ChevronRight className="h-5 w-5" />
@@ -275,7 +275,7 @@ export default function MenteePatternTrackingPage() {
 
         {/* Pattern Type Selector */}
         <div className="mb-4" data-testid="pattern-selector">
-          <label className="mb-2 block text-sm font-medium text-gray-400">
+          <label className="mb-2 block text-sm font-medium text-rdy-gray-400">
             Select Pattern Type
           </label>
           <Select
@@ -283,19 +283,19 @@ export default function MenteePatternTrackingPage() {
             onValueChange={(value) => setSelectedPattern(value as PatternType)}
           >
             <SelectTrigger
-              className="w-full border-gray-700 bg-gray-900 text-white"
+              className="w-full border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black"
               data-testid="pattern-type-select"
             >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
               {Object.entries(PATTERN_CONFIG).map(([key, config]) => {
                 const Icon = config.icon;
                 return (
                   <SelectItem
                     key={key}
                     value={key}
-                    className="text-white focus:bg-gray-800 focus:text-white"
+                    className="text-rdy-black focus:bg-rdy-gray-100 focus:text-rdy-black"
                     data-testid={`pattern-option-${key}`}
                   >
                     <span className="flex items-center gap-2">
@@ -311,7 +311,7 @@ export default function MenteePatternTrackingPage() {
 
         {/* Intensity Legend */}
         <div
-          className="mb-4 flex items-center justify-center gap-4 rounded-xl bg-gray-900 p-3"
+          className="mb-4 flex items-center justify-center gap-4 rounded-xl bg-rdy-gray-100 p-3"
           data-testid="intensity-legend"
         >
           <div className="flex items-center gap-2">
@@ -319,39 +319,39 @@ export default function MenteePatternTrackingPage() {
               className={cn('h-4 w-4 rounded', currentPatternConfig.strongColor)}
               data-testid="legend-strong"
             />
-            <span className="text-xs text-gray-400">Strong</span>
+            <span className="text-xs text-rdy-gray-400">Strong</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className={cn('h-4 w-4 rounded', currentPatternConfig.weakColor)}
               data-testid="legend-weak"
             />
-            <span className="text-xs text-gray-400">Weak</span>
+            <span className="text-xs text-rdy-gray-400">Weak</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className={cn('h-4 w-4 rounded', currentPatternConfig.noneColor)}
               data-testid="legend-none"
             />
-            <span className="text-xs text-gray-400">None</span>
+            <span className="text-xs text-rdy-gray-400">None</span>
           </div>
         </div>
 
         {/* Time Block Grid */}
         <div
-          className="mb-4 rounded-xl bg-gray-900 p-4"
+          className="mb-4 rounded-xl bg-rdy-gray-100 p-4"
           data-testid="time-block-grid"
         >
           <div className="mb-3 flex items-center gap-2">
             <PatternIcon className={cn('h-5 w-5', currentPatternConfig.color)} />
-            <h3 className="font-medium text-white">
+            <h3 className="font-medium text-rdy-black">
               {currentPatternConfig.label} by Hour
             </h3>
           </div>
 
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-twilight-400 border-t-transparent" />
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-rdy-orange-500 border-t-transparent" />
             </div>
           ) : (
             <div className="grid grid-cols-6 gap-2" data-testid="hourly-grid">
@@ -364,15 +364,15 @@ export default function MenteePatternTrackingPage() {
                     className={cn(
                       'flex h-12 flex-col items-center justify-center rounded-lg transition-all',
                       getIntensityColorClass(selectedPattern, intensity),
-                      'hover:ring-2 hover:ring-twilight-500'
+                      'hover:ring-2 hover:ring-rdy-orange-500'
                     )}
                     data-testid={`time-block-${hour}`}
                     data-hour={hour}
                     data-intensity={intensity || 'unset'}
                   >
-                    <span className="text-xs font-medium text-white">{shortLabel}</span>
+                    <span className="text-xs font-medium text-rdy-black">{shortLabel}</span>
                     {intensity && (
-                      <span className="mt-0.5 text-[10px] text-white/70">
+                      <span className="mt-0.5 text-[10px] text-rdy-black/70">
                         {intensity.charAt(0).toUpperCase()}
                       </span>
                     )}
@@ -386,10 +386,10 @@ export default function MenteePatternTrackingPage() {
         {/* Daily Summary */}
         {summaryData && (
           <div
-            className="rounded-xl bg-gray-900 p-4"
+            className="rounded-xl bg-rdy-gray-100 p-4"
             data-testid="daily-summary"
           >
-            <h3 className="mb-3 font-medium text-white">Daily Summary</h3>
+            <h3 className="mb-3 font-medium text-rdy-black">Daily Summary</h3>
             <div className="grid grid-cols-2 gap-3">
               {Object.entries(PATTERN_CONFIG).map(([key, config]) => {
                 const Icon = config.icon;
@@ -409,8 +409,8 @@ export default function MenteePatternTrackingPage() {
                   >
                     <Icon className={cn('h-5 w-5', config.color)} />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-white">{config.label}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-sm font-medium text-rdy-black">{config.label}</p>
+                      <p className="text-xs text-rdy-gray-400">
                         {total > 0 ? (
                           <>
                             {strongCount}S / {weakCount}W
@@ -430,7 +430,7 @@ export default function MenteePatternTrackingPage() {
 
       {/* Calendar Dialog */}
       <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
-        <DialogContent className="bg-gray-900 text-white sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Select Date</DialogTitle>
           </DialogHeader>
@@ -440,7 +440,7 @@ export default function MenteePatternTrackingPage() {
               mode="single"
               selected={selectedDate}
               onSelect={handleDateSelect}
-              className="rounded-xl border border-gray-700"
+              className="rounded-xl border border-rdy-gray-200"
             />
           </div>
 
@@ -450,7 +450,7 @@ export default function MenteePatternTrackingPage() {
               setShowCalendar(false);
             }}
             variant="outline"
-            className="mt-4 w-full border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700"
+            className="mt-4 w-full border-rdy-gray-200 bg-rdy-gray-100 text-rdy-gray-600 hover:bg-rdy-gray-200"
             data-testid="today-button"
           >
             Go to Today
@@ -460,13 +460,13 @@ export default function MenteePatternTrackingPage() {
 
       {/* Intensity Selection Dialog */}
       <Dialog open={showIntensityDialog} onOpenChange={setShowIntensityDialog}>
-        <DialogContent className="bg-gray-900 text-white sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle data-testid="intensity-dialog-title">
               Set {currentPatternConfig.label} at{' '}
               {selectedHour !== null ? TIME_BLOCKS[selectedHour].label : ''}
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-rdy-gray-400">
               Select the intensity level for this time block
             </DialogDescription>
           </DialogHeader>
@@ -479,7 +479,7 @@ export default function MenteePatternTrackingPage() {
                 disabled={upsertEntry.isPending}
                 className={cn(
                   'flex w-full items-center gap-4 rounded-xl p-4 transition-all',
-                  'border border-gray-700 bg-gray-800 hover:border-twilight-500',
+                  'border border-rdy-gray-200 bg-rdy-gray-100 hover:border-rdy-orange-500',
                   upsertEntry.isPending && 'opacity-50'
                 )}
                 data-testid={`intensity-${option.value}`}
@@ -493,8 +493,8 @@ export default function MenteePatternTrackingPage() {
                   )}
                 />
                 <div className="flex-1 text-left">
-                  <p className="font-medium text-white">{option.label}</p>
-                  <p className="text-sm text-gray-400">{option.description}</p>
+                  <p className="font-medium text-rdy-black">{option.label}</p>
+                  <p className="text-sm text-rdy-gray-400">{option.description}</p>
                 </div>
               </button>
             ))}
@@ -506,7 +506,7 @@ export default function MenteePatternTrackingPage() {
               setSelectedHour(null);
             }}
             variant="outline"
-            className="mt-4 w-full border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700"
+            className="mt-4 w-full border-rdy-gray-200 bg-rdy-gray-100 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Cancel
           </Button>

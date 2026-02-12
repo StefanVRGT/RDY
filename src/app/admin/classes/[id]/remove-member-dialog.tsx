@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -58,10 +58,10 @@ export function RemoveMemberDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-gray-800 bg-gray-900 text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Remove Member</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Are you sure you want to remove this member from the class? This will delete their
             enrollment record.
           </DialogDescription>
@@ -69,13 +69,13 @@ export function RemoveMemberDialog({
 
         <div className="py-4">
           {member && (
-            <div className="rounded-lg bg-gray-800 p-4">
-              <p className="font-medium text-white">{member.userName}</p>
+            <div className="rounded-lg bg-rdy-gray-100 p-4">
+              <p className="font-medium">{member.userName}</p>
             </div>
           )}
 
           {errorMessage && (
-            <div className="mt-4 rounded-lg bg-red-900/20 p-3 text-sm text-red-400">
+            <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-500">
               {errorMessage}
             </div>
           )}
@@ -85,7 +85,7 @@ export function RemoveMemberDialog({
           <Button
             variant="outline"
             onClick={() => handleClose(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Cancel
           </Button>

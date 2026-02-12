@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -82,13 +82,13 @@ export function SchwerpunktebenenManagement() {
   const getMonthBadgeClass = (monthNumber: string) => {
     switch (monthNumber) {
       case '1':
-        return 'bg-blue-900/30 text-blue-400';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
       case '2':
-        return 'bg-purple-900/30 text-purple-400';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
       case '3':
-        return 'bg-green-900/30 text-green-400';
+        return 'bg-rdy-orange-500/10 text-green-400';
       default:
-        return 'bg-gray-900/30 text-gray-400';
+        return 'bg-rdy-gray-100/30 text-rdy-gray-400';
     }
   };
 
@@ -99,7 +99,7 @@ export function SchwerpunktebenenManagement() {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading focus areas: {error.message}
       </div>
     );
@@ -117,49 +117,49 @@ export function SchwerpunktebenenManagement() {
               setPage(1);
             }}
           >
-            <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Month" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="all" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="all" className="text-rdy-black">
                 All Months
               </SelectItem>
-              <SelectItem value="1" className="text-white">
+              <SelectItem value="1" className="text-rdy-black">
                 Month 1
               </SelectItem>
-              <SelectItem value="2" className="text-white">
+              <SelectItem value="2" className="text-rdy-black">
                 Month 2
               </SelectItem>
-              <SelectItem value="3" className="text-white">
+              <SelectItem value="3" className="text-rdy-black">
                 Month 3
               </SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-            <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="monthNumber" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="monthNumber" className="text-rdy-black">
                 Month
               </SelectItem>
-              <SelectItem value="titleDe" className="text-white">
+              <SelectItem value="titleDe" className="text-rdy-black">
                 Title
               </SelectItem>
-              <SelectItem value="createdAt" className="text-white">
+              <SelectItem value="createdAt" className="text-rdy-black">
                 Created
               </SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortOrder} onValueChange={(value: SortOrder) => setSortOrder(value)}>
-            <SelectTrigger className="w-[100px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[100px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Order" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="asc" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="asc" className="text-rdy-black">
                 Asc
               </SelectItem>
-              <SelectItem value="desc" className="text-white">
+              <SelectItem value="desc" className="text-rdy-black">
                 Desc
               </SelectItem>
             </SelectContent>
@@ -169,34 +169,34 @@ export function SchwerpunktebenenManagement() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900">
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="text-gray-400">Month</TableHead>
-              <TableHead className="text-gray-400">Title (DE)</TableHead>
-              <TableHead className="text-gray-400">Title (EN)</TableHead>
-              <TableHead className="text-gray-400">Goal (DE)</TableHead>
-              <TableHead className="text-gray-400">Image</TableHead>
-              <TableHead className="text-right text-gray-400">Actions</TableHead>
+            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+              <TableHead className="text-rdy-gray-400">Month</TableHead>
+              <TableHead className="text-rdy-gray-400">Title (DE)</TableHead>
+              <TableHead className="text-rdy-gray-400">Title (EN)</TableHead>
+              <TableHead className="text-rdy-gray-400">Goal (DE)</TableHead>
+              <TableHead className="text-rdy-gray-400">Image</TableHead>
+              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !data?.schwerpunktebenen?.length ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
                   No focus areas found
                 </TableCell>
               </TableRow>
             ) : (
               data.schwerpunktebenen.map((schwerpunktebene) => (
-                <TableRow key={schwerpunktebene.id} className="border-gray-800">
+                <TableRow key={schwerpunktebene.id} className="border-rdy-gray-200">
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getMonthBadgeClass(schwerpunktebene.monthNumber)}`}
@@ -204,20 +204,20 @@ export function SchwerpunktebenenManagement() {
                       {getMonthLabel(schwerpunktebene.monthNumber)}
                     </span>
                   </TableCell>
-                  <TableCell className="font-medium text-white">
+                  <TableCell className="font-medium text-rdy-black">
                     {schwerpunktebene.titleDe}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {schwerpunktebene.titleEn || '-'}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {truncateText(schwerpunktebene.zielDe)}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {schwerpunktebene.imageUrl ? (
                       <span className="text-green-400">Yes</span>
                     ) : (
-                      <span className="text-gray-500">No</span>
+                      <span className="text-rdy-gray-500">No</span>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -230,7 +230,7 @@ export function SchwerpunktebenenManagement() {
                             `/admin/weeks?schwerpunktebeneId=${schwerpunktebene.id}`
                           )
                         }
-                        className="text-blue-400 hover:text-blue-300"
+                        className="text-rdy-orange-500 hover:text-rdy-orange-500"
                       >
                         Weeks
                       </Button>
@@ -238,7 +238,7 @@ export function SchwerpunktebenenManagement() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingSchwerpunktebene(schwerpunktebene)}
-                        className="text-gray-400 hover:text-white"
+                        className="text-rdy-gray-400 hover:text-rdy-black"
                       >
                         Edit
                       </Button>
@@ -267,7 +267,7 @@ export function SchwerpunktebenenManagement() {
       {/* Pagination */}
       {data?.pagination && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
             {data.pagination.total} focus areas
           </p>
@@ -277,7 +277,7 @@ export function SchwerpunktebenenManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Previous
             </Button>
@@ -286,7 +286,7 @@ export function SchwerpunktebenenManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
               disabled={page === data.pagination.totalPages}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Next
             </Button>

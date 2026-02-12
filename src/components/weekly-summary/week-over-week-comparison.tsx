@@ -43,7 +43,7 @@ function TrendIndicator({ current, previous }: { current: number; previous: numb
     );
   }
   return (
-    <span className="flex items-center gap-0.5 text-xs text-gray-400">
+    <span className="flex items-center gap-0.5 text-xs text-rdy-gray-400">
       <Minus className="h-3 w-3" />
       0
     </span>
@@ -86,14 +86,14 @@ export function WeekOverWeekComparison({
   if (weeks.length < 2) {
     return (
       <div
-        className={cn('rounded-xl bg-gray-900 p-4', className)}
+        className={cn('rounded-xl bg-rdy-gray-100 p-4', className)}
         data-testid="week-over-week-comparison"
       >
         <div className="flex items-center gap-2 mb-4">
-          <GitCompare className="h-5 w-5 text-twilight-400" />
-          <h3 className="font-semibold text-white">Week-over-Week</h3>
+          <GitCompare className="h-5 w-5 text-rdy-orange-500" />
+          <h3 className="font-semibold text-rdy-black">Week-over-Week</h3>
         </div>
-        <div className="text-center text-gray-400 py-8">
+        <div className="text-center text-rdy-gray-400 py-8">
           <p>Need at least 2 weeks of data for comparison</p>
         </div>
       </div>
@@ -102,22 +102,22 @@ export function WeekOverWeekComparison({
 
   return (
     <div
-      className={cn('rounded-xl bg-gray-900 p-4', className)}
+      className={cn('rounded-xl bg-rdy-gray-100 p-4', className)}
       data-testid="week-over-week-comparison"
     >
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
-        <GitCompare className="h-5 w-5 text-twilight-400" />
-        <h3 className="font-semibold text-white">Week-over-Week</h3>
+        <GitCompare className="h-5 w-5 text-rdy-orange-500" />
+        <h3 className="font-semibold text-rdy-black">Week-over-Week</h3>
       </div>
 
       {/* Summary Cards */}
       <div className="mb-4 grid grid-cols-2 gap-3" data-testid="summary-cards">
         {/* Exercise Completion */}
-        <div className="rounded-lg bg-gray-800 p-3" data-testid="exercise-summary">
-          <p className="text-xs text-gray-400 mb-1">Exercises</p>
+        <div className="rounded-lg bg-rdy-gray-100 p-3" data-testid="exercise-summary">
+          <p className="text-xs text-rdy-gray-400 mb-1">Exercises</p>
           <div className="flex items-end justify-between">
-            <span className="text-2xl font-bold text-twilight-400">
+            <span className="text-2xl font-bold text-rdy-orange-500">
               {currentWeekData?.exerciseCompletionRate || 0}%
             </span>
             {previousWeekData && (
@@ -130,8 +130,8 @@ export function WeekOverWeekComparison({
         </div>
 
         {/* Mood Score */}
-        <div className="rounded-lg bg-gray-800 p-3" data-testid="mood-summary">
-          <p className="text-xs text-gray-400 mb-1">Mood Score</p>
+        <div className="rounded-lg bg-rdy-gray-100 p-3" data-testid="mood-summary">
+          <p className="text-xs text-rdy-gray-400 mb-1">Mood Score</p>
           <div className="flex items-end justify-between">
             <span className="text-2xl font-bold text-green-400">
               {currentWeekData?.moodScore || 50}
@@ -146,8 +146,8 @@ export function WeekOverWeekComparison({
         </div>
 
         {/* Diary Entries */}
-        <div className="rounded-lg bg-gray-800 p-3" data-testid="diary-summary">
-          <p className="text-xs text-gray-400 mb-1">Diary Entries</p>
+        <div className="rounded-lg bg-rdy-gray-100 p-3" data-testid="diary-summary">
+          <p className="text-xs text-rdy-gray-400 mb-1">Diary Entries</p>
           <div className="flex items-end justify-between">
             <span className="text-2xl font-bold text-emerald-400">
               {currentWeekData?.diaryEntries || 0}
@@ -162,10 +162,10 @@ export function WeekOverWeekComparison({
         </div>
 
         {/* Pattern Entries */}
-        <div className="rounded-lg bg-gray-800 p-3" data-testid="pattern-summary">
-          <p className="text-xs text-gray-400 mb-1">Pattern Entries</p>
+        <div className="rounded-lg bg-rdy-gray-100 p-3" data-testid="pattern-summary">
+          <p className="text-xs text-rdy-gray-400 mb-1">Pattern Entries</p>
           <div className="flex items-end justify-between">
-            <span className="text-2xl font-bold text-purple-400">
+            <span className="text-2xl font-bold text-rdy-orange-500">
               {currentWeekData?.totalPatternEntries || 0}
             </span>
             {previousWeekData && (
@@ -182,7 +182,7 @@ export function WeekOverWeekComparison({
       <div className="space-y-4" data-testid="trend-charts">
         {/* Exercise Completion Trend */}
         <div data-testid="exercise-trend-chart">
-          <p className="mb-2 text-xs font-medium text-gray-400">Exercise Completion Trend</p>
+          <p className="mb-2 text-xs font-medium text-rdy-gray-400">Exercise Completion Trend</p>
           <div className="flex items-end justify-between gap-1 h-16">
             {weekLabels.map((week, idx) => (
               <div
@@ -190,17 +190,17 @@ export function WeekOverWeekComparison({
                 className="flex flex-1 flex-col items-center"
                 data-testid={`exercise-bar-${idx}`}
               >
-                <div className="relative mb-1 h-12 w-full rounded-t bg-gray-800">
+                <div className="relative mb-1 h-12 w-full rounded-t bg-rdy-gray-100">
                   <div
                     className={cn(
                       'absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300',
-                      week.isCurrentWeek ? 'bg-twilight-400' : 'bg-twilight-600'
+                      week.isCurrentWeek ? 'bg-rdy-orange-500' : 'bg-rdy-orange-600'
                     )}
                     style={{ height: `${(week.exerciseCompletionRate / maxValues.exerciseRate) * 100}%` }}
                     data-rate={week.exerciseCompletionRate}
                   />
                 </div>
-                <span className="text-[10px] text-gray-500">{week.shortLabel}</span>
+                <span className="text-[10px] text-rdy-gray-500">{week.shortLabel}</span>
               </div>
             ))}
           </div>
@@ -208,7 +208,7 @@ export function WeekOverWeekComparison({
 
         {/* Mood Score Trend */}
         <div data-testid="mood-trend-chart">
-          <p className="mb-2 text-xs font-medium text-gray-400">Mood Score Trend</p>
+          <p className="mb-2 text-xs font-medium text-rdy-gray-400">Mood Score Trend</p>
           <div className="flex items-end justify-between gap-1 h-16">
             {weekLabels.map((week, idx) => (
               <div
@@ -216,7 +216,7 @@ export function WeekOverWeekComparison({
                 className="flex flex-1 flex-col items-center"
                 data-testid={`mood-bar-${idx}`}
               >
-                <div className="relative mb-1 h-12 w-full rounded-t bg-gray-800">
+                <div className="relative mb-1 h-12 w-full rounded-t bg-rdy-gray-100">
                   <div
                     className={cn(
                       'absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300',
@@ -226,7 +226,7 @@ export function WeekOverWeekComparison({
                     data-score={week.moodScore}
                   />
                 </div>
-                <span className="text-[10px] text-gray-500">{week.shortLabel}</span>
+                <span className="text-[10px] text-rdy-gray-500">{week.shortLabel}</span>
               </div>
             ))}
           </div>
@@ -234,7 +234,7 @@ export function WeekOverWeekComparison({
 
         {/* Activity Trend (Diary + Patterns) */}
         <div data-testid="activity-trend-chart">
-          <p className="mb-2 text-xs font-medium text-gray-400">Activity Trend</p>
+          <p className="mb-2 text-xs font-medium text-rdy-gray-400">Activity Trend</p>
           <div className="flex items-end justify-between gap-1 h-16">
             {weekLabels.map((week, idx) => {
               const activityScore = week.diaryEntries + week.totalPatternEntries;
@@ -246,17 +246,17 @@ export function WeekOverWeekComparison({
                   className="flex flex-1 flex-col items-center"
                   data-testid={`activity-bar-${idx}`}
                 >
-                  <div className="relative mb-1 h-12 w-full rounded-t bg-gray-800">
+                  <div className="relative mb-1 h-12 w-full rounded-t bg-rdy-gray-100">
                     <div
                       className={cn(
                         'absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300',
-                        week.isCurrentWeek ? 'bg-purple-400' : 'bg-purple-600'
+                        week.isCurrentWeek ? 'bg-rdy-orange-500' : 'bg-rdy-orange-600'
                       )}
                       style={{ height: `${(activityScore / maxActivity) * 100}%` }}
                       data-activity={activityScore}
                     />
                   </div>
-                  <span className="text-[10px] text-gray-500">{week.shortLabel}</span>
+                  <span className="text-[10px] text-rdy-gray-500">{week.shortLabel}</span>
                 </div>
               );
             })}

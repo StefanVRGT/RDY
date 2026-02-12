@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -60,19 +60,19 @@ export function InvitationManagement() {
 
   const getStatusBadgeClass = (status: string, isExpired: boolean) => {
     if (isExpired && status === 'pending') {
-      return 'bg-orange-900/30 text-orange-400';
+      return 'bg-rdy-orange-500/10 text-rdy-orange-500';
     }
     switch (status) {
       case 'pending':
         return 'bg-yellow-900/30 text-yellow-400';
       case 'accepted':
-        return 'bg-green-900/30 text-green-400';
+        return 'bg-rdy-orange-500/10 text-green-400';
       case 'expired':
-        return 'bg-orange-900/30 text-orange-400';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
       case 'revoked':
         return 'bg-red-900/30 text-red-400';
       default:
-        return 'bg-gray-900/30 text-gray-400';
+        return 'bg-rdy-gray-100/30 text-rdy-gray-400';
     }
   };
 
@@ -85,7 +85,7 @@ export function InvitationManagement() {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading invitations: {error.message}
       </div>
     );
@@ -104,7 +104,7 @@ export function InvitationManagement() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="max-w-sm border-gray-700 bg-gray-900 text-white placeholder:text-gray-500"
+              className="max-w-sm border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black placeholder:text-rdy-gray-500"
             />
           </div>
           <Select
@@ -114,58 +114,58 @@ export function InvitationManagement() {
               setPage(1);
             }}
           >
-            <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="all" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="all" className="text-rdy-black">
                 All Status
               </SelectItem>
-              <SelectItem value="pending" className="text-white">
+              <SelectItem value="pending" className="text-rdy-black">
                 Pending
               </SelectItem>
-              <SelectItem value="accepted" className="text-white">
+              <SelectItem value="accepted" className="text-rdy-black">
                 Accepted
               </SelectItem>
-              <SelectItem value="expired" className="text-white">
+              <SelectItem value="expired" className="text-rdy-black">
                 Expired
               </SelectItem>
-              <SelectItem value="revoked" className="text-white">
+              <SelectItem value="revoked" className="text-rdy-black">
                 Revoked
               </SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-            <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="createdAt" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="createdAt" className="text-rdy-black">
                 Created
               </SelectItem>
-              <SelectItem value="expiresAt" className="text-white">
+              <SelectItem value="expiresAt" className="text-rdy-black">
                 Expires
               </SelectItem>
-              <SelectItem value="email" className="text-white">
+              <SelectItem value="email" className="text-rdy-black">
                 Email
               </SelectItem>
-              <SelectItem value="role" className="text-white">
+              <SelectItem value="role" className="text-rdy-black">
                 Role
               </SelectItem>
-              <SelectItem value="status" className="text-white">
+              <SelectItem value="status" className="text-rdy-black">
                 Status
               </SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortOrder} onValueChange={(value: SortOrder) => setSortOrder(value)}>
-            <SelectTrigger className="w-[100px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[100px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Order" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="desc" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="desc" className="text-rdy-black">
                 Desc
               </SelectItem>
-              <SelectItem value="asc" className="text-white">
+              <SelectItem value="asc" className="text-rdy-black">
                 Asc
               </SelectItem>
             </SelectContent>
@@ -175,42 +175,42 @@ export function InvitationManagement() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900">
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="text-gray-400">Email</TableHead>
-              <TableHead className="text-gray-400">Role</TableHead>
-              <TableHead className="text-gray-400">Status</TableHead>
-              <TableHead className="text-gray-400">Invited By</TableHead>
-              <TableHead className="text-gray-400">Expires</TableHead>
-              <TableHead className="text-gray-400">Created</TableHead>
-              <TableHead className="text-right text-gray-400">Actions</TableHead>
+            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+              <TableHead className="text-rdy-gray-400">Email</TableHead>
+              <TableHead className="text-rdy-gray-400">Role</TableHead>
+              <TableHead className="text-rdy-gray-400">Status</TableHead>
+              <TableHead className="text-rdy-gray-400">Invited By</TableHead>
+              <TableHead className="text-rdy-gray-400">Expires</TableHead>
+              <TableHead className="text-rdy-gray-400">Created</TableHead>
+              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !data?.invitations?.length ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
                   No invitations found
                 </TableCell>
               </TableRow>
             ) : (
               data.invitations.map((invitation) => (
-                <TableRow key={invitation.id} className="border-gray-800">
-                  <TableCell className="font-medium text-white">{invitation.email}</TableCell>
+                <TableRow key={invitation.id} className="border-rdy-gray-200">
+                  <TableCell className="font-medium text-rdy-black">{invitation.email}</TableCell>
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                         invitation.role === 'mentor'
-                          ? 'bg-blue-900/30 text-blue-400'
-                          : 'bg-purple-900/30 text-purple-400'
+                          ? 'bg-rdy-orange-500/10 text-rdy-orange-500'
+                          : 'bg-rdy-orange-500/10 text-rdy-orange-500'
                       }`}
                     >
                       {invitation.role}
@@ -223,13 +223,13 @@ export function InvitationManagement() {
                       {getDisplayStatus(invitation.status, invitation.isExpired)}
                     </span>
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {invitation.inviter?.name || invitation.inviter?.email || '-'}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {formatDate(invitation.expiresAt)}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {formatDate(invitation.createdAt)}
                   </TableCell>
                   <TableCell className="text-right">
@@ -245,7 +245,7 @@ export function InvitationManagement() {
                               status: invitation.isExpired ? 'expired' : invitation.status,
                             })
                           }
-                          className="text-gray-400 hover:text-white"
+                          className="text-rdy-gray-400 hover:text-rdy-black"
                         >
                           Actions
                         </Button>
@@ -262,7 +262,7 @@ export function InvitationManagement() {
       {/* Pagination */}
       {data?.pagination && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
             {data.pagination.total} invitations
           </p>
@@ -272,7 +272,7 @@ export function InvitationManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Previous
             </Button>
@@ -281,7 +281,7 @@ export function InvitationManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
               disabled={page === data.pagination.totalPages}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Next
             </Button>

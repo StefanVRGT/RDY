@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -133,12 +133,12 @@ export function AssignCurriculumDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto border-gray-800 bg-gray-900 text-white sm:max-w-[600px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {existingCurriculum ? 'Edit' : 'Assign'} Curriculum - Month {monthNumber}
           </DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Select a focus area and optionally customize it for this class
           </DialogDescription>
         </DialogHeader>
@@ -146,14 +146,14 @@ export function AssignCurriculumDialog({
         <div className="space-y-4 py-4">
           {/* Focus Area Selection */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Focus Area *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Focus Area *</label>
             <Select value={schwerpunktebeneId} onValueChange={setSchwerpunktebeneId}>
-              <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a focus area" />
               </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-gray-800">
+              <SelectContent>
                 {schwerpunktebenen?.map((s) => (
-                  <SelectItem key={s.id} value={s.id} className="text-white">
+                  <SelectItem key={s.id} value={s.id}>
                     {s.titleDe} {s.monthNumber ? `(Month ${s.monthNumber})` : ''}
                   </SelectItem>
                 ))}
@@ -163,81 +163,79 @@ export function AssignCurriculumDialog({
 
           {/* Show selected focus area description */}
           {selectedSchwerpunktebene && (
-            <div className="rounded-lg bg-gray-800 p-3">
-              <p className="text-sm font-medium text-white">{selectedSchwerpunktebene.titleDe}</p>
+            <div className="rounded-lg bg-rdy-gray-100 p-3">
+              <p className="text-sm font-medium">{selectedSchwerpunktebene.titleDe}</p>
               {selectedSchwerpunktebene.titleEn && (
-                <p className="text-sm text-gray-400">{selectedSchwerpunktebene.titleEn}</p>
+                <p className="text-sm text-rdy-gray-400">{selectedSchwerpunktebene.titleEn}</p>
               )}
             </div>
           )}
 
           {/* Customization Section */}
-          <div className="space-y-4 rounded-lg border border-gray-700 p-4">
-            <p className="text-sm font-medium text-gray-300">
+          <div className="space-y-4 rounded-lg border border-rdy-gray-200 p-4">
+            <p className="text-sm font-medium text-rdy-gray-600">
               Optional Customization (overrides default)
             </p>
 
             {/* Custom Title (DE) */}
             <div className="space-y-2">
-              <label className="text-sm text-gray-400">Custom Title (German)</label>
+              <label className="text-sm text-rdy-gray-400">Custom Title (German)</label>
               <Input
                 placeholder="Leave empty to use default"
                 value={customTitleDe}
                 onChange={(e) => setCustomTitleDe(e.target.value)}
-                className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
               />
             </div>
 
             {/* Custom Title (EN) */}
             <div className="space-y-2">
-              <label className="text-sm text-gray-400">Custom Title (English)</label>
+              <label className="text-sm text-rdy-gray-400">Custom Title (English)</label>
               <Input
                 placeholder="Leave empty to use default"
                 value={customTitleEn}
                 onChange={(e) => setCustomTitleEn(e.target.value)}
-                className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
               />
             </div>
 
             {/* Custom Description (DE) */}
             <div className="space-y-2">
-              <label className="text-sm text-gray-400">Custom Description (German)</label>
+              <label className="text-sm text-rdy-gray-400">Custom Description (German)</label>
               <textarea
                 placeholder="Leave empty to use default"
                 value={customDescriptionDe}
                 onChange={(e) => setCustomDescriptionDe(e.target.value)}
                 rows={2}
-                className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
               />
             </div>
 
             {/* Custom Description (EN) */}
             <div className="space-y-2">
-              <label className="text-sm text-gray-400">Custom Description (English)</label>
+              <label className="text-sm text-rdy-gray-400">Custom Description (English)</label>
               <textarea
                 placeholder="Leave empty to use default"
                 value={customDescriptionEn}
                 onChange={(e) => setCustomDescriptionEn(e.target.value)}
                 rows={2}
-                className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
               />
             </div>
           </div>
 
           {/* Mentor Notes */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Mentor Notes</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Mentor Notes</label>
             <textarea
               placeholder="Private notes for the mentor (not visible to students)"
               value={mentorNotes}
               onChange={(e) => setMentorNotes(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
           {errorMessage && (
-            <div className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">{errorMessage}</div>
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{errorMessage}</div>
           )}
         </div>
 
@@ -245,11 +243,15 @@ export function AssignCurriculumDialog({
           <Button
             variant="outline"
             onClick={() => handleClose(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!schwerpunktebeneId || assignMutation.isPending}>
+          <Button
+            onClick={handleSubmit}
+            disabled={!schwerpunktebeneId || assignMutation.isPending}
+            className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
+          >
             {assignMutation.isPending
               ? 'Saving...'
               : existingCurriculum

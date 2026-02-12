@@ -116,7 +116,7 @@ export default function MentorMenteeDiaryPage() {
     return (
       <MobileLayout title="Mentee Diary" showBack showNotifications>
         <div className="flex min-h-[50vh] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-twilight-400 border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-rdy-orange-500 border-t-transparent" />
         </div>
       </MobileLayout>
     );
@@ -130,8 +130,8 @@ export default function MentorMenteeDiaryPage() {
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20">
             <BookOpen className="h-8 w-8 text-red-400" />
           </div>
-          <h2 className="mb-2 text-xl font-bold text-white">Access Denied</h2>
-          <p className="text-center text-gray-400">
+          <h2 className="mb-2 text-xl font-bold text-rdy-black">Access Denied</h2>
+          <p className="text-center text-rdy-gray-400">
             You do not have access to this mentee&apos;s diary.
           </p>
         </div>
@@ -147,20 +147,20 @@ export default function MentorMenteeDiaryPage() {
     >
       <div className="flex flex-col px-4 py-4" data-testid="mentor-mentee-diary">
         {/* Mentee Info Header */}
-        <div className="mb-4 rounded-xl bg-gray-900 p-4" data-testid="mentee-info-header">
+        <div className="mb-4 rounded-xl bg-rdy-gray-100 p-4" data-testid="mentee-info-header">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-twilight-600/20">
-              <User className="h-6 w-6 text-twilight-400" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-rdy-orange-500/10">
+              <User className="h-6 w-6 text-rdy-orange-500" />
             </div>
             <div className="flex-1">
-              <h2 className="font-semibold text-white" data-testid="mentee-name">
+              <h2 className="font-semibold text-rdy-black" data-testid="mentee-name">
                 {menteeInfo?.name || 'Unknown'}
               </h2>
-              <p className="text-sm text-gray-400" data-testid="mentee-email">
+              <p className="text-sm text-rdy-gray-400" data-testid="mentee-email">
                 {menteeInfo?.email}
               </p>
               {menteeInfo?.classes && menteeInfo.classes.length > 0 && (
-                <p className="mt-1 text-xs text-twilight-400" data-testid="mentee-class">
+                <p className="mt-1 text-xs text-rdy-orange-500" data-testid="mentee-class">
                   {menteeInfo.classes.map(c => c.className).join(', ')}
                 </p>
               )}
@@ -169,7 +169,7 @@ export default function MentorMenteeDiaryPage() {
         </div>
 
         {/* Read-only notice */}
-        <div className="mb-4 rounded-lg bg-twilight-900/30 px-3 py-2 text-sm text-twilight-300" data-testid="readonly-notice">
+        <div className="mb-4 rounded-lg bg-rdy-orange-500/10 px-3 py-2 text-sm text-rdy-orange-500" data-testid="readonly-notice">
           <span className="font-medium">Read-only access</span> - You can view diary entries but cannot modify them.
         </div>
 
@@ -180,7 +180,7 @@ export default function MentorMenteeDiaryPage() {
             variant="outline"
             size="sm"
             onClick={() => setShowMenteeFilter(true)}
-            className="gap-2 border-gray-700 bg-gray-900 text-gray-300 hover:bg-gray-800"
+            className="gap-2 border-rdy-gray-200 bg-rdy-gray-100 text-rdy-gray-600 hover:bg-rdy-gray-200"
             data-testid="mentee-filter-button"
           >
             <Filter className="h-4 w-4" />
@@ -192,7 +192,7 @@ export default function MentorMenteeDiaryPage() {
             variant="outline"
             size="sm"
             onClick={() => setShowCalendarFilter(true)}
-            className="gap-2 border-gray-700 bg-gray-900 text-gray-300 hover:bg-gray-800"
+            className="gap-2 border-rdy-gray-200 bg-rdy-gray-100 text-rdy-gray-600 hover:bg-rdy-gray-200"
             data-testid="date-filter-button"
           >
             <CalendarIcon className="h-4 w-4" />
@@ -203,7 +203,7 @@ export default function MentorMenteeDiaryPage() {
               variant="ghost"
               size="sm"
               onClick={clearDateFilter}
-              className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+              className="h-8 w-8 p-0 text-rdy-gray-400 hover:text-rdy-black"
               data-testid="clear-date-filter"
             >
               <X className="h-4 w-4" />
@@ -215,18 +215,18 @@ export default function MentorMenteeDiaryPage() {
         <div className="space-y-4" data-testid="diary-entries-list">
           {entriesLoading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-twilight-400 border-t-transparent" />
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-rdy-orange-500 border-t-transparent" />
             </div>
           ) : entries.length === 0 ? (
             <div
               className="flex flex-col items-center justify-center py-12 text-center"
               data-testid="empty-state"
             >
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-800">
-                <FileText className="h-8 w-8 text-gray-500" />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rdy-gray-100">
+                <FileText className="h-8 w-8 text-rdy-gray-500" />
               </div>
-              <p className="text-lg font-medium text-white">No diary entries</p>
-              <p className="mt-1 text-sm text-gray-400">
+              <p className="text-lg font-medium text-rdy-black">No diary entries</p>
+              <p className="mt-1 text-sm text-rdy-gray-400">
                 {selectedDate
                   ? `No entries for ${format(selectedDate, 'MMMM d, yyyy')}`
                   : 'This mentee has not created any diary entries yet'}
@@ -242,14 +242,14 @@ export default function MentorMenteeDiaryPage() {
 
       {/* Mentee Filter Dialog */}
       <Dialog open={showMenteeFilter} onOpenChange={setShowMenteeFilter}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto bg-gray-900 text-white sm:max-w-md">
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Select Mentee</DialogTitle>
           </DialogHeader>
 
           <div className="mt-4 space-y-2" data-testid="mentee-filter-list">
             {allMentees.length === 0 ? (
-              <p className="py-4 text-center text-gray-400">No mentees found</p>
+              <p className="py-4 text-center text-rdy-gray-400">No mentees found</p>
             ) : (
               allMentees.map(mentee => (
                 <button
@@ -257,20 +257,20 @@ export default function MentorMenteeDiaryPage() {
                   onClick={() => handleMenteeSelect(mentee.userId)}
                   className={`w-full rounded-lg p-3 text-left transition-colors ${
                     mentee.userId === menteeId
-                      ? 'bg-twilight-600/20 ring-1 ring-twilight-500'
-                      : 'bg-gray-800 hover:bg-gray-700'
+                      ? 'bg-rdy-orange-500/10 ring-1 ring-rdy-orange-500'
+                      : 'bg-rdy-gray-100 hover:bg-rdy-gray-200'
                   }`}
                   data-testid={`mentee-option-${mentee.userId}`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-700">
-                      <User className="h-5 w-5 text-gray-400" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-gray-200">
+                      <User className="h-5 w-5 text-rdy-gray-400" />
                     </div>
                     <div>
-                      <p className="font-medium text-white">
+                      <p className="font-medium text-rdy-black">
                         {mentee.user.name || 'Unknown'}
                       </p>
-                      <p className="text-xs text-gray-400">{mentee.className}</p>
+                      <p className="text-xs text-rdy-gray-400">{mentee.className}</p>
                     </div>
                   </div>
                 </button>
@@ -282,7 +282,7 @@ export default function MentorMenteeDiaryPage() {
 
       {/* Calendar Filter Dialog */}
       <Dialog open={showCalendarFilter} onOpenChange={setShowCalendarFilter}>
-        <DialogContent className="bg-gray-900 text-white sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Filter by Date</DialogTitle>
           </DialogHeader>
@@ -294,9 +294,9 @@ export default function MentorMenteeDiaryPage() {
               onSelect={handleDateSelect}
               modifiers={{ hasEntries: datesWithEntries }}
               modifiersClassNames={{
-                hasEntries: 'bg-twilight-600/30 text-twilight-300',
+                hasEntries: 'bg-rdy-orange-500/20 text-rdy-orange-500',
               }}
-              className="rounded-xl border border-gray-700"
+              className="rounded-xl border border-rdy-gray-200"
             />
           </div>
 
@@ -307,7 +307,7 @@ export default function MentorMenteeDiaryPage() {
                 setShowCalendarFilter(false);
               }}
               variant="outline"
-              className="mt-4 w-full border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700"
+              className="mt-4 w-full border-rdy-gray-200 bg-rdy-gray-100 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Clear Filter
             </Button>
@@ -345,24 +345,24 @@ function ReadOnlyDiaryEntryCard({ entry }: { entry: DiaryEntry }) {
 
   return (
     <div
-      className="rounded-xl bg-gray-900 p-4"
+      className="rounded-xl bg-rdy-gray-100 p-4"
       data-testid={`diary-entry-${entry.id}`}
       data-entry-type={entry.entryType}
     >
       {/* Entry header - read-only, no action buttons */}
-      <div className="mb-3 flex items-center gap-2 text-sm text-gray-400">
+      <div className="mb-3 flex items-center gap-2 text-sm text-rdy-gray-400">
         <CalendarIcon className="h-4 w-4" />
         <span data-testid={`entry-date-${entry.id}`}>
           {format(new Date(entry.entryDate), 'MMMM d, yyyy')}
         </span>
-        <span className="text-gray-600">|</span>
+        <span className="text-rdy-gray-400">|</span>
         <Clock className="h-4 w-4" />
         <span>{format(new Date(entry.entryDate), 'h:mm a')}</span>
       </div>
 
       {/* Text content */}
       {entry.content && (
-        <p className="whitespace-pre-wrap text-gray-300" data-testid={`entry-content-${entry.id}`}>
+        <p className="whitespace-pre-wrap text-rdy-gray-600" data-testid={`entry-content-${entry.id}`}>
           {entry.content}
         </p>
       )}
@@ -370,25 +370,25 @@ function ReadOnlyDiaryEntryCard({ entry }: { entry: DiaryEntry }) {
       {/* Voice recording with playback support */}
       {entry.voiceRecordingUrl && (
         <div
-          className={`rounded-lg bg-gray-800 p-3 ${entry.content ? 'mt-3' : ''}`}
+          className={`rounded-lg bg-rdy-gray-100 p-3 ${entry.content ? 'mt-3' : ''}`}
           data-testid={`entry-voice-${entry.id}`}
         >
           <div className="flex items-center gap-3">
             <Button
               onClick={togglePlayback}
               size="sm"
-              className="h-10 w-10 rounded-full bg-twilight-600 p-0 hover:bg-twilight-500"
+              className="h-10 w-10 rounded-full bg-rdy-orange-500 p-0 hover:bg-rdy-orange-600"
               data-testid={`play-voice-${entry.id}`}
             >
               {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="ml-0.5 h-5 w-5" />}
             </Button>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <Mic className="h-4 w-4 text-twilight-400" />
-                <span className="text-sm text-white">Voice Note</span>
+                <Mic className="h-4 w-4 text-rdy-orange-500" />
+                <span className="text-sm text-rdy-black">Voice Note</span>
               </div>
               {entry.voiceRecordingDuration && (
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-rdy-gray-400">
                   {formatDuration(entry.voiceRecordingDuration)}
                 </p>
               )}
@@ -401,24 +401,24 @@ function ReadOnlyDiaryEntryCard({ entry }: { entry: DiaryEntry }) {
       {/* Entry type indicator */}
       <div className="mt-3 flex items-center gap-2">
         {entry.entryType === 'text' && (
-          <span className="flex items-center gap-1 rounded-full bg-gray-800 px-2 py-1 text-xs text-gray-400">
+          <span className="flex items-center gap-1 rounded-full bg-rdy-gray-100 px-2 py-1 text-xs text-rdy-gray-400">
             <FileText className="h-3 w-3" />
             Text
           </span>
         )}
         {entry.entryType === 'voice' && (
-          <span className="flex items-center gap-1 rounded-full bg-twilight-900/50 px-2 py-1 text-xs text-twilight-400">
+          <span className="flex items-center gap-1 rounded-full bg-rdy-orange-500/20 px-2 py-1 text-xs text-rdy-orange-500">
             <Mic className="h-3 w-3" />
             Voice
           </span>
         )}
         {entry.entryType === 'mixed' && (
           <>
-            <span className="flex items-center gap-1 rounded-full bg-gray-800 px-2 py-1 text-xs text-gray-400">
+            <span className="flex items-center gap-1 rounded-full bg-rdy-gray-100 px-2 py-1 text-xs text-rdy-gray-400">
               <FileText className="h-3 w-3" />
               Text
             </span>
-            <span className="flex items-center gap-1 rounded-full bg-twilight-900/50 px-2 py-1 text-xs text-twilight-400">
+            <span className="flex items-center gap-1 rounded-full bg-rdy-orange-500/20 px-2 py-1 text-xs text-rdy-orange-500">
               <Mic className="h-3 w-3" />
               Voice
             </span>

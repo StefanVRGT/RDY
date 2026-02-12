@@ -26,7 +26,7 @@ export function MobileHeader({
   return (
     <header
       className={cn(
-        'fixed left-0 right-0 top-0 z-50 border-b border-gray-800 bg-gray-900/95 backdrop-blur-sm safe-area-inset-top',
+        'fixed left-0 right-0 top-0 z-50 border-b border-rdy-gray-200 bg-white/95 backdrop-blur-sm safe-area-inset-top',
         className
       )}
     >
@@ -36,7 +36,7 @@ export function MobileHeader({
           {showBack && (
             <button
               onClick={() => router.back()}
-              className="flex h-10 w-10 items-center justify-center rounded-full text-gray-300 transition-colors hover:bg-gray-800 hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-rdy-gray-500 transition-colors hover:bg-rdy-gray-100 hover:text-rdy-black"
               aria-label="Go back"
             >
               <ChevronLeft className="h-6 w-6" />
@@ -45,7 +45,7 @@ export function MobileHeader({
           {showMenu && !showBack && (
             <button
               onClick={onMenuClick}
-              className="flex h-10 w-10 items-center justify-center rounded-full text-gray-300 transition-colors hover:bg-gray-800 hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-rdy-gray-500 transition-colors hover:bg-rdy-gray-100 hover:text-rdy-black"
               aria-label="Open menu"
             >
               <Menu className="h-6 w-6" />
@@ -54,7 +54,7 @@ export function MobileHeader({
         </div>
 
         {/* Center - Title */}
-        <h1 className="flex-1 truncate text-center text-lg font-semibold text-white">
+        <h1 className="flex-1 truncate text-center text-lg font-semibold text-rdy-black">
           {title}
         </h1>
 
@@ -62,7 +62,7 @@ export function MobileHeader({
         <div className="flex min-w-[48px] items-center justify-end">
           {showNotifications && (
             <button
-              className="flex h-10 w-10 items-center justify-center rounded-full text-gray-300 transition-colors hover:bg-gray-800 hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-rdy-gray-500 transition-colors hover:bg-rdy-gray-100 hover:text-rdy-black"
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -114,10 +114,10 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-gray-800 bg-gray-900 text-white sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{isEditing ? 'Edit Tenant' : 'Create Tenant'}</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription className="text-rdy-gray-400">
             {isEditing
               ? 'Update the tenant settings below.'
               : 'Fill in the details to create a new tenant.'}
@@ -125,15 +125,15 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
         </DialogHeader>
 
         {isFetching ? (
-          <div className="py-8 text-center text-gray-400">Loading...</div>
+          <div className="py-8 text-center text-rdy-gray-400">Loading...</div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">{error}</div>
+              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{error}</div>
             )}
 
             <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium text-gray-300">
+              <label htmlFor="name" className="text-sm font-medium text-rdy-gray-600">
                 Name *
               </label>
               <Input
@@ -142,13 +142,13 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder="Acme Corporation"
                 required
-                className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
+                className="border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black placeholder:text-rdy-gray-500"
               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="slug" className="text-sm font-medium text-gray-300">
-                Slug * <span className="text-gray-500">(URL identifier)</span>
+              <label htmlFor="slug" className="text-sm font-medium text-rdy-gray-600">
+                Slug * <span className="text-rdy-gray-500">(URL identifier)</span>
               </label>
               <Input
                 id="slug"
@@ -157,13 +157,13 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
                 placeholder="acme-corp"
                 required
                 pattern="^[a-z0-9-]+$"
-                className="border-gray-700 bg-gray-800 font-mono text-white placeholder:text-gray-500"
+                className="border-rdy-gray-200 bg-rdy-gray-100 font-mono text-rdy-black placeholder:text-rdy-gray-500"
               />
-              <p className="text-xs text-gray-500">Lowercase letters, numbers, and hyphens only</p>
+              <p className="text-xs text-rdy-gray-500">Lowercase letters, numbers, and hyphens only</p>
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="logoUrl" className="text-sm font-medium text-gray-300">
+              <label htmlFor="logoUrl" className="text-sm font-medium text-rdy-gray-600">
                 Logo URL
               </label>
               <Input
@@ -172,13 +172,13 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
                 value={logoUrl}
                 onChange={(e) => setLogoUrl(e.target.value)}
                 placeholder="https://example.com/logo.png"
-                className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
+                className="border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black placeholder:text-rdy-gray-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="primaryColor" className="text-sm font-medium text-gray-300">
+                <label htmlFor="primaryColor" className="text-sm font-medium text-rdy-gray-600">
                   Primary Color
                 </label>
                 <div className="flex gap-2">
@@ -188,11 +188,11 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
                     onChange={(e) => setPrimaryColor(e.target.value)}
                     placeholder="#6366f1"
                     pattern="^#[0-9A-Fa-f]{6}$"
-                    className="flex-1 border-gray-700 bg-gray-800 font-mono text-white placeholder:text-gray-500"
+                    className="flex-1 border-rdy-gray-200 bg-rdy-gray-100 font-mono text-rdy-black placeholder:text-rdy-gray-500"
                   />
                   {primaryColor && /^#[0-9A-Fa-f]{6}$/.test(primaryColor) && (
                     <div
-                      className="h-9 w-9 rounded border border-gray-700"
+                      className="h-9 w-9 rounded border border-rdy-gray-200"
                       style={{ backgroundColor: primaryColor }}
                     />
                   )}
@@ -200,7 +200,7 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="secondaryColor" className="text-sm font-medium text-gray-300">
+                <label htmlFor="secondaryColor" className="text-sm font-medium text-rdy-gray-600">
                   Secondary Color
                 </label>
                 <div className="flex gap-2">
@@ -210,11 +210,11 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
                     onChange={(e) => setSecondaryColor(e.target.value)}
                     placeholder="#8b5cf6"
                     pattern="^#[0-9A-Fa-f]{6}$"
-                    className="flex-1 border-gray-700 bg-gray-800 font-mono text-white placeholder:text-gray-500"
+                    className="flex-1 border-rdy-gray-200 bg-rdy-gray-100 font-mono text-rdy-black placeholder:text-rdy-gray-500"
                   />
                   {secondaryColor && /^#[0-9A-Fa-f]{6}$/.test(secondaryColor) && (
                     <div
-                      className="h-9 w-9 rounded border border-gray-700"
+                      className="h-9 w-9 rounded border border-rdy-gray-200"
                       style={{ backgroundColor: secondaryColor }}
                     />
                   )}
@@ -227,7 +227,7 @@ export function TenantFormDialog({ open, onOpenChange, tenantId }: TenantFormDia
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
-                className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
               >
                 Cancel
               </Button>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -260,30 +260,30 @@ export function CurriculumBuilder() {
   const getExerciseTypeBadgeClass = (type: 'video' | 'audio' | 'text') => {
     switch (type) {
       case 'video':
-        return 'bg-purple-900/30 text-purple-400';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
       case 'audio':
-        return 'bg-green-900/30 text-green-400';
+        return 'bg-rdy-orange-500/10 text-green-400';
       case 'text':
-        return 'bg-blue-900/30 text-blue-400';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
     }
   };
 
   const getMonthColor = (monthNumber: string) => {
     switch (monthNumber) {
       case '1':
-        return 'bg-blue-900/30 text-blue-400 border-blue-800';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500 border-blue-800';
       case '2':
-        return 'bg-purple-900/30 text-purple-400 border-purple-800';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500 border-purple-800';
       case '3':
-        return 'bg-green-900/30 text-green-400 border-green-800';
+        return 'bg-rdy-orange-500/10 text-green-400 border-green-800';
       default:
-        return 'bg-gray-900/30 text-gray-400 border-gray-800';
+        return 'bg-rdy-gray-100/30 text-rdy-gray-400 border-rdy-gray-200';
     }
   };
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading curriculum: {error.message}
       </div>
     );
@@ -293,21 +293,21 @@ export function CurriculumBuilder() {
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <div className="flex items-center justify-between">
-          <TabsList className="bg-gray-800">
-            <TabsTrigger value="builder" className="data-[state=active]:bg-gray-700">
+          <TabsList className="bg-rdy-gray-100">
+            <TabsTrigger value="builder" className="data-[state=active]:bg-rdy-gray-200">
               Builder
             </TabsTrigger>
-            <TabsTrigger value="preview" className="data-[state=active]:bg-gray-700">
+            <TabsTrigger value="preview" className="data-[state=active]:bg-rdy-gray-200">
               Preview
             </TabsTrigger>
           </TabsList>
 
           {activeTab === 'builder' && (
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={expandAll} className="border-gray-700">
+              <Button variant="outline" size="sm" onClick={expandAll} className="border-rdy-gray-200">
                 Expand All
               </Button>
-              <Button variant="outline" size="sm" onClick={collapseAll} className="border-gray-700">
+              <Button variant="outline" size="sm" onClick={collapseAll} className="border-rdy-gray-200">
                 Collapse All
               </Button>
             </div>
@@ -316,32 +316,32 @@ export function CurriculumBuilder() {
 
         <TabsContent value="builder" className="mt-6">
           {isLoading ? (
-            <div className="py-8 text-center text-gray-400">Loading curriculum...</div>
+            <div className="py-8 text-center text-rdy-gray-400">Loading curriculum...</div>
           ) : !data?.curriculum?.length ? (
-            <div className="rounded-lg border border-gray-800 bg-gray-900 p-8 text-center">
-              <p className="text-gray-400">
+            <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 p-8 text-center">
+              <p className="text-rdy-gray-400">
                 No curriculum data found. Start by creating Schwerpunktebenen, Weeks, and Exercises
                 in their respective management pages.
               </p>
               <div className="mt-4 flex justify-center gap-4">
-                <Button variant="outline" asChild className="border-gray-700">
+                <Button variant="outline" asChild className="border-rdy-gray-200">
                   <a href="/admin/schwerpunktebenen">Manage Schwerpunktebenen</a>
                 </Button>
-                <Button variant="outline" asChild className="border-gray-700">
+                <Button variant="outline" asChild className="border-rdy-gray-200">
                   <a href="/admin/exercises">Manage Exercises</a>
                 </Button>
               </div>
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-rdy-gray-500">
                 Drag and drop items to reorder. Click to expand/collapse sections.
               </p>
 
               {data.curriculum.map((schwerpunktebene) => (
                 <Card
                   key={schwerpunktebene.id}
-                  className={`border-gray-800 bg-gray-900 ${
+                  className={`border-rdy-gray-200 bg-rdy-gray-100 ${
                     draggedItem?.type === 'schwerpunktebene' && draggedItem.id === schwerpunktebene.id
                       ? 'opacity-50'
                       : ''
@@ -360,7 +360,7 @@ export function CurriculumBuilder() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <span className="cursor-move text-gray-500" title="Drag to reorder">
+                        <span className="cursor-move text-rdy-gray-500" title="Drag to reorder">
                           ⋮⋮
                         </span>
                         <span
@@ -368,28 +368,28 @@ export function CurriculumBuilder() {
                         >
                           Month {schwerpunktebene.monthNumber}
                         </span>
-                        <CardTitle className="text-lg text-white">
+                        <CardTitle className="text-lg text-rdy-black">
                           {schwerpunktebene.titleDe}
                         </CardTitle>
                         {schwerpunktebene.titleEn && (
-                          <span className="text-sm text-gray-500">({schwerpunktebene.titleEn})</span>
+                          <span className="text-sm text-rdy-gray-500">({schwerpunktebene.titleEn})</span>
                         )}
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-rdy-gray-500">
                           {schwerpunktebene.weeks.length} weeks
                         </span>
-                        <span className="text-gray-400">
+                        <span className="text-rdy-gray-400">
                           {expandedSchwerpunktebenen.has(schwerpunktebene.id) ? '▼' : '▶'}
                         </span>
                       </div>
                     </div>
                     {schwerpunktebene.zielDe && (
-                      <p className="mt-2 text-sm text-gray-400">
+                      <p className="mt-2 text-sm text-rdy-gray-400">
                         Goal: {schwerpunktebene.zielDe}
                         {!schwerpunktebene.zielEn && (
                           <button
-                            className="ml-2 text-xs text-blue-400 hover:text-blue-300"
+                            className="ml-2 text-xs text-rdy-orange-500 hover:text-rdy-orange-500"
                             onClick={(e) => {
                               e.stopPropagation();
                               openTranslateDialog(schwerpunktebene.zielDe!, 'de', 'en', 'Goal (EN)');
@@ -405,11 +405,11 @@ export function CurriculumBuilder() {
                   {expandedSchwerpunktebenen.has(schwerpunktebene.id) && (
                     <CardContent className="space-y-3 pt-0">
                       {schwerpunktebene.weeks.length === 0 ? (
-                        <p className="py-4 text-center text-sm text-gray-500">
+                        <p className="py-4 text-center text-sm text-rdy-gray-500">
                           No weeks in this Schwerpunktebene.{' '}
                           <a
                             href={`/admin/weeks?schwerpunktebeneId=${schwerpunktebene.id}`}
-                            className="text-blue-400 hover:text-blue-300"
+                            className="text-rdy-orange-500 hover:text-rdy-orange-500"
                           >
                             Add weeks
                           </a>
@@ -418,7 +418,7 @@ export function CurriculumBuilder() {
                         schwerpunktebene.weeks.map((week) => (
                           <div
                             key={week.id}
-                            className={`ml-6 rounded-lg border border-gray-700 bg-gray-800 ${
+                            className={`ml-6 rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 ${
                               draggedItem?.type === 'week' && draggedItem.id === week.id
                                 ? 'opacity-50'
                                 : ''
@@ -447,31 +447,31 @@ export function CurriculumBuilder() {
                               onClick={() => toggleWeek(week.id)}
                             >
                               <div className="flex items-center gap-3">
-                                <span className="cursor-move text-gray-500" title="Drag to reorder">
+                                <span className="cursor-move text-rdy-gray-500" title="Drag to reorder">
                                   ⋮⋮
                                 </span>
-                                <span className="inline-flex items-center rounded-full bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-400">
+                                <span className="inline-flex items-center rounded-full bg-rdy-orange-500/10 px-2 py-1 text-xs font-medium text-rdy-orange-500">
                                   Week {week.weekNumber}
                                 </span>
-                                <span className="font-medium text-white">{week.titleDe}</span>
+                                <span className="font-medium text-rdy-black">{week.titleDe}</span>
                                 {week.titleEn && (
-                                  <span className="text-sm text-gray-500">({week.titleEn})</span>
+                                  <span className="text-sm text-rdy-gray-500">({week.titleEn})</span>
                                 )}
                               </div>
                               <div className="flex items-center gap-4">
-                                <span className="text-sm text-gray-500">
+                                <span className="text-sm text-rdy-gray-500">
                                   {week.exercises.length} exercises
                                 </span>
-                                <span className="text-gray-400">
+                                <span className="text-rdy-gray-400">
                                   {expandedWeeks.has(week.id) ? '▼' : '▶'}
                                 </span>
                               </div>
                             </div>
 
                             {expandedWeeks.has(week.id) && (
-                              <div className="border-t border-gray-700 p-3 pt-2">
+                              <div className="border-t border-rdy-gray-200 p-3 pt-2">
                                 {week.exercises.length === 0 ? (
-                                  <p className="py-2 text-center text-sm text-gray-500">
+                                  <p className="py-2 text-center text-sm text-rdy-gray-500">
                                     No exercises in this week.
                                   </p>
                                 ) : (
@@ -479,7 +479,7 @@ export function CurriculumBuilder() {
                                     {week.exercises.map((we) => (
                                       <div
                                         key={we.id}
-                                        className={`ml-4 flex items-center justify-between rounded border border-gray-600 bg-gray-700/50 p-2 ${
+                                        className={`ml-4 flex items-center justify-between rounded border border-rdy-gray-200 bg-rdy-gray-200/50 p-2 ${
                                           draggedItem?.type === 'exercise' &&
                                           draggedItem.id === we.id
                                             ? 'opacity-50'
@@ -506,7 +506,7 @@ export function CurriculumBuilder() {
                                       >
                                         <div className="flex items-center gap-3">
                                           <span
-                                            className="cursor-move text-gray-500"
+                                            className="cursor-move text-rdy-gray-500"
                                             title="Drag to reorder"
                                           >
                                             ⋮⋮
@@ -519,16 +519,16 @@ export function CurriculumBuilder() {
                                           >
                                             {we.exercise.type}
                                           </span>
-                                          <span className="text-sm text-white">
+                                          <span className="text-sm text-rdy-black">
                                             {we.exercise.titleDe}
                                           </span>
                                           {we.exercise.titleEn && (
-                                            <span className="text-xs text-gray-500">
+                                            <span className="text-xs text-rdy-gray-500">
                                               ({we.exercise.titleEn})
                                             </span>
                                           )}
                                           {we.exercise.durationMinutes && (
-                                            <span className="text-xs text-gray-500">
+                                            <span className="text-xs text-rdy-gray-500">
                                               {we.exercise.durationMinutes} min
                                             </span>
                                           )}
@@ -536,7 +536,7 @@ export function CurriculumBuilder() {
                                         <div className="flex items-center gap-4">
                                           <div className="flex items-center gap-2">
                                             <span
-                                              className={`text-xs ${we.isObligatory ? 'text-orange-400' : 'text-gray-500'}`}
+                                              className={`text-xs ${we.isObligatory ? 'text-rdy-orange-500' : 'text-rdy-gray-500'}`}
                                             >
                                               {we.isObligatory ? 'Obligatory' : 'Optional'}
                                             </span>
@@ -548,7 +548,7 @@ export function CurriculumBuilder() {
                                               className="data-[state=checked]:bg-orange-600"
                                             />
                                           </div>
-                                          <span className="text-xs text-gray-500">
+                                          <span className="text-xs text-rdy-gray-500">
                                             {we.frequency}
                                           </span>
                                         </div>

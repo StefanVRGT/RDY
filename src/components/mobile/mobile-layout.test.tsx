@@ -73,7 +73,7 @@ describe('MobileLayout', () => {
     );
 
     const wrapper = container.firstChild as HTMLElement;
-    expect(wrapper).toHaveClass('min-h-screen', 'flex-col', 'bg-gray-950');
+    expect(wrapper).toHaveClass('min-h-screen', 'flex-col', 'bg-white');
   });
 
   it('applies custom className', () => {

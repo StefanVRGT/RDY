@@ -19,7 +19,7 @@ export function LanguageToggle({ className, size = 'md' }: LanguageToggleProps) 
         size === 'sm'
           ? 'px-2 py-1 text-xs'
           : 'px-3 py-1.5 text-sm',
-        'bg-gray-800 hover:bg-gray-700',
+        'bg-rdy-gray-100 hover:bg-rdy-gray-200',
         className
       )}
       aria-label={`Switch to ${language === 'de' ? 'English' : 'German'}`}
@@ -28,16 +28,16 @@ export function LanguageToggle({ className, size = 'md' }: LanguageToggleProps) 
       <span
         className={cn(
           'transition-colors',
-          language === 'de' ? 'text-white font-bold' : 'text-gray-500'
+          language === 'de' ? 'text-rdy-black font-bold' : 'text-rdy-gray-400'
         )}
       >
         DE
       </span>
-      <span className="text-gray-600">/</span>
+      <span className="text-rdy-gray-300">/</span>
       <span
         className={cn(
           'transition-colors',
-          language === 'en' ? 'text-white font-bold' : 'text-gray-500'
+          language === 'en' ? 'text-rdy-black font-bold' : 'text-rdy-gray-400'
         )}
       >
         EN

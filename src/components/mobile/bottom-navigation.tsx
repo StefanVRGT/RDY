@@ -5,12 +5,10 @@ import { usePathname } from 'next/navigation';
 import {
   Home,
   Calendar,
-  BookOpen,
   ClipboardList,
   User,
   Clock,
   Users,
-  CalendarPlus,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -32,8 +30,7 @@ const mentorNavItems: NavItem[] = [
 
 const menteeNavItems: NavItem[] = [
   { href: '/mentee/calendar', label: 'Today', icon: Home },
-  { href: '/mentee/booking', label: 'Sessions', icon: CalendarPlus },
-  { href: '/mentee/exercises', label: 'Exercises', icon: BookOpen },
+  { href: '/mentee/calendar/weekly', label: 'Week', icon: Calendar },
   { href: '/mentee/diary', label: 'Diary', icon: ClipboardList },
   { href: '/mentee/profile', label: 'Profile', icon: User },
 ];
@@ -64,19 +61,17 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
   return (
     <nav
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-50 border-t border-gray-800 bg-gray-900/95 backdrop-blur-sm safe-area-inset-bottom',
+        'safe-area-inset-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-rdy-gray-200 bg-white/95 backdrop-blur-sm',
         className
       )}
       role="navigation"
       aria-label="Mobile navigation"
     >
-      <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2 pb-safe">
+      <div className="pb-safe mx-auto flex h-16 max-w-lg items-center justify-around px-2">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== '/mentor' &&
-              item.href !== '/mentee' &&
-              pathname.startsWith(item.href));
+            (item.href !== '/mentor' && item.href !== '/mentee' && pathname.startsWith(item.href));
           const Icon = item.icon;
 
           return (
@@ -85,16 +80,14 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
               href={item.href}
               className={cn(
                 'flex min-w-[64px] flex-col items-center justify-center gap-1 px-3 py-2 text-xs transition-colors',
-                isActive
-                  ? 'text-twilight-400'
-                  : 'text-gray-400 hover:text-gray-200'
+                isActive ? 'text-rdy-orange-500' : 'text-rdy-gray-400 hover:text-rdy-gray-600'
               )}
               aria-current={isActive ? 'page' : undefined}
             >
               <Icon
                 className={cn(
                   'h-5 w-5 transition-colors',
-                  isActive ? 'text-twilight-400' : 'text-gray-400'
+                  isActive ? 'text-rdy-orange-500' : 'text-rdy-gray-400'
                 )}
                 aria-hidden="true"
               />

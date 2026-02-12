@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -118,7 +118,7 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading weeks: {error.message}
       </div>
     );
@@ -132,15 +132,15 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
           <Button
             variant="ghost"
             onClick={() => router.push('/admin/schwerpunktebenen')}
-            className="text-gray-400 hover:text-white"
+            className="text-rdy-gray-400 hover:text-rdy-black"
           >
             &larr; Back to Focus Areas
           </Button>
           {data?.schwerpunktebene && (
-            <div className="rounded-lg border border-gray-700 bg-gray-800 px-4 py-2">
-              <span className="text-sm text-gray-400">Focus Area: </span>
-              <span className="font-medium text-white">{data.schwerpunktebene.titleDe}</span>
-              <span className="ml-2 text-sm text-gray-500">
+            <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-4 py-2">
+              <span className="text-sm text-rdy-gray-400">Focus Area: </span>
+              <span className="font-medium text-rdy-black">{data.schwerpunktebene.titleDe}</span>
+              <span className="ml-2 text-sm text-rdy-gray-500">
                 (Month {data.schwerpunktebene.monthNumber})
               </span>
             </div>
@@ -150,34 +150,34 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
       </div>
 
       {/* Reorder hint */}
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-rdy-gray-500">
         Drag and drop rows to reorder weeks within the focus area.
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900">
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="w-[50px] text-gray-400">#</TableHead>
-              <TableHead className="text-gray-400">Week</TableHead>
-              <TableHead className="text-gray-400">Title (DE)</TableHead>
-              <TableHead className="text-gray-400">Title (EN)</TableHead>
-              <TableHead className="text-gray-400">Goal (DE)</TableHead>
-              <TableHead className="text-gray-400">Measurement</TableHead>
-              <TableHead className="text-right text-gray-400">Actions</TableHead>
+            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+              <TableHead className="w-[50px] text-rdy-gray-400">#</TableHead>
+              <TableHead className="text-rdy-gray-400">Week</TableHead>
+              <TableHead className="text-rdy-gray-400">Title (DE)</TableHead>
+              <TableHead className="text-rdy-gray-400">Title (EN)</TableHead>
+              <TableHead className="text-rdy-gray-400">Goal (DE)</TableHead>
+              <TableHead className="text-rdy-gray-400">Measurement</TableHead>
+              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !data?.weeks?.length ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
                   No weeks found. Add your first week to get started.
                 </TableCell>
               </TableRow>
@@ -185,7 +185,7 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
               data.weeks.map((week, index) => (
                 <TableRow
                   key={week.id}
-                  className={`border-gray-800 cursor-move ${
+                  className={`border-rdy-gray-200 cursor-move ${
                     draggedWeekId === week.id ? 'opacity-50' : ''
                   }`}
                   draggable
@@ -194,16 +194,16 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
                   onDrop={() => handleDrop(week.id)}
                   onDragEnd={handleDragEnd}
                 >
-                  <TableCell className="text-gray-500">{index + 1}</TableCell>
+                  <TableCell className="text-rdy-gray-500">{index + 1}</TableCell>
                   <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-400">
+                    <span className="inline-flex items-center rounded-full bg-rdy-orange-500/10 px-2 py-1 text-xs font-medium text-rdy-orange-500">
                       Week {week.weekNumber}
                     </span>
                   </TableCell>
-                  <TableCell className="font-medium text-white">{week.titleDe}</TableCell>
-                  <TableCell className="text-gray-400">{week.titleEn || '-'}</TableCell>
-                  <TableCell className="text-gray-400">{truncateText(week.zielDe)}</TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="font-medium text-rdy-black">{week.titleDe}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{week.titleEn || '-'}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{truncateText(week.zielDe)}</TableCell>
+                  <TableCell className="text-rdy-gray-400">
                     {getMeasurementTypeLabel(week.measurementType)}
                   </TableCell>
                   <TableCell className="text-right">
@@ -212,7 +212,7 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingWeek(week)}
-                        className="text-gray-400 hover:text-white"
+                        className="text-rdy-gray-400 hover:text-rdy-black"
                       >
                         Edit
                       </Button>
@@ -241,7 +241,7 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
       {/* Pagination */}
       {data?.pagination && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
             {data.pagination.total} weeks
           </p>
@@ -251,7 +251,7 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Previous
             </Button>
@@ -260,7 +260,7 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
               size="sm"
               onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
               disabled={page === data.pagination.totalPages}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Next
             </Button>

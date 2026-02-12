@@ -310,7 +310,7 @@ export default function MenteeWeeklyCalendarPage() {
             data-testid="pull-to-refresh-indicator"
           >
             <RefreshCw
-              className={`h-6 w-6 text-twilight-400 ${isRefreshing ? 'animate-spin' : ''}`}
+              className={`h-6 w-6 text-rdy-orange-500 ${isRefreshing ? 'animate-spin' : ''}`}
               style={{
                 transform: isRefreshing ? 'rotate(0deg)' : `rotate(${pullDistance * 3.6}deg)`,
                 opacity: isRefreshing ? 1 : Math.min(pullDistance / 60, 1),
@@ -323,7 +323,7 @@ export default function MenteeWeeklyCalendarPage() {
         <div className="mb-4 flex items-center justify-between" data-testid="week-header">
           <button
             onClick={goToPreviousWeek}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-white transition-colors hover:bg-gray-700"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-gray-100 text-rdy-black transition-colors hover:bg-rdy-gray-200"
             aria-label="Previous week"
             data-testid="prev-week-button"
           >
@@ -331,18 +331,18 @@ export default function MenteeWeeklyCalendarPage() {
           </button>
 
           <div className="text-center">
-            <h2 className="text-xl font-bold text-white" data-testid="week-date-range">
+            <h2 className="text-xl font-bold text-rdy-black" data-testid="week-date-range">
               {format(currentWeekStart, 'MMM d')} - {format(weekEndDate, 'MMM d, yyyy')}
             </h2>
             {weekThemeData?.weekNumber && (
-              <p className="text-sm text-gray-400" data-testid="week-number">
+              <p className="text-sm text-rdy-gray-400" data-testid="week-number">
                 Week {weekThemeData.weekNumber}
               </p>
             )}
             {!isCurrentWeek && (
               <button
                 onClick={goToCurrentWeek}
-                className="mt-1 text-sm text-twilight-400 hover:text-twilight-300"
+                className="mt-1 text-sm text-rdy-orange-500 hover:text-rdy-orange-500"
                 data-testid="current-week-button"
               >
                 Back to Current Week
@@ -352,7 +352,7 @@ export default function MenteeWeeklyCalendarPage() {
 
           <button
             onClick={goToNextWeek}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-white transition-colors hover:bg-gray-700"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-gray-100 text-rdy-black transition-colors hover:bg-rdy-gray-200"
             aria-label="Next week"
             data-testid="next-week-button"
           >
@@ -363,12 +363,12 @@ export default function MenteeWeeklyCalendarPage() {
         {/* Weekly Topic Card */}
         {weekThemeData && (
           <div
-            className="mb-6 rounded-xl bg-gradient-to-br from-twilight-600 to-twilight-800 p-4"
+            className="mb-6 rounded-xl bg-gradient-to-br from-rdy-orange-500 to-rdy-orange-600 p-4"
             data-testid="week-topic-card"
           >
             {/* Header with language toggle */}
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wide text-twilight-200">
+              <p className="text-xs font-medium uppercase tracking-wide text-white">
                 {weekThemeData.weekTheme
                   ? language === 'de'
                     ? 'Wochenthema'
@@ -381,7 +381,7 @@ export default function MenteeWeeklyCalendarPage() {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-twilight-500/30">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-rdy-orange-500/20">
                 <Target className="h-5 w-5 text-white" />
               </div>
               <div className="flex-1">
@@ -396,7 +396,7 @@ export default function MenteeWeeklyCalendarPage() {
                   weekThemeData.weekTheme?.descriptionEn ||
                   weekThemeData.monthTheme?.descriptionEn) && (
                   <p
-                    className="mt-1 line-clamp-2 text-sm text-twilight-200"
+                    className="mt-1 line-clamp-2 text-sm text-white"
                     data-testid="week-theme-description"
                   >
                     {t(
@@ -416,16 +416,16 @@ export default function MenteeWeeklyCalendarPage() {
               weekThemeData.weekTheme?.herkunftEn ||
               weekThemeData.monthTheme?.herkunftEn) && (
               <div
-                className="mt-3 rounded-lg bg-twilight-900/30 p-3"
+                className="mt-3 rounded-lg bg-rdy-orange-500/10 p-3"
                 data-testid="week-herkunft-preview"
               >
                 <div className="mb-1 flex items-center gap-2">
-                  <Compass className="h-3.5 w-3.5 text-amber-400" />
-                  <span className="text-xs font-medium uppercase tracking-wide text-amber-400">
+                  <Compass className="h-3.5 w-3.5 text-rdy-orange-500" />
+                  <span className="text-xs font-medium uppercase tracking-wide text-rdy-orange-500">
                     {language === 'de' ? 'Herkunft' : 'Background'}
                   </span>
                 </div>
-                <p className="line-clamp-2 text-sm text-twilight-100" data-testid="herkunft-text">
+                <p className="line-clamp-2 text-sm text-white" data-testid="herkunft-text">
                   {t(
                     weekThemeData.weekTheme?.herkunftDe || weekThemeData.monthTheme?.herkunftDe,
                     weekThemeData.weekTheme?.herkunftEn || weekThemeData.monthTheme?.herkunftEn
@@ -440,7 +440,7 @@ export default function MenteeWeeklyCalendarPage() {
               weekThemeData.weekTheme?.zielEn ||
               weekThemeData.monthTheme?.zielEn) && (
               <div
-                className="mt-3 rounded-lg bg-twilight-900/30 p-3"
+                className="mt-3 rounded-lg bg-rdy-orange-500/10 p-3"
                 data-testid="week-ziel-preview"
               >
                 <div className="mb-1 flex items-center gap-2">
@@ -449,7 +449,7 @@ export default function MenteeWeeklyCalendarPage() {
                     {language === 'de' ? 'Ziel' : 'Goal'}
                   </span>
                 </div>
-                <p className="line-clamp-2 text-sm text-twilight-100" data-testid="ziel-text">
+                <p className="line-clamp-2 text-sm text-white" data-testid="ziel-text">
                   {t(
                     weekThemeData.weekTheme?.zielDe || weekThemeData.monthTheme?.zielDe,
                     weekThemeData.weekTheme?.zielEn || weekThemeData.monthTheme?.zielEn
@@ -461,7 +461,7 @@ export default function MenteeWeeklyCalendarPage() {
             {/* View Monthly Schwerpunkt Details Button */}
             <button
               onClick={() => setShowSchwerpunktDetail(true)}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-twilight-500/20 py-2 text-sm font-medium text-twilight-200 transition-colors hover:bg-twilight-500/30"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-rdy-orange-500/10 py-2 text-sm font-medium text-white transition-colors hover:bg-rdy-orange-500/20"
               data-testid="view-schwerpunkt-details-button"
             >
               <Info className="h-4 w-4" />
@@ -469,14 +469,14 @@ export default function MenteeWeeklyCalendarPage() {
             </button>
 
             {/* Weekly Progress */}
-            <div className="mt-4 border-t border-twilight-500/30 pt-3" data-testid="weekly-progress">
+            <div className="mt-4 border-t border-rdy-orange-500/30 pt-3" data-testid="weekly-progress">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-twilight-200">
+                <span className="text-sm text-white">
                   {language === 'de' ? 'Wochenfortschritt' : 'Weekly Progress'}
                 </span>
                 <span className="text-lg font-bold text-white">{weeklyProgress}%</span>
               </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-twilight-900/50">
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-rdy-orange-500/20">
                 <div
                   className="h-full rounded-full bg-white transition-all duration-300"
                   style={{ width: `${weeklyProgress}%` }}
@@ -489,7 +489,7 @@ export default function MenteeWeeklyCalendarPage() {
         {/* Loading indicator */}
         {isLoading && (
           <div className="flex items-center justify-center py-8">
-            <RefreshCw className="h-6 w-6 animate-spin text-twilight-400" />
+            <RefreshCw className="h-6 w-6 animate-spin text-rdy-orange-500" />
           </div>
         )}
 
@@ -511,7 +511,7 @@ export default function MenteeWeeklyCalendarPage() {
 
       {/* Day Detail Dialog */}
       <Dialog open={showDayDetail} onOpenChange={setShowDayDetail}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto bg-gray-900 text-white sm:max-w-md">
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2" data-testid="day-detail-title">
               <Calendar className="h-5 w-5" />
@@ -519,7 +519,7 @@ export default function MenteeWeeklyCalendarPage() {
                 format(new Date(selectedDay.date + 'T12:00:00'), 'EEEE, MMMM d, yyyy')}
             </DialogTitle>
             {selectedDay && (
-              <DialogDescription className="text-gray-400">
+              <DialogDescription className="text-rdy-gray-400">
                 {selectedDay.totalCount === 0
                   ? language === 'de'
                     ? 'Keine Übungen geplant'
@@ -533,7 +533,7 @@ export default function MenteeWeeklyCalendarPage() {
 
           <div className="mt-4 space-y-3" data-testid="day-detail-content">
             {selectedDay?.exercises.length === 0 ? (
-              <div className="py-8 text-center text-gray-400">
+              <div className="py-8 text-center text-rdy-gray-400">
                 {language === 'de'
                   ? 'Keine Übungen für diesen Tag geplant'
                   : 'No exercises scheduled for this day'}
@@ -544,8 +544,8 @@ export default function MenteeWeeklyCalendarPage() {
                   key={ex.id}
                   className={`flex items-center gap-3 rounded-xl p-4 ${
                     ex.isObligatory
-                      ? 'border-l-4 border-amber-500 bg-gray-800'
-                      : 'bg-gray-800'
+                      ? 'border-l-4 border-amber-500 bg-rdy-gray-100'
+                      : 'bg-rdy-gray-100'
                   }`}
                   data-testid={`day-detail-exercise-${ex.id}`}
                 >
@@ -557,21 +557,21 @@ export default function MenteeWeeklyCalendarPage() {
                     {ex.completed ? (
                       <CheckCircle2 className="h-6 w-6 text-green-500" />
                     ) : (
-                      <Circle className="h-6 w-6 text-gray-600 hover:text-gray-400" />
+                      <Circle className="h-6 w-6 text-rdy-gray-400 hover:text-rdy-gray-400" />
                     )}
                   </button>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p
                         className={`font-medium ${
-                          ex.completed ? 'text-gray-400 line-through' : 'text-white'
+                          ex.completed ? 'text-rdy-gray-400 line-through' : 'text-rdy-black'
                         }`}
                       >
                         {t(ex.exercise?.titleDe, ex.exercise?.titleEn) || (language === 'de' ? 'Unbekannte Übung' : 'Unknown Exercise')}
                       </p>
-                      {ex.isObligatory && <Star className="h-4 w-4 text-amber-400" />}
+                      {ex.isObligatory && <Star className="h-4 w-4 text-rdy-orange-500" />}
                     </div>
-                    <div className="mt-1 flex items-center gap-3 text-sm text-gray-500">
+                    <div className="mt-1 flex items-center gap-3 text-sm text-rdy-gray-500">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {formatTime(ex.scheduledAt)}
@@ -585,8 +585,8 @@ export default function MenteeWeeklyCalendarPage() {
                     </div>
                   </div>
                   {(ex.exercise?.type === 'video' || ex.exercise?.type === 'audio') && (
-                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-twilight-500/20">
-                      <Play className="h-4 w-4 text-twilight-400" />
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                      <Play className="h-4 w-4 text-rdy-orange-500" />
                     </div>
                   )}
                 </div>
@@ -597,7 +597,7 @@ export default function MenteeWeeklyCalendarPage() {
           <div className="mt-4">
             <Button
               onClick={() => setShowDayDetail(false)}
-              className="w-full bg-twilight-600 text-white hover:bg-twilight-500"
+              className="w-full bg-rdy-orange-500 text-white hover:bg-rdy-orange-500"
               data-testid="close-day-detail-button"
             >
               <X className="mr-2 h-4 w-4" />

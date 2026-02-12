@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -76,33 +76,33 @@ export function InvitationActionsDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-gray-800 bg-gray-900 text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Invitation Actions</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Manage invitation for {invitation?.email}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="space-y-2 rounded-lg bg-gray-800 p-4">
-            <p className="text-sm text-gray-400">
+          <div className="space-y-2 rounded-lg bg-rdy-gray-100 p-4">
+            <p className="text-sm text-rdy-gray-400">
               Current Status:{' '}
-              <span className="font-medium capitalize text-white">{invitation?.status}</span>
+              <span className="font-medium capitalize">{invitation?.status}</span>
             </p>
           </div>
 
           {canResend && (
-            <div className="rounded-lg bg-blue-900/20 p-4">
-              <h4 className="mb-2 font-medium text-blue-400">Resend Invitation</h4>
-              <p className="mb-3 text-sm text-gray-400">
+            <div className="rounded-lg bg-rdy-orange-500/10 p-4">
+              <h4 className="mb-2 font-medium text-rdy-orange-500">Resend Invitation</h4>
+              <p className="mb-3 text-sm text-rdy-gray-400">
                 This will generate a new invitation link and extend the expiry by 7 days.
               </p>
               <Button
                 onClick={handleResend}
                 disabled={isPending}
                 variant="outline"
-                className="border-blue-700 text-blue-400 hover:bg-blue-900/30"
+                className="border-rdy-orange-500 text-rdy-orange-500 hover:bg-rdy-orange-500/10"
               >
                 {resendMutation.isPending ? 'Resending...' : 'Resend Invitation'}
               </Button>
@@ -110,9 +110,9 @@ export function InvitationActionsDialog({
           )}
 
           {canRevoke && (
-            <div className="rounded-lg bg-red-900/20 p-4">
-              <h4 className="mb-2 font-medium text-red-400">Revoke Invitation</h4>
-              <p className="mb-3 text-sm text-gray-400">
+            <div className="rounded-lg bg-red-50 p-4">
+              <h4 className="mb-2 font-medium text-red-500">Revoke Invitation</h4>
+              <p className="mb-3 text-sm text-rdy-gray-400">
                 This will permanently invalidate the invitation. The user will not be able to accept
                 it.
               </p>
@@ -120,7 +120,7 @@ export function InvitationActionsDialog({
                 onClick={handleRevoke}
                 disabled={isPending}
                 variant="outline"
-                className="border-red-700 text-red-400 hover:bg-red-900/30"
+                className="border-red-700 text-red-500 hover:bg-red-50"
               >
                 {revokeMutation.isPending ? 'Revoking...' : 'Revoke Invitation'}
               </Button>
@@ -128,7 +128,7 @@ export function InvitationActionsDialog({
           )}
 
           {errorMessage && (
-            <div className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">{errorMessage}</div>
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{errorMessage}</div>
           )}
         </div>
 
@@ -136,7 +136,7 @@ export function InvitationActionsDialog({
           <Button
             variant="outline"
             onClick={() => handleClose(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Close
           </Button>

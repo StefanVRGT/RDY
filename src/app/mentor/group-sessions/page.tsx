@@ -46,7 +46,7 @@ function formatTime(date: Date): string {
 function getStatusColor(status: string) {
   switch (status) {
     case 'scheduled':
-      return 'bg-twilight-500';
+      return 'bg-rdy-orange-500';
     case 'completed':
       return 'bg-green-500';
     case 'cancelled':
@@ -237,7 +237,7 @@ export default function GroupSessionsPage() {
             data-testid="pull-to-refresh-indicator"
           >
             <RefreshCw
-              className={`h-6 w-6 text-twilight-400 ${isRefreshing ? 'animate-spin' : ''}`}
+              className={`h-6 w-6 text-rdy-orange-500 ${isRefreshing ? 'animate-spin' : ''}`}
               style={{
                 transform: isRefreshing ? 'rotate(0deg)' : `rotate(${pullDistance * 3.6}deg)`,
                 opacity: isRefreshing ? 1 : Math.min(pullDistance / 60, 1),
@@ -249,12 +249,12 @@ export default function GroupSessionsPage() {
         {/* Header with Create button */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Group Sessions</h1>
-            <p className="text-sm text-gray-400">Manage your group mentoring sessions</p>
+            <h1 className="text-2xl font-bold text-rdy-black">Group Sessions</h1>
+            <p className="text-sm text-rdy-gray-400">Manage your group mentoring sessions</p>
           </div>
           <button
             onClick={() => setShowCreateDialog(true)}
-            className="flex items-center gap-2 rounded-lg bg-twilight-600 px-4 py-2 text-sm font-medium text-white hover:bg-twilight-700"
+            className="flex items-center gap-2 rounded-lg bg-rdy-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-rdy-orange-600"
             data-testid="create-session-button"
           >
             <Plus className="h-4 w-4" />
@@ -263,10 +263,10 @@ export default function GroupSessionsPage() {
         </div>
 
         {/* Tab navigation */}
-        <div className="mb-4 flex rounded-xl bg-gray-900 p-1" data-testid="tab-navigation">
+        <div className="mb-4 flex rounded-xl bg-rdy-gray-100 p-1" data-testid="tab-navigation">
           <button
             className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
-              activeTab === 'upcoming' ? 'bg-twilight-600 text-white' : 'text-gray-400 hover:text-white'
+              activeTab === 'upcoming' ? 'bg-rdy-orange-500 text-white' : 'text-rdy-gray-400 hover:text-rdy-black'
             }`}
             onClick={() => setActiveTab('upcoming')}
             data-testid="tab-upcoming"
@@ -275,7 +275,7 @@ export default function GroupSessionsPage() {
           </button>
           <button
             className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
-              activeTab === 'past' ? 'bg-twilight-600 text-white' : 'text-gray-400 hover:text-white'
+              activeTab === 'past' ? 'bg-rdy-orange-500 text-white' : 'text-rdy-gray-400 hover:text-rdy-black'
             }`}
             onClick={() => setActiveTab('past')}
             data-testid="tab-past"
@@ -288,26 +288,26 @@ export default function GroupSessionsPage() {
         <div className="space-y-3" data-testid="sessions-list">
           {isLoading ? (
             <div className="flex min-h-[200px] items-center justify-center">
-              <RefreshCw className="h-8 w-8 animate-spin text-twilight-400" />
+              <RefreshCw className="h-8 w-8 animate-spin text-rdy-orange-500" />
             </div>
           ) : sessions && sessions.length > 0 ? (
             sessions.map((session) => (
               <button
                 key={session.id}
                 onClick={() => handleSessionClick(session.id)}
-                className="w-full rounded-xl bg-gray-900 p-4 text-left transition-colors hover:bg-gray-800"
+                className="w-full rounded-xl bg-rdy-gray-100 p-4 text-left transition-colors hover:bg-rdy-gray-200"
                 data-testid={`session-item-${session.id}`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <div className={`h-2 w-2 rounded-full ${getStatusColor(session.status)}`} />
-                      <h3 className="font-medium text-white">{session.title}</h3>
+                      <h3 className="font-medium text-rdy-black">{session.title}</h3>
                     </div>
                     {session.className && (
-                      <p className="mt-1 text-sm text-gray-400">{session.className}</p>
+                      <p className="mt-1 text-sm text-rdy-gray-400">{session.className}</p>
                     )}
-                    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-rdy-gray-500">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {formatDate(session.scheduledAt)}
@@ -324,7 +324,7 @@ export default function GroupSessionsPage() {
                       )}
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
+                  <ChevronRight className="h-5 w-5 text-rdy-gray-400" />
                 </div>
 
                 {/* RSVP summary */}
@@ -333,7 +333,7 @@ export default function GroupSessionsPage() {
                     <CheckCircle2 className="h-3 w-3" />
                     {session.rsvpCounts.accepted} accepted
                   </span>
-                  <span className="flex items-center gap-1 text-amber-400">
+                  <span className="flex items-center gap-1 text-rdy-orange-500">
                     <AlertCircle className="h-3 w-3" />
                     {session.rsvpCounts.pending} pending
                   </span>
@@ -342,7 +342,7 @@ export default function GroupSessionsPage() {
                     {session.rsvpCounts.declined} declined
                   </span>
                   {session.maxParticipants && (
-                    <span className="flex items-center gap-1 text-gray-400">
+                    <span className="flex items-center gap-1 text-rdy-gray-400">
                       <Users className="h-3 w-3" />
                       Max: {session.maxParticipants}
                     </span>
@@ -351,9 +351,9 @@ export default function GroupSessionsPage() {
               </button>
             ))
           ) : (
-            <div className="rounded-xl bg-gray-900 p-8 text-center" data-testid="empty-state">
-              <Users className="mx-auto h-12 w-12 text-gray-600" />
-              <p className="mt-4 text-gray-400">
+            <div className="rounded-xl bg-rdy-gray-100 p-8 text-center" data-testid="empty-state">
+              <Users className="mx-auto h-12 w-12 text-rdy-gray-400" />
+              <p className="mt-4 text-rdy-gray-400">
                 {activeTab === 'upcoming'
                   ? 'No upcoming group sessions'
                   : 'No past group sessions'}
@@ -361,7 +361,7 @@ export default function GroupSessionsPage() {
               {activeTab === 'upcoming' && (
                 <button
                   onClick={() => setShowCreateDialog(true)}
-                  className="mt-4 text-twilight-400 hover:text-twilight-300"
+                  className="mt-4 text-rdy-orange-500 hover:text-rdy-orange-500"
                 >
                   Create your first group session
                 </button>
@@ -372,7 +372,7 @@ export default function GroupSessionsPage() {
 
         {/* Create Session Dialog */}
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogContent className="max-h-[90vh] overflow-y-auto bg-gray-900 text-white">
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create Group Session</DialogTitle>
             </DialogHeader>
@@ -387,14 +387,14 @@ export default function GroupSessionsPage() {
             >
               {/* Title */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-300">
+                <label className="mb-1 block text-sm font-medium text-rdy-gray-600">
                   Title <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-twilight-500 focus:outline-none"
+                  className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black placeholder-rdy-gray-500 focus:border-rdy-orange-500 focus:outline-none"
                   placeholder="Session title"
                   data-testid="input-title"
                 />
@@ -405,11 +405,11 @@ export default function GroupSessionsPage() {
 
               {/* Description */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-300">Description</label>
+                <label className="mb-1 block text-sm font-medium text-rdy-gray-600">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-twilight-500 focus:outline-none"
+                  className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black placeholder-rdy-gray-500 focus:border-rdy-orange-500 focus:outline-none"
                   placeholder="Brief description of the session"
                   rows={2}
                   data-testid="input-description"
@@ -418,11 +418,11 @@ export default function GroupSessionsPage() {
 
               {/* Agenda */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-300">Agenda</label>
+                <label className="mb-1 block text-sm font-medium text-rdy-gray-600">Agenda</label>
                 <textarea
                   value={formData.agenda}
                   onChange={(e) => setFormData({ ...formData, agenda: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-twilight-500 focus:outline-none"
+                  className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black placeholder-rdy-gray-500 focus:border-rdy-orange-500 focus:outline-none"
                   placeholder="Session agenda or topics to cover"
                   rows={3}
                   data-testid="input-agenda"
@@ -431,13 +431,13 @@ export default function GroupSessionsPage() {
 
               {/* Associate with Class */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-300">
+                <label className="mb-1 block text-sm font-medium text-rdy-gray-600">
                   Associate with Class
                 </label>
                 <select
                   value={formData.classId}
                   onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-twilight-500 focus:outline-none"
+                  className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black focus:border-rdy-orange-500 focus:outline-none"
                   data-testid="input-class"
                 >
                   <option value="">No class (invite manually)</option>
@@ -447,7 +447,7 @@ export default function GroupSessionsPage() {
                     </option>
                   ))}
                 </select>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-rdy-gray-500">
                   If selected, all class members will be automatically invited
                 </p>
               </div>
@@ -455,14 +455,14 @@ export default function GroupSessionsPage() {
               {/* Date and Time */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-300">
+                  <label className="mb-1 block text-sm font-medium text-rdy-gray-600">
                     Date <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="date"
                     value={formData.scheduledAt}
                     onChange={(e) => setFormData({ ...formData, scheduledAt: e.target.value })}
-                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-twilight-500 focus:outline-none"
+                    className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black focus:border-rdy-orange-500 focus:outline-none"
                     min={new Date().toISOString().split('T')[0]}
                     data-testid="input-date"
                   />
@@ -471,14 +471,14 @@ export default function GroupSessionsPage() {
                   )}
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-300">
+                  <label className="mb-1 block text-sm font-medium text-rdy-gray-600">
                     Time <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="time"
                     value={formData.scheduledTime}
                     onChange={(e) => setFormData({ ...formData, scheduledTime: e.target.value })}
-                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-twilight-500 focus:outline-none"
+                    className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black focus:border-rdy-orange-500 focus:outline-none"
                     data-testid="input-time"
                   />
                   {formErrors.scheduledTime && (
@@ -489,7 +489,7 @@ export default function GroupSessionsPage() {
 
               {/* Duration */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-300">
+                <label className="mb-1 block text-sm font-medium text-rdy-gray-600">
                   Duration (minutes)
                 </label>
                 <select
@@ -497,7 +497,7 @@ export default function GroupSessionsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, durationMinutes: parseInt(e.target.value) })
                   }
-                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-twilight-500 focus:outline-none"
+                  className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black focus:border-rdy-orange-500 focus:outline-none"
                   data-testid="input-duration"
                 >
                   <option value={30}>30 minutes</option>
@@ -510,14 +510,14 @@ export default function GroupSessionsPage() {
 
               {/* Max Participants */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-300">
+                <label className="mb-1 block text-sm font-medium text-rdy-gray-600">
                   Max Participants
                 </label>
                 <input
                   type="number"
                   value={formData.maxParticipants}
                   onChange={(e) => setFormData({ ...formData, maxParticipants: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-twilight-500 focus:outline-none"
+                  className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black placeholder-rdy-gray-500 focus:border-rdy-orange-500 focus:outline-none"
                   placeholder="Leave empty for unlimited"
                   min={1}
                   data-testid="input-max-participants"
@@ -529,12 +529,12 @@ export default function GroupSessionsPage() {
 
               {/* Location */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-300">Location</label>
+                <label className="mb-1 block text-sm font-medium text-rdy-gray-600">Location</label>
                 <input
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-twilight-500 focus:outline-none"
+                  className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black placeholder-rdy-gray-500 focus:border-rdy-orange-500 focus:outline-none"
                   placeholder="Virtual link or physical location"
                   data-testid="input-location"
                 />
@@ -547,7 +547,7 @@ export default function GroupSessionsPage() {
                     setShowCreateDialog(false);
                     resetForm();
                   }}
-                  className="rounded-lg border border-gray-600 px-4 py-2 text-gray-300 hover:bg-gray-800"
+                  className="rounded-lg border border-rdy-gray-200 px-4 py-2 text-rdy-gray-600 hover:bg-rdy-gray-200"
                   data-testid="cancel-button"
                 >
                   Cancel
@@ -555,7 +555,7 @@ export default function GroupSessionsPage() {
                 <button
                   type="submit"
                   disabled={createSession.isPending}
-                  className="rounded-lg bg-twilight-600 px-4 py-2 font-medium text-white hover:bg-twilight-700 disabled:opacity-50"
+                  className="rounded-lg bg-rdy-orange-500 px-4 py-2 font-medium text-white hover:bg-rdy-orange-600 disabled:opacity-50"
                   data-testid="submit-button"
                 >
                   {createSession.isPending ? 'Creating...' : 'Create Session'}

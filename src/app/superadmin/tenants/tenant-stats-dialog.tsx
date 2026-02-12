@@ -1,6 +1,6 @@
 'use client';
 
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -35,18 +35,18 @@ export function TenantStatsDialog({ open, onOpenChange, tenantId }: TenantStatsD
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-gray-800 bg-gray-900 text-white sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Tenant Usage Statistics</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription className="text-rdy-gray-400">
             {stats ? `Statistics for ${stats.tenantName}` : 'Loading...'}
           </DialogDescription>
         </DialogHeader>
 
         {isLoading ? (
-          <div className="py-8 text-center text-gray-400">Loading statistics...</div>
+          <div className="py-8 text-center text-rdy-gray-400">Loading statistics...</div>
         ) : error ? (
-          <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+          <div className="rounded-lg bg-red-50 p-4 text-red-500">
             Error loading statistics: {error.message}
           </div>
         ) : stats ? (
@@ -55,8 +55,8 @@ export function TenantStatsDialog({ open, onOpenChange, tenantId }: TenantStatsD
             <div
               className={`rounded-lg p-4 ${
                 stats.tenantStatus === 'active'
-                  ? 'bg-green-900/20 text-green-400'
-                  : 'bg-red-900/20 text-red-400'
+                  ? 'bg-green-50 text-green-600'
+                  : 'bg-red-50 text-red-500'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -67,52 +67,52 @@ export function TenantStatsDialog({ open, onOpenChange, tenantId }: TenantStatsD
 
             {/* User Statistics */}
             <div className="grid gap-4 sm:grid-cols-2">
-              <Card className="border-gray-700 bg-gray-800">
+              <Card className="border-rdy-gray-200 bg-rdy-gray-100">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-400">Total Users</CardTitle>
+                  <CardTitle className="text-sm font-medium text-rdy-gray-400">Total Users</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold text-white">{stats.users.total}</p>
+                  <p className="text-3xl font-bold text-rdy-black">{stats.users.total}</p>
                 </CardContent>
               </Card>
 
-              <Card className="border-gray-700 bg-gray-800">
+              <Card className="border-rdy-gray-200 bg-rdy-gray-100">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-400">
+                  <CardTitle className="text-sm font-medium text-rdy-gray-400">
                     New Users (30 days)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold text-white">{stats.users.recentRegistrations}</p>
+                  <p className="text-3xl font-bold text-rdy-black">{stats.users.recentRegistrations}</p>
                 </CardContent>
               </Card>
             </div>
 
             {/* User Breakdown by Role */}
-            <Card className="border-gray-700 bg-gray-800">
+            <Card className="border-rdy-gray-200 bg-rdy-gray-100">
               <CardHeader>
-                <CardTitle className="text-sm font-medium text-gray-400">Users by Role</CardTitle>
+                <CardTitle className="text-sm font-medium text-rdy-gray-400">Users by Role</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Admins</span>
-                    <span className="font-mono text-white">{stats.users.byRole.admin}</span>
+                    <span className="text-rdy-gray-600">Admins</span>
+                    <span className="font-mono text-rdy-black">{stats.users.byRole.admin}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Mentors</span>
-                    <span className="font-mono text-white">{stats.users.byRole.mentor}</span>
+                    <span className="text-rdy-gray-600">Mentors</span>
+                    <span className="font-mono text-rdy-black">{stats.users.byRole.mentor}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Mentees</span>
-                    <span className="font-mono text-white">{stats.users.byRole.mentee}</span>
+                    <span className="text-rdy-gray-600">Mentees</span>
+                    <span className="font-mono text-rdy-black">{stats.users.byRole.mentee}</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Tenant Info */}
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-rdy-gray-400">
               <p>Created: {formatDate(stats.createdAt)}</p>
             </div>
           </div>
@@ -122,7 +122,7 @@ export function TenantStatsDialog({ open, onOpenChange, tenantId }: TenantStatsD
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Close
           </Button>

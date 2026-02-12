@@ -38,21 +38,21 @@ const PATTERN_CONFIG = {
   focus: {
     label: 'Focus',
     icon: Target,
-    color: 'text-blue-400',
+    color: 'text-rdy-orange-500',
     bgColor: 'bg-blue-500',
     lightColor: 'bg-blue-300',
   },
   anxiety: {
     label: 'Anxiety',
     icon: Activity,
-    color: 'text-purple-400',
+    color: 'text-rdy-orange-500',
     bgColor: 'bg-purple-500',
     lightColor: 'bg-purple-300',
   },
   motivation: {
     label: 'Motivation',
     icon: Flame,
-    color: 'text-orange-400',
+    color: 'text-rdy-orange-500',
     bgColor: 'bg-orange-500',
     lightColor: 'bg-orange-300',
   },
@@ -124,13 +124,13 @@ export function PatternFrequencyChart({
 
   return (
     <div
-      className={cn('rounded-xl bg-gray-900 p-4', className)}
+      className={cn('rounded-xl bg-rdy-gray-100 p-4', className)}
       data-testid="pattern-frequency-chart"
     >
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
-        <BarChart3 className="h-5 w-5 text-twilight-400" />
-        <h3 className="font-semibold text-white">Pattern Frequency</h3>
+        <BarChart3 className="h-5 w-5 text-rdy-orange-500" />
+        <h3 className="font-semibold text-rdy-black">Pattern Frequency</h3>
       </div>
 
       {/* Pattern bars */}
@@ -150,10 +150,10 @@ export function PatternFrequencyChart({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Icon className={cn('h-4 w-4', config.color)} />
-                  <span className="text-sm text-gray-300">{config.label}</span>
+                  <span className="text-sm text-rdy-gray-600">{config.label}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-white" data-testid={`count-${pattern.type}`}>
+                  <span className="text-sm font-medium text-rdy-black" data-testid={`count-${pattern.type}`}>
                     {pattern.total}
                   </span>
                   {change !== 0 && (
@@ -170,7 +170,7 @@ export function PatternFrequencyChart({
                 </div>
               </div>
               {/* Stacked bar showing strong/weak/none */}
-              <div className="flex h-2 w-full overflow-hidden rounded-full bg-gray-800">
+              <div className="flex h-2 w-full overflow-hidden rounded-full bg-rdy-gray-100">
                 {pattern.strong > 0 && (
                   <div
                     className={cn(config.bgColor, 'transition-all duration-300')}
@@ -194,18 +194,18 @@ export function PatternFrequencyChart({
       {/* Legend */}
       <div className="mb-4 flex items-center justify-center gap-4" data-testid="intensity-legend">
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded bg-twilight-500" />
-          <span className="text-xs text-gray-400">Strong</span>
+          <div className="h-3 w-3 rounded bg-rdy-orange-500" />
+          <span className="text-xs text-rdy-gray-400">Strong</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded bg-twilight-300" />
-          <span className="text-xs text-gray-400">Weak</span>
+          <div className="h-3 w-3 rounded bg-rdy-orange-500" />
+          <span className="text-xs text-rdy-gray-400">Weak</span>
         </div>
       </div>
 
       {/* Weekly heatmap */}
       <div data-testid="weekly-heatmap">
-        <p className="mb-2 text-xs font-medium text-gray-400">Weekly Pattern Heatmap</p>
+        <p className="mb-2 text-xs font-medium text-rdy-gray-400">Weekly Pattern Heatmap</p>
         <div className="overflow-x-auto">
           <div className="min-w-full">
             {/* Day headers */}
@@ -214,7 +214,7 @@ export function PatternFrequencyChart({
               {heatmapData.map(day => (
                 <div
                   key={day.date}
-                  className="flex-1 text-center text-[10px] text-gray-500"
+                  className="flex-1 text-center text-[10px] text-rdy-gray-500"
                 >
                   {day.dayLabel}
                 </div>
@@ -227,7 +227,7 @@ export function PatternFrequencyChart({
                 <div key={type} className="mb-1 flex items-center">
                   <div className="flex w-16 items-center gap-1">
                     <Icon className={cn('h-3 w-3', config.color)} />
-                    <span className="text-[10px] text-gray-500 truncate">
+                    <span className="text-[10px] text-rdy-gray-500 truncate">
                       {config.label.substring(0, 3)}
                     </span>
                   </div>
@@ -248,7 +248,7 @@ export function PatternFrequencyChart({
                             'mx-auto h-4 w-4 rounded-sm transition-all',
                             hasStrong && config.bgColor,
                             hasWeak && !hasStrong && config.lightColor,
-                            !hasEntry && 'bg-gray-800'
+                            !hasEntry && 'bg-rdy-gray-100'
                           )}
                           title={`${config.label}: ${patternData?.total || 0} entries`}
                         />
@@ -264,8 +264,8 @@ export function PatternFrequencyChart({
 
       {/* Total entries */}
       <div className="mt-4 text-center">
-        <span className="text-sm text-gray-400">
-          Total Entries: <span className="font-medium text-white" data-testid="total-pattern-entries">{stats.totalEntries}</span>
+        <span className="text-sm text-rdy-gray-400">
+          Total Entries: <span className="font-medium text-rdy-black" data-testid="total-pattern-entries">{stats.totalEntries}</span>
         </span>
       </div>
     </div>

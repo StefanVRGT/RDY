@@ -17,9 +17,9 @@ const viewLabels: Record<ViewMode, string> = {
 };
 
 const viewColors: Record<ViewMode, string> = {
-  admin: 'text-orange-400',
-  mentor: 'text-blue-400',
-  mentee: 'text-green-400',
+  admin: 'text-rdy-orange-500',
+  mentor: 'text-rdy-orange-500',
+  mentee: 'text-rdy-orange-500',
 };
 
 export function ViewSwitcher() {
@@ -32,20 +32,19 @@ export function ViewSwitcher() {
 
   return (
     <div className="flex items-center gap-2" data-testid="view-switcher">
-      <Eye className="h-4 w-4 text-gray-400" />
+      <Eye className="h-4 w-4 text-rdy-gray-400" />
       <Select value={currentView} onValueChange={(value) => setCurrentView(value as ViewMode)}>
         <SelectTrigger
-          className="w-[140px] border-gray-700 bg-gray-800 text-sm text-white hover:bg-gray-700"
+          className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-sm text-rdy-black hover:bg-rdy-gray-200"
           data-testid="view-switcher-trigger"
         >
           <SelectValue placeholder="Select view" />
         </SelectTrigger>
-        <SelectContent className="border-gray-700 bg-gray-800">
+        <SelectContent>
           {availableViews.map((view) => (
             <SelectItem
               key={view}
               value={view}
-              className="text-white focus:bg-gray-700 focus:text-white"
               data-testid={`view-option-${view}`}
             >
               <span className={viewColors[view]}>{viewLabels[view]}</span>

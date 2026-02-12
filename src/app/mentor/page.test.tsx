@@ -254,7 +254,7 @@ describe('MentorHomePage', () => {
       render(<MentorHomePage />);
 
       const session1 = screen.getByTestId('today-session-session-1');
-      expect(session1).toHaveClass('border-l-4', 'border-twilight-500');
+      expect(session1).toHaveClass('border-l-4', 'border-rdy-orange-500');
     });
 
     it('should show completed status for completed sessions', () => {

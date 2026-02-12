@@ -283,7 +283,7 @@ export default function MentorCalendarPage() {
             data-testid="pull-to-refresh-indicator"
           >
             <RefreshCw
-              className={`h-6 w-6 text-twilight-400 ${isRefreshing ? 'animate-spin' : ''}`}
+              className={`h-6 w-6 text-rdy-orange-500 ${isRefreshing ? 'animate-spin' : ''}`}
               style={{
                 transform: isRefreshing ? 'rotate(0deg)' : `rotate(${pullDistance * 3.6}deg)`,
                 opacity: isRefreshing ? 1 : Math.min(pullDistance / 60, 1),
@@ -296,7 +296,7 @@ export default function MentorCalendarPage() {
         <div className="mb-4 flex items-center justify-between" data-testid="calendar-header">
           <button
             onClick={goToPreviousMonth}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-white transition-colors hover:bg-gray-700"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-gray-100 text-rdy-black transition-colors hover:bg-rdy-gray-200"
             aria-label="Previous month"
             data-testid="prev-month-button"
           >
@@ -304,12 +304,12 @@ export default function MentorCalendarPage() {
           </button>
 
           <div className="text-center">
-            <h2 className="text-xl font-bold text-white" data-testid="current-month">
+            <h2 className="text-xl font-bold text-rdy-black" data-testid="current-month">
               {format(currentMonth, 'MMMM yyyy')}
             </h2>
             <button
               onClick={goToToday}
-              className="mt-1 text-sm text-twilight-400 hover:text-twilight-300"
+              className="mt-1 text-sm text-rdy-orange-500 hover:text-rdy-orange-500"
               data-testid="today-button"
             >
               Today
@@ -318,7 +318,7 @@ export default function MentorCalendarPage() {
 
           <button
             onClick={goToNextMonth}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-white transition-colors hover:bg-gray-700"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-gray-100 text-rdy-black transition-colors hover:bg-rdy-gray-200"
             aria-label="Next month"
             data-testid="next-month-button"
           >
@@ -329,7 +329,7 @@ export default function MentorCalendarPage() {
         {/* Weekday Headers */}
         <div className="mb-2 grid grid-cols-7 gap-1" data-testid="weekday-headers">
           {weekDays.map(day => (
-            <div key={day} className="py-2 text-center text-xs font-medium text-gray-400">
+            <div key={day} className="py-2 text-center text-xs font-medium text-rdy-gray-400">
               {day}
             </div>
           ))}
@@ -366,14 +366,14 @@ export default function MentorCalendarPage() {
                 onClick={() => handleDayTap(day)}
                 className={`relative flex aspect-square flex-col items-center justify-center rounded-lg p-1 transition-colors ${
                   !isCurrentMonth
-                    ? 'text-gray-600'
+                    ? 'text-rdy-gray-400'
                     : isSelected
-                      ? 'bg-twilight-600 text-white'
+                      ? 'bg-rdy-orange-500 text-white'
                       : isTodayDate
-                        ? 'bg-twilight-500/20 text-twilight-400'
+                        ? 'bg-rdy-orange-500/10 text-rdy-orange-500'
                         : hasAvailability
-                          ? 'bg-cyan-900/30 text-white hover:bg-cyan-900/50'
-                          : 'bg-gray-900 text-white hover:bg-gray-800'
+                          ? 'bg-cyan-900/30 text-rdy-black hover:bg-cyan-900/50'
+                          : 'bg-rdy-gray-100 text-rdy-black hover:bg-rdy-gray-200'
                 }`}
                 data-testid={`calendar-day-${dateKey}`}
                 data-has-sessions={daySessions.length > 0}
@@ -393,7 +393,7 @@ export default function MentorCalendarPage() {
                       <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
                     )}
                     {hasIncompleteSessions && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-twilight-400" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-rdy-orange-500" />
                     )}
                     {hasCompletedSessions && (
                       <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
@@ -408,34 +408,34 @@ export default function MentorCalendarPage() {
         {/* Loading indicator */}
         {isLoading && (
           <div className="flex items-center justify-center py-8">
-            <RefreshCw className="h-6 w-6 animate-spin text-twilight-400" />
+            <RefreshCw className="h-6 w-6 animate-spin text-rdy-orange-500" />
           </div>
         )}
 
         {/* Quick Stats */}
         <div className="mb-4 grid grid-cols-3 gap-3" data-testid="calendar-stats">
-          <div className="rounded-xl bg-gray-900 p-3">
-            <p className="text-2xl font-bold text-white">{sessions.length}</p>
-            <p className="text-xs text-gray-400">Sessions</p>
+          <div className="rounded-xl bg-rdy-gray-100 p-3">
+            <p className="text-2xl font-bold text-rdy-black">{sessions.length}</p>
+            <p className="text-xs text-rdy-gray-400">Sessions</p>
           </div>
-          <div className="rounded-xl bg-gray-900 p-3">
-            <p className="text-2xl font-bold text-white">
+          <div className="rounded-xl bg-rdy-gray-100 p-3">
+            <p className="text-2xl font-bold text-rdy-black">
               {sessions.filter(s => s.completed).length}
             </p>
-            <p className="text-xs text-gray-400">Completed</p>
+            <p className="text-xs text-rdy-gray-400">Completed</p>
           </div>
-          <div className="rounded-xl bg-gray-900 p-3">
+          <div className="rounded-xl bg-rdy-gray-100 p-3">
             <p className="text-2xl font-bold text-cyan-400">
               {(availabilityData?.slots.length ?? 0) + (availabilityData?.recurringSlots.length ?? 0)}
             </p>
-            <p className="text-xs text-gray-400">Availability</p>
+            <p className="text-xs text-rdy-gray-400">Availability</p>
           </div>
         </div>
 
         {/* Create Session Button */}
         <Button
           onClick={() => setShowCreateSession(true)}
-          className="mb-4 w-full gap-2 bg-twilight-600 text-white hover:bg-twilight-500"
+          className="mb-4 w-full gap-2 bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
           data-testid="create-session-button"
         >
           <Plus className="h-4 w-4" />
@@ -443,13 +443,13 @@ export default function MentorCalendarPage() {
         </Button>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-400">
+        <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-rdy-gray-400">
           <div className="flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-cyan-400" />
             <span>Available</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-twilight-400" />
+            <span className="h-2 w-2 rounded-full bg-rdy-orange-500" />
             <span>Scheduled</span>
           </div>
           <div className="flex items-center gap-1">
@@ -461,7 +461,7 @@ export default function MentorCalendarPage() {
 
       {/* Session List Dialog */}
       <Dialog open={showSessionList} onOpenChange={setShowSessionList}>
-        <DialogContent className="max-h-[80vh] overflow-y-auto bg-gray-900 text-white sm:max-w-md">
+        <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-md">
           <DialogHeader>
             <DialogTitle data-testid="session-list-title">
               {selectedDate ? format(selectedDate, 'EEEE, MMMM d, yyyy') : 'Sessions'}
@@ -483,11 +483,11 @@ export default function MentorCalendarPage() {
                   {selectedDateAvailability.map(slot => (
                     <div
                       key={slot.id}
-                      className="rounded-xl border-l-4 border-cyan-500 bg-gray-800 p-3"
+                      className="rounded-xl border-l-4 border-cyan-500 bg-rdy-gray-100 p-3"
                       data-testid={`availability-slot-${slot.id}`}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-sm text-white">
+                        <div className="flex items-center gap-2 text-sm text-rdy-black">
                           <Clock className="h-4 w-4 text-cyan-400" />
                           {slot.isRecurring && slot.recurringStartTime && slot.recurringEndTime ? (
                             <span>{slot.recurringStartTime} - {slot.recurringEndTime}</span>
@@ -512,7 +512,7 @@ export default function MentorCalendarPage() {
             {/* Sessions Section */}
             {selectedDateSessions.length > 0 ? (
               <div data-testid="sessions-section">
-                <h4 className="mb-2 flex items-center gap-2 text-sm font-medium text-twilight-400">
+                <h4 className="mb-2 flex items-center gap-2 text-sm font-medium text-rdy-orange-500">
                   <User className="h-4 w-4" />
                   Scheduled Sessions
                 </h4>
@@ -520,29 +520,29 @@ export default function MentorCalendarPage() {
                   {selectedDateSessions.map(session => (
                     <div
                       key={session.id}
-                      className={`rounded-xl border-l-4 bg-gray-800 p-4 ${
-                        session.completed ? 'border-green-500' : 'border-twilight-500'
+                      className={`rounded-xl border-l-4 bg-rdy-gray-100 p-4 ${
+                        session.completed ? 'border-green-500' : 'border-rdy-orange-500'
                       }`}
                       data-testid={`session-item-${session.id}`}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-gray-400" />
-                            <p className="font-medium text-white">
+                            <User className="h-4 w-4 text-rdy-gray-400" />
+                            <p className="font-medium text-rdy-black">
                               {session.mentee?.name || 'Unknown Mentee'}
                             </p>
                           </div>
-                          <div className="mt-1 flex items-center gap-2 text-sm text-gray-400">
+                          <div className="mt-1 flex items-center gap-2 text-sm text-rdy-gray-400">
                             <BookOpen className="h-3 w-3" />
                             <span>{session.className}</span>
                           </div>
-                          <div className="mt-1 flex items-center gap-2 text-sm text-gray-400">
+                          <div className="mt-1 flex items-center gap-2 text-sm text-rdy-gray-400">
                             <Clock className="h-3 w-3" />
                             <span>{formatTime(session.scheduledAt)}</span>
                           </div>
                           {session.notes && (
-                            <p className="mt-2 text-sm italic text-gray-400">{session.notes}</p>
+                            <p className="mt-2 text-sm italic text-rdy-gray-400">{session.notes}</p>
                           )}
                         </div>
                         <div className="flex flex-col items-end">
@@ -552,7 +552,7 @@ export default function MentorCalendarPage() {
                               Done
                             </span>
                           ) : (
-                            <span className="text-xs text-twilight-400">Scheduled</span>
+                            <span className="text-xs text-rdy-orange-500">Scheduled</span>
                           )}
                         </div>
                       </div>
@@ -561,7 +561,7 @@ export default function MentorCalendarPage() {
                 </div>
               </div>
             ) : selectedDateAvailability.length === 0 ? (
-              <div className="py-8 text-center text-gray-400">
+              <div className="py-8 text-center text-rdy-gray-400">
                 <p>No sessions or availability for this day</p>
                 <Button
                   onClick={() => {
@@ -569,7 +569,7 @@ export default function MentorCalendarPage() {
                     setShowCreateSession(true);
                   }}
                   variant="ghost"
-                  className="mt-2 text-twilight-400 hover:text-twilight-300"
+                  className="mt-2 text-rdy-orange-500 hover:text-rdy-orange-500"
                 >
                   <Plus className="mr-1 h-4 w-4" />
                   Add Session
@@ -583,7 +583,7 @@ export default function MentorCalendarPage() {
               setShowSessionList(false);
               setShowCreateSession(true);
             }}
-            className="mt-4 w-full gap-2 bg-twilight-600 text-white hover:bg-twilight-500"
+            className="mt-4 w-full gap-2 bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
           >
             <Plus className="h-4 w-4" />
             Add Session
@@ -593,7 +593,7 @@ export default function MentorCalendarPage() {
 
       {/* Create Session Dialog */}
       <Dialog open={showCreateSession} onOpenChange={setShowCreateSession}>
-        <DialogContent className="bg-gray-900 text-white sm:max-w-md">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Create Session</DialogTitle>
             <DialogDescription>
@@ -679,7 +679,7 @@ function CreateSessionForm({
 
       {/* Class Selection */}
       <div>
-        <label htmlFor="class-select" className="mb-1 block text-sm text-gray-400">
+        <label htmlFor="class-select" className="mb-1 block text-sm text-rdy-gray-400">
           Class
         </label>
         <select
@@ -689,7 +689,7 @@ function CreateSessionForm({
             setSelectedClassId(e.target.value);
             setSelectedUserId('');
           }}
-          className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-twilight-500 focus:outline-none focus:ring-1 focus:ring-twilight-500"
+          className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
           required
           data-testid="class-select"
         >
@@ -704,14 +704,14 @@ function CreateSessionForm({
 
       {/* Mentee Selection */}
       <div>
-        <label htmlFor="mentee-select" className="mb-1 block text-sm text-gray-400">
+        <label htmlFor="mentee-select" className="mb-1 block text-sm text-rdy-gray-400">
           Mentee
         </label>
         <select
           id="mentee-select"
           value={selectedUserId}
           onChange={e => setSelectedUserId(e.target.value)}
-          className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-twilight-500 focus:outline-none focus:ring-1 focus:ring-twilight-500 disabled:opacity-50"
+          className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500 disabled:opacity-50"
           disabled={!selectedClassId || isLoadingMembers}
           required
           data-testid="mentee-select"
@@ -729,7 +729,7 @@ function CreateSessionForm({
 
       {/* Time Selection */}
       <div>
-        <label htmlFor="session-time" className="mb-1 block text-sm text-gray-400">
+        <label htmlFor="session-time" className="mb-1 block text-sm text-rdy-gray-400">
           Time
         </label>
         <input
@@ -737,7 +737,7 @@ function CreateSessionForm({
           type="time"
           value={sessionTime}
           onChange={e => setSessionTime(e.target.value)}
-          className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-twilight-500 focus:outline-none focus:ring-1 focus:ring-twilight-500"
+          className="w-full rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
           required
           data-testid="session-time-input"
         />
@@ -745,7 +745,7 @@ function CreateSessionForm({
 
       {/* Notes */}
       <div>
-        <label htmlFor="session-notes" className="mb-1 block text-sm text-gray-400">
+        <label htmlFor="session-notes" className="mb-1 block text-sm text-rdy-gray-400">
           Notes (optional)
         </label>
         <textarea
@@ -753,7 +753,7 @@ function CreateSessionForm({
           value={notes}
           onChange={e => setNotes(e.target.value)}
           rows={3}
-          className="w-full resize-none rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-twilight-500 focus:outline-none focus:ring-1 focus:ring-twilight-500"
+          className="w-full resize-none rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-3 py-2 text-rdy-black placeholder-rdy-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
           placeholder="Add any notes for this session..."
           data-testid="session-notes-input"
         />
@@ -772,7 +772,7 @@ function CreateSessionForm({
         <Button
           type="submit"
           disabled={createSession.isPending}
-          className="flex-1 bg-twilight-600 text-white hover:bg-twilight-500"
+          className="flex-1 bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
           data-testid="submit-session-button"
         >
           {createSession.isPending ? 'Creating...' : 'Create Session'}

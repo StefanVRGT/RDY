@@ -100,14 +100,14 @@ export default function WeeklySummaryPage() {
       <div className="flex flex-col px-4 py-4" data-testid="weekly-summary-page">
         {/* Week Navigation */}
         <div
-          className="mb-4 flex items-center justify-between rounded-xl bg-gray-900 p-3"
+          className="mb-4 flex items-center justify-between rounded-xl bg-rdy-gray-100 p-3"
           data-testid="week-navigation"
         >
           <Button
             variant="ghost"
             size="sm"
             onClick={goToPreviousWeek}
-            className="h-10 w-10 p-0 text-gray-400 hover:text-white"
+            className="h-10 w-10 p-0 text-rdy-gray-400 hover:text-rdy-black"
             data-testid="prev-week-button"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -116,7 +116,7 @@ export default function WeeklySummaryPage() {
           <Button
             variant="ghost"
             onClick={() => setShowCalendar(true)}
-            className="flex items-center gap-2 text-white hover:bg-gray-800"
+            className="flex items-center gap-2 text-rdy-black hover:bg-rdy-gray-200"
             data-testid="week-selector"
           >
             <CalendarIcon className="h-4 w-4" />
@@ -129,7 +129,7 @@ export default function WeeklySummaryPage() {
             variant="ghost"
             size="sm"
             onClick={goToNextWeek}
-            className="h-10 w-10 p-0 text-gray-400 hover:text-white"
+            className="h-10 w-10 p-0 text-rdy-gray-400 hover:text-rdy-black"
             disabled={isCurrentWeek}
             data-testid="next-week-button"
           >
@@ -144,7 +144,7 @@ export default function WeeklySummaryPage() {
               variant="outline"
               size="sm"
               onClick={goToCurrentWeek}
-              className="border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700"
+              className="border-rdy-gray-200 bg-rdy-gray-100 text-rdy-gray-600 hover:bg-rdy-gray-200"
               data-testid="go-to-current-week"
             >
               Go to Current Week
@@ -155,7 +155,7 @@ export default function WeeklySummaryPage() {
             size="sm"
             onClick={() => refetchSummary()}
             disabled={isLoading}
-            className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+            className="h-8 w-8 p-0 text-rdy-gray-400 hover:text-rdy-black"
             data-testid="refresh-button"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -165,7 +165,7 @@ export default function WeeklySummaryPage() {
         {/* Loading state */}
         {isLoading && (
           <div className="flex items-center justify-center py-12" data-testid="loading-state">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-twilight-400 border-t-transparent" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-rdy-orange-500 border-t-transparent" />
           </div>
         )}
 
@@ -210,11 +210,11 @@ export default function WeeklySummaryPage() {
         {/* Empty state */}
         {!isLoading && !summaryData && (
           <div
-            className="rounded-xl bg-gray-900 p-8 text-center"
+            className="rounded-xl bg-rdy-gray-100 p-8 text-center"
             data-testid="empty-state"
           >
-            <p className="text-gray-400">No data available for this week</p>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="text-rdy-gray-400">No data available for this week</p>
+            <p className="mt-2 text-sm text-rdy-gray-500">
               Start tracking exercises, patterns, and diary entries to see your weekly summary
             </p>
           </div>
@@ -223,10 +223,10 @@ export default function WeeklySummaryPage() {
 
       {/* Calendar Dialog */}
       <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
-        <DialogContent className="bg-gray-900 text-white sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Select Week</DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-rdy-gray-400">
               Choose a date to view that week&apos;s summary
             </DialogDescription>
           </DialogHeader>
@@ -236,7 +236,7 @@ export default function WeeklySummaryPage() {
               mode="single"
               selected={selectedDate}
               onSelect={handleDateSelect}
-              className="rounded-xl border border-gray-700"
+              className="rounded-xl border border-rdy-gray-200"
               disabled={(date) => date > new Date()}
             />
           </div>
@@ -244,7 +244,7 @@ export default function WeeklySummaryPage() {
           <Button
             onClick={goToCurrentWeek}
             variant="outline"
-            className="mt-4 w-full border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700"
+            className="mt-4 w-full border-rdy-gray-200 bg-rdy-gray-100 text-rdy-gray-600 hover:bg-rdy-gray-200"
             data-testid="today-button"
           >
             Go to Current Week

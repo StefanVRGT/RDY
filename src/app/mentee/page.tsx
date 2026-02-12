@@ -19,10 +19,10 @@ export default function MenteeHomePage() {
 
   // Show a brief loading state during redirect
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-950">
+    <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="flex flex-col items-center gap-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-twilight-400 border-t-transparent" />
-        <p className="text-gray-400">Loading...</p>
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-rdy-orange-500 border-t-transparent" />
+        <p className="text-rdy-gray-400">Loading...</p>
       </div>
     </div>
   );

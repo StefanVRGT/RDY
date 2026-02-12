@@ -474,12 +474,12 @@ describe('MentorAvailabilityPage', () => {
       const sunButton = screen.getByTestId('day-sun');
 
       // Sunday is not selected by default (Mon-Fri are)
-      expect(sunButton).toHaveClass('bg-gray-800');
+      expect(sunButton).toHaveClass('bg-rdy-gray-100');
 
       // Click to select
       fireEvent.click(sunButton);
 
-      expect(sunButton).toHaveClass('bg-twilight-600');
+      expect(sunButton).toHaveClass('bg-rdy-orange-600');
     });
 
     it('should display time slot inputs', () => {

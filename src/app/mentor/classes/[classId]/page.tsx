@@ -46,9 +46,9 @@ function ProgressBar({ percentage, size = 'md' }: { percentage: number; size?: '
   const heightClass = size === 'sm' ? 'h-1.5' : size === 'lg' ? 'h-3' : 'h-2';
 
   return (
-    <div className={`w-full overflow-hidden rounded-full bg-gray-700 ${heightClass}`}>
+    <div className={`w-full overflow-hidden rounded-full bg-rdy-gray-200 ${heightClass}`}>
       <div
-        className={`${heightClass} rounded-full bg-twilight-500 transition-all duration-300`}
+        className={`${heightClass} rounded-full bg-rdy-orange-500 transition-all duration-300`}
         style={{ width: `${percentage}%` }}
         data-testid="progress-bar-fill"
       />
@@ -156,7 +156,7 @@ export default function ClassDetailPage() {
             data-testid="pull-to-refresh-indicator"
           >
             <RefreshCw
-              className={`h-6 w-6 text-twilight-400 ${isRefreshing ? 'animate-spin' : ''}`}
+              className={`h-6 w-6 text-rdy-orange-500 ${isRefreshing ? 'animate-spin' : ''}`}
               style={{
                 transform: isRefreshing ? 'rotate(0deg)' : `rotate(${pullDistance * 3.6}deg)`,
                 opacity: isRefreshing ? 1 : Math.min(pullDistance / 60, 1),
@@ -167,19 +167,19 @@ export default function ClassDetailPage() {
 
         {classLoading ? (
           <div className="flex min-h-[50vh] items-center justify-center">
-            <RefreshCw className="h-8 w-8 animate-spin text-twilight-400" />
+            <RefreshCw className="h-8 w-8 animate-spin text-rdy-orange-500" />
           </div>
         ) : classDetail ? (
           <>
             {/* Class header */}
             <div className="mb-6" data-testid="class-header">
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold text-white">{classDetail.name}</h2>
+                <h2 className="text-2xl font-bold text-rdy-black">{classDetail.name}</h2>
                 <div
                   className={`h-2 w-2 rounded-full ${classDetail.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}`}
                 />
               </div>
-              <div className="mt-2 flex items-center gap-4 text-sm text-gray-400">
+              <div className="mt-2 flex items-center gap-4 text-sm text-rdy-gray-400">
                 <span className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   {formatDate(classDetail.startDate)} - {formatDate(classDetail.endDate)}
@@ -193,31 +193,31 @@ export default function ClassDetailPage() {
 
             {/* Stats summary */}
             <div className="mb-6 grid grid-cols-2 gap-3" data-testid="class-stats">
-              <div className="rounded-xl bg-gray-900 p-4">
-                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-twilight-500/20">
-                  <TrendingUp className="h-4 w-4 text-twilight-400" />
+              <div className="rounded-xl bg-rdy-gray-100 p-4">
+                <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-rdy-orange-500/10">
+                  <TrendingUp className="h-4 w-4 text-rdy-orange-500" />
                 </div>
-                <p className="text-xl font-bold text-white">{avgProgress}%</p>
-                <p className="text-xs text-gray-400">Avg. Progress</p>
+                <p className="text-xl font-bold text-rdy-black">{avgProgress}%</p>
+                <p className="text-xs text-rdy-gray-400">Avg. Progress</p>
               </div>
-              <div className="rounded-xl bg-gray-900 p-4">
+              <div className="rounded-xl bg-rdy-gray-100 p-4">
                 <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-green-500/20">
                   <CheckCircle2 className="h-4 w-4 text-green-400" />
                 </div>
-                <p className="text-xl font-bold text-white">
+                <p className="text-xl font-bold text-rdy-black">
                   {completedSessions}/{totalSessions}
                 </p>
-                <p className="text-xs text-gray-400">Sessions</p>
+                <p className="text-xs text-rdy-gray-400">Sessions</p>
               </div>
             </div>
 
             {/* Tab navigation */}
-            <div className="mb-4 flex rounded-xl bg-gray-900 p-1" data-testid="tab-navigation">
+            <div className="mb-4 flex rounded-xl bg-rdy-gray-100 p-1" data-testid="tab-navigation">
               <button
                 className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
                   activeTab === 'mentees'
-                    ? 'bg-twilight-600 text-white'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'bg-rdy-orange-500 text-white'
+                    : 'text-rdy-gray-400 hover:text-rdy-black'
                 }`}
                 onClick={() => setActiveTab('mentees')}
                 data-testid="tab-mentees"
@@ -228,8 +228,8 @@ export default function ClassDetailPage() {
               <button
                 className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
                   activeTab === 'sessions'
-                    ? 'bg-twilight-600 text-white'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'bg-rdy-orange-500 text-white'
+                    : 'text-rdy-gray-400 hover:text-rdy-black'
                 }`}
                 onClick={() => setActiveTab('sessions')}
                 data-testid="tab-sessions"
@@ -243,7 +243,7 @@ export default function ClassDetailPage() {
             {activeTab === 'mentees' && (
               <div className="space-y-3" data-testid="enrolled-mentees-list">
                 {progressLoading ? (
-                  <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+                  <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                     Loading mentees...
                   </div>
                 ) : menteeProgress && menteeProgress.length > 0 ? (
@@ -251,32 +251,32 @@ export default function ClassDetailPage() {
                     <button
                       key={mentee.id}
                       onClick={() => handleMenteeTap(mentee.userId)}
-                      className="w-full rounded-xl bg-gray-900 p-4 text-left transition-colors hover:bg-gray-800"
+                      className="w-full rounded-xl bg-rdy-gray-100 p-4 text-left transition-colors hover:bg-rdy-gray-200"
                       data-testid={`mentee-item-${mentee.userId}`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <p className="font-medium text-white">
+                          <p className="font-medium text-rdy-black">
                             {mentee.user.name || mentee.user.email}
                           </p>
-                          <p className="text-sm text-gray-400">
+                          <p className="text-sm text-rdy-gray-400">
                             Month {mentee.currentMonth} of {mentee.totalMonths}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <span
-                            className="text-sm font-medium text-twilight-400"
+                            className="text-sm font-medium text-rdy-orange-500"
                             data-testid={`mentee-progress-${mentee.userId}`}
                           >
                             {mentee.progressPercentage}%
                           </span>
-                          <ChevronRight className="h-5 w-5 text-gray-400" />
+                          <ChevronRight className="h-5 w-5 text-rdy-gray-400" />
                         </div>
                       </div>
                       <div className="mt-3">
                         <ProgressBar percentage={mentee.progressPercentage} size="sm" />
                       </div>
-                      <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+                      <div className="mt-2 flex items-center justify-between text-xs text-rdy-gray-500">
                         <span>
                           {mentee.completedSessions}/{mentee.totalSessions} sessions
                         </span>
@@ -287,7 +287,7 @@ export default function ClassDetailPage() {
                     </button>
                   ))
                 ) : (
-                  <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+                  <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                     No mentees enrolled yet
                   </div>
                 )}
@@ -297,7 +297,7 @@ export default function ClassDetailPage() {
             {activeTab === 'sessions' && (
               <div className="space-y-3" data-testid="session-history-list">
                 {historyLoading ? (
-                  <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+                  <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                     Loading session history...
                   </div>
                 ) : sessionHistory && sessionHistory.sessions.length > 0 ? (
@@ -307,24 +307,24 @@ export default function ClassDetailPage() {
                         key={session.id}
                         className={`rounded-xl p-4 ${
                           session.completed
-                            ? 'border-l-4 border-green-500 bg-gray-900'
+                            ? 'border-l-4 border-green-500 bg-rdy-gray-100'
                             : isPast(session.scheduledAt)
-                              ? 'border-l-4 border-amber-500 bg-gray-900'
-                              : 'border-l-4 border-twilight-500 bg-gray-900'
+                              ? 'border-l-4 border-amber-500 bg-rdy-gray-100'
+                              : 'border-l-4 border-rdy-orange-500 bg-rdy-gray-100'
                         }`}
                         data-testid={`session-item-${session.id}`}
                       >
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-medium text-white">
+                            <p className="font-medium text-rdy-black">
                               {session.mentee?.name || session.mentee?.email || 'Unknown Mentee'}
                             </p>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-rdy-gray-400">
                               {session.exercise?.titleEn || session.exercise?.titleDe || 'Session'}
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm text-gray-300">
+                            <p className="text-sm text-rdy-gray-600">
                               {formatDateTime(session.scheduledAt)}
                             </p>
                             <span
@@ -332,8 +332,8 @@ export default function ClassDetailPage() {
                                 session.completed
                                   ? 'text-green-400'
                                   : isPast(session.scheduledAt)
-                                    ? 'text-amber-400'
-                                    : 'text-twilight-400'
+                                    ? 'text-rdy-orange-500'
+                                    : 'text-rdy-orange-500'
                               }`}
                             >
                               {session.completed ? (
@@ -356,13 +356,13 @@ export default function ClassDetailPage() {
                           </div>
                         </div>
                         {session.notes && (
-                          <p className="mt-2 text-sm text-gray-500">{session.notes}</p>
+                          <p className="mt-2 text-sm text-rdy-gray-500">{session.notes}</p>
                         )}
                       </div>
                     ))}
                     {sessionHistory.hasMore && (
                       <button
-                        className="w-full rounded-xl bg-gray-800 p-3 text-center text-sm text-twilight-400 transition-colors hover:bg-gray-700"
+                        className="w-full rounded-xl bg-rdy-gray-100 p-3 text-center text-sm text-rdy-orange-500 transition-colors hover:bg-rdy-gray-200"
                         data-testid="load-more-sessions"
                       >
                         Load more sessions
@@ -370,7 +370,7 @@ export default function ClassDetailPage() {
                     )}
                   </>
                 ) : (
-                  <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+                  <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                     No sessions recorded yet
                   </div>
                 )}
@@ -379,10 +379,10 @@ export default function ClassDetailPage() {
           </>
         ) : (
           <div className="flex min-h-[50vh] flex-col items-center justify-center">
-            <p className="text-gray-400">Class not found</p>
+            <p className="text-rdy-gray-400">Class not found</p>
             <Link
               href="/mentor/classes"
-              className="mt-4 text-twilight-400 hover:text-twilight-300"
+              className="mt-4 text-rdy-orange-500 hover:text-rdy-orange-500"
             >
               Back to classes
             </Link>

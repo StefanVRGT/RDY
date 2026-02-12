@@ -27,12 +27,12 @@ function ErrorContent() {
     : errorMessages.Default;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-950">
-      <div className="w-full max-w-md space-y-6 rounded-lg bg-gray-900 p-8 shadow-xl">
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="w-full max-w-md space-y-6 rounded-lg bg-rdy-gray-100 p-8 shadow-xl">
         <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-900/50">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
             <svg
-              className="h-6 w-6 text-red-400"
+              className="h-6 w-6 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -45,11 +45,11 @@ function ErrorContent() {
               />
             </svg>
           </div>
-          <h1 className="mt-4 text-2xl font-bold text-white">Authentication Error</h1>
-          <p className="mt-2 text-gray-400">{errorMessage}</p>
+          <h1 className="mt-4 text-2xl font-bold text-rdy-black">Authentication Error</h1>
+          <p className="mt-2 text-rdy-gray-400">{errorMessage}</p>
           {error && (
-            <p className="mt-1 text-sm text-gray-500">
-              Error code: <code className="rounded bg-gray-800 px-1 py-0.5">{error}</code>
+            <p className="mt-1 text-sm text-rdy-gray-500">
+              Error code: <code className="rounded bg-rdy-gray-200 px-1 py-0.5">{error}</code>
             </p>
           )}
         </div>
@@ -57,13 +57,13 @@ function ErrorContent() {
         <div className="flex flex-col gap-3">
           <Link
             href="/auth/signin"
-            className="flex w-full items-center justify-center rounded-lg bg-purple-600 px-4 py-3 text-white transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            className="flex w-full items-center justify-center rounded-lg bg-rdy-orange-500 px-4 py-3 text-white transition-colors hover:bg-rdy-orange-600 focus:outline-none focus:ring-2 focus:ring-rdy-orange-500 focus:ring-offset-2"
           >
             Try Again
           </Link>
           <Link
             href="/"
-            className="flex w-full items-center justify-center rounded-lg border border-gray-700 px-4 py-3 text-gray-300 transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            className="flex w-full items-center justify-center rounded-lg border border-rdy-gray-200 px-4 py-3 text-rdy-gray-600 transition-colors hover:bg-rdy-gray-100 focus:outline-none focus:ring-2 focus:ring-rdy-gray-400 focus:ring-offset-2"
           >
             Go Home
           </Link>
@@ -77,8 +77,8 @@ export default function ErrorPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-gray-950">
-          <div className="text-white">Loading...</div>
+        <div className="flex min-h-screen items-center justify-center bg-white">
+          <div className="text-rdy-black">Loading...</div>
         </div>
       }
     >

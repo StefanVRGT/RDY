@@ -16,12 +16,17 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
+        // RDY Design System variants
+        rdy: 'text-rdy-black text-rdy-sm uppercase tracking-wide py-4 font-medium active:opacity-60 transition-opacity bg-transparent border-none shadow-none rounded-none',
+        'rdy-primary': 'text-rdy-black text-rdy-sm uppercase tracking-wide py-4 font-medium active:opacity-60 transition-opacity bg-transparent border-none shadow-none rounded-none',
+        'rdy-orange': 'text-rdy-orange-500 text-rdy-sm uppercase tracking-wide py-4 font-medium active:opacity-60 transition-opacity bg-transparent border-none shadow-none rounded-none hover:text-rdy-orange-600',
       },
       size: {
         default: 'h-9 px-4 py-2',
         sm: 'h-8 rounded-md px-3 text-xs',
         lg: 'h-10 rounded-md px-8',
         icon: 'h-9 w-9',
+        rdy: 'h-auto px-0 py-4',
       },
     },
     defaultVariants: {

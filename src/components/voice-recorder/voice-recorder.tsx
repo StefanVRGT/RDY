@@ -65,11 +65,11 @@ export function VoiceRecorder({
     const width = canvas.width;
     const height = canvas.height;
 
-    ctx.fillStyle = 'rgb(31, 41, 55)'; // bg-gray-800
+    ctx.fillStyle = 'rgb(245, 245, 245)'; // rdy-gray-100
     ctx.fillRect(0, 0, width, height);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgb(139, 92, 246)'; // twilight-500
+    ctx.strokeStyle = 'rgb(243, 146, 55)'; // rdy-orange-500
     ctx.beginPath();
 
     const sliceWidth = width / bufferLength;
@@ -115,7 +115,7 @@ export function VoiceRecorder({
       const step = Math.ceil(channelData.length / width);
       const amp = height / 2;
 
-      ctx.fillStyle = 'rgb(31, 41, 55)'; // bg-gray-800
+      ctx.fillStyle = 'rgb(245, 245, 245)'; // rdy-gray-100
       ctx.fillRect(0, 0, width, height);
 
       ctx.beginPath();
@@ -134,9 +134,9 @@ export function VoiceRecorder({
         // Draw progress indicator
         const progressX = playbackProgress * width;
         if (i < progressX) {
-          ctx.strokeStyle = 'rgb(139, 92, 246)'; // twilight-500 (played)
+          ctx.strokeStyle = 'rgb(243, 146, 55)'; // rdy-orange-500 (played)
         } else {
-          ctx.strokeStyle = 'rgb(107, 114, 128)'; // gray-500 (not played)
+          ctx.strokeStyle = 'rgb(189, 189, 189)'; // rdy-gray-300 (not played)
         }
 
         ctx.beginPath();
@@ -344,11 +344,11 @@ export function VoiceRecorder({
   }, [audioUrl]);
 
   return (
-    <div className={cn('rounded-xl bg-gray-800 p-4', className)} data-testid="voice-recorder">
+    <div className={cn('rounded-xl bg-rdy-gray-100 p-4', className)} data-testid="voice-recorder">
       {/* Error message */}
       {error && (
         <div
-          className="mb-3 rounded-lg bg-red-900/30 p-3 text-sm text-red-400"
+          className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-500"
           data-testid="voice-recorder-error"
         >
           {error}
@@ -372,7 +372,7 @@ export function VoiceRecorder({
           <Button
             onClick={startRecording}
             disabled={disabled}
-            className="gap-2 bg-twilight-600 text-white hover:bg-twilight-500"
+            className="gap-2 bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
             data-testid="voice-record-button"
           >
             <Mic className="h-4 w-4" />
@@ -388,15 +388,15 @@ export function VoiceRecorder({
               className="h-3 w-3 animate-pulse rounded-full bg-red-500"
               data-testid="recording-indicator"
             />
-            <span className="font-mono text-white" data-testid="recording-duration">
+            <span className="font-mono text-rdy-black" data-testid="recording-duration">
               {formatDuration(recordingDuration)}
             </span>
-            <span className="text-xs text-gray-400">/ {formatDuration(maxDuration)}</span>
+            <span className="text-xs text-rdy-gray-400">/ {formatDuration(maxDuration)}</span>
           </div>
           <Button
             onClick={stopRecording}
             variant="outline"
-            className="gap-2 border-red-600 bg-red-900/30 text-red-400 hover:bg-red-900/50"
+            className="gap-2 border-red-400 bg-red-50 text-red-500 hover:bg-red-100"
             data-testid="voice-stop-button"
           >
             <Square className="h-4 w-4" />
@@ -412,14 +412,14 @@ export function VoiceRecorder({
               <Button
                 onClick={togglePlayback}
                 size="sm"
-                className="h-10 w-10 rounded-full bg-twilight-600 p-0 hover:bg-twilight-500"
+                className="h-10 w-10 rounded-full bg-rdy-orange-500 p-0 hover:bg-rdy-orange-600"
                 data-testid="voice-play-button"
               >
                 {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="ml-0.5 h-5 w-5" />}
               </Button>
               <div>
-                <p className="text-sm text-white">Voice Recording</p>
-                <p className="text-xs text-gray-400" data-testid="voice-duration">
+                <p className="text-sm text-rdy-black">Voice Recording</p>
+                <p className="text-xs text-rdy-gray-400" data-testid="voice-duration">
                   {formatDuration(recordingDuration)}
                 </p>
               </div>
@@ -429,7 +429,7 @@ export function VoiceRecorder({
                 onClick={reRecord}
                 size="sm"
                 variant="ghost"
-                className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+                className="h-8 w-8 p-0 text-rdy-gray-400 hover:text-rdy-black"
                 data-testid="voice-rerecord-button"
                 title="Re-record"
               >
@@ -439,7 +439,7 @@ export function VoiceRecorder({
                 onClick={clearRecording}
                 size="sm"
                 variant="ghost"
-                className="h-8 w-8 p-0 text-gray-400 hover:text-red-400"
+                className="h-8 w-8 p-0 text-rdy-gray-400 hover:text-red-500"
                 data-testid="voice-clear-button"
                 title="Delete recording"
               >

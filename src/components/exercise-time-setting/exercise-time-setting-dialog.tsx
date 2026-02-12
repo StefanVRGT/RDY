@@ -143,22 +143,22 @@ export function ExerciseTimeSettingDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-md bg-gray-900"
+        className="max-w-md"
         data-testid="exercise-time-setting-dialog"
       >
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-white">
-            <Clock className="h-5 w-5 text-twilight-400" />
+          <DialogTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-rdy-orange-500" />
             Set Exercise Time
           </DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             {exerciseTitle}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Date display */}
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+          <div className="flex items-center justify-center gap-2 text-sm text-rdy-gray-400">
             <Calendar className="h-4 w-4" />
             <span data-testid="selected-date">
               {format(selectedDate, 'EEEE, MMMM d, yyyy')}
@@ -174,8 +174,8 @@ export function ExerciseTimeSettingDialog({
           </div>
 
           {/* Duration picker */}
-          <div className="border-t border-gray-800 pt-4">
-            <h4 className="mb-3 text-center text-sm font-medium text-gray-400">
+          <div className="border-t border-rdy-gray-200 pt-4">
+            <h4 className="mb-3 text-center text-sm font-medium text-rdy-gray-400">
               Duration
             </h4>
             <div className="flex justify-center" data-testid="duration-picker-section">
@@ -200,10 +200,10 @@ export function ExerciseTimeSettingDialog({
                 <div className="space-y-2">
                   {conflicts.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-yellow-400">
+                      <p className="text-sm font-medium text-yellow-600">
                         Time Conflict Detected
                       </p>
-                      <ul className="mt-1 text-sm text-yellow-300/80">
+                      <ul className="mt-1 text-sm text-yellow-600/80">
                         {conflicts.map((conflict) => (
                           <li key={conflict.id}>
                             {conflict.label} ({format(conflict.startTime, 'h:mm a')} -{' '}
@@ -214,7 +214,7 @@ export function ExerciseTimeSettingDialog({
                     </div>
                   )}
                   {!withinAvailability && (
-                    <p className="text-sm text-yellow-300/80">
+                    <p className="text-sm text-yellow-600/80">
                       This time is outside your mentor&apos;s available hours.
                     </p>
                   )}
@@ -224,12 +224,12 @@ export function ExerciseTimeSettingDialog({
           )}
 
           {/* Time summary */}
-          <div className="rounded-lg bg-gray-800 p-4 text-center">
-            <p className="text-sm text-gray-400">Scheduled for</p>
-            <p className="text-2xl font-bold text-white" data-testid="time-summary">
+          <div className="rounded-lg bg-rdy-gray-100 p-4 text-center">
+            <p className="text-sm text-rdy-gray-400">Scheduled for</p>
+            <p className="text-2xl font-bold text-rdy-black" data-testid="time-summary">
               {format(proposedTime, 'h:mm a')}
             </p>
-            <p className="text-sm text-gray-400" data-testid="duration-summary">
+            <p className="text-sm text-rdy-gray-400" data-testid="duration-summary">
               {selectedDuration} minutes
             </p>
           </div>
@@ -373,15 +373,15 @@ export function BulkTimeSettingDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-md bg-gray-900"
+        className="max-w-md"
         data-testid="bulk-time-setting-dialog"
       >
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-white">
-            <Zap className="h-5 w-5 text-twilight-400" />
+          <DialogTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-rdy-orange-500" />
             Bulk Set Time
           </DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Set the same time for exercises on selected days
           </DialogDescription>
         </DialogHeader>
@@ -389,7 +389,7 @@ export function BulkTimeSettingDialog({
         <div className="space-y-6 py-4">
           {/* Day selection */}
           <div>
-            <h4 className="mb-3 text-sm font-medium text-gray-400">
+            <h4 className="mb-3 text-sm font-medium text-rdy-gray-400">
               Apply to days
             </h4>
             <div
@@ -404,8 +404,8 @@ export function BulkTimeSettingDialog({
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-colors',
                     selectedDays.includes(day.index)
-                      ? 'bg-twilight-600 text-white'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                      ? 'bg-rdy-orange-500 text-white'
+                      : 'bg-rdy-gray-100 text-rdy-gray-400 hover:bg-rdy-gray-200'
                   )}
                   title={day.fullLabel}
                   data-testid={`day-toggle-${day.index}`}
@@ -417,8 +417,8 @@ export function BulkTimeSettingDialog({
           </div>
 
           {/* Time picker */}
-          <div className="border-t border-gray-800 pt-4">
-            <h4 className="mb-3 text-center text-sm font-medium text-gray-400">
+          <div className="border-t border-rdy-gray-200 pt-4">
+            <h4 className="mb-3 text-center text-sm font-medium text-rdy-gray-400">
               Set Time
             </h4>
             <div className="flex justify-center" data-testid="bulk-time-picker">
@@ -438,10 +438,10 @@ export function BulkTimeSettingDialog({
               <div className="flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 flex-shrink-0 text-yellow-500" />
                 <div>
-                  <p className="text-sm font-medium text-yellow-400">
+                  <p className="text-sm font-medium text-yellow-600">
                     Conflicts on some days
                   </p>
-                  <ul className="mt-1 text-sm text-yellow-300/80">
+                  <ul className="mt-1 text-sm text-yellow-600/80">
                     {Object.entries(allConflicts).map(([dayIndex, conflicts]) => (
                       <li key={dayIndex}>
                         {days[Number(dayIndex)].fullLabel}: {conflicts.length} conflict(s)
@@ -454,17 +454,17 @@ export function BulkTimeSettingDialog({
           )}
 
           {/* Summary */}
-          <div className="rounded-lg bg-gray-800 p-4 text-center">
-            <p className="text-sm text-gray-400">
-              Will update <span className="font-bold text-white">{affectedExerciseCount}</span> exercise(s)
+          <div className="rounded-lg bg-rdy-gray-100 p-4 text-center">
+            <p className="text-sm text-rdy-gray-400">
+              Will update <span className="font-bold text-rdy-black">{affectedExerciseCount}</span> exercise(s)
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-rdy-gray-400">
               on{' '}
-              <span className="font-bold text-white">
+              <span className="font-bold text-rdy-black">
                 {selectedDays.length} day(s)
               </span>
             </p>
-            <p className="mt-2 text-lg font-bold text-white" data-testid="bulk-time-summary">
+            <p className="mt-2 text-lg font-bold text-rdy-black" data-testid="bulk-time-summary">
               {format(
                 parse(selectedTime, 'HH:mm', new Date()),
                 'h:mm a'

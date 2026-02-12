@@ -559,10 +559,10 @@ describe('S8.3 - Voice Recording Component', () => {
       expect(screen.getByTestId('voice-recorder')).toHaveClass('custom-class');
     });
 
-    it('has proper styling for dark theme', () => {
+    it('has proper styling for light theme', () => {
       render(<VoiceRecorder />);
 
-      expect(screen.getByTestId('voice-recorder')).toHaveClass('bg-gray-800');
+      expect(screen.getByTestId('voice-recorder')).toHaveClass('bg-rdy-gray-200');
     });
 
     it('buttons have proper accessibility attributes', () => {

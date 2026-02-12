@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -83,7 +83,7 @@ export function TenantManagement() {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading tenants: {error.message}
       </div>
     );
@@ -101,7 +101,7 @@ export function TenantManagement() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="max-w-sm border-gray-700 bg-gray-900 text-white placeholder:text-gray-500"
+            className="max-w-sm border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black placeholder:text-rdy-gray-500"
           />
         </div>
         <Select
@@ -111,46 +111,46 @@ export function TenantManagement() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+          <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="border-gray-700 bg-gray-900">
-            <SelectItem value="all" className="text-white">
+          <SelectContent className="border-rdy-gray-200 bg-white">
+            <SelectItem value="all" className="text-rdy-black">
               All Status
             </SelectItem>
-            <SelectItem value="active" className="text-white">
+            <SelectItem value="active" className="text-rdy-black">
               Active
             </SelectItem>
-            <SelectItem value="disabled" className="text-white">
+            <SelectItem value="disabled" className="text-rdy-black">
               Disabled
             </SelectItem>
           </SelectContent>
         </Select>
         <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-          <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+          <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent className="border-gray-700 bg-gray-900">
-            <SelectItem value="createdAt" className="text-white">
+          <SelectContent className="border-rdy-gray-200 bg-white">
+            <SelectItem value="createdAt" className="text-rdy-black">
               Created
             </SelectItem>
-            <SelectItem value="name" className="text-white">
+            <SelectItem value="name" className="text-rdy-black">
               Name
             </SelectItem>
-            <SelectItem value="status" className="text-white">
+            <SelectItem value="status" className="text-rdy-black">
               Status
             </SelectItem>
           </SelectContent>
         </Select>
         <Select value={sortOrder} onValueChange={(value: SortOrder) => setSortOrder(value)}>
-          <SelectTrigger className="w-[100px] border-gray-700 bg-gray-900 text-white">
+          <SelectTrigger className="w-[100px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Order" />
           </SelectTrigger>
-          <SelectContent className="border-gray-700 bg-gray-900">
-            <SelectItem value="desc" className="text-white">
+          <SelectContent className="border-rdy-gray-200 bg-white">
+            <SelectItem value="desc" className="text-rdy-black">
               Desc
             </SelectItem>
-            <SelectItem value="asc" className="text-white">
+            <SelectItem value="asc" className="text-rdy-black">
               Asc
             </SelectItem>
           </SelectContent>
@@ -159,54 +159,54 @@ export function TenantManagement() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900">
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="text-gray-400">Name</TableHead>
-              <TableHead className="text-gray-400">Slug</TableHead>
-              <TableHead className="text-gray-400">Status</TableHead>
-              <TableHead className="text-gray-400">Created</TableHead>
-              <TableHead className="text-right text-gray-400">Actions</TableHead>
+            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+              <TableHead className="text-rdy-gray-400">Name</TableHead>
+              <TableHead className="text-rdy-gray-400">Slug</TableHead>
+              <TableHead className="text-rdy-gray-400">Status</TableHead>
+              <TableHead className="text-rdy-gray-400">Created</TableHead>
+              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={5} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={5} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !data?.tenants?.length ? (
               <TableRow>
-                <TableCell colSpan={5} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={5} className="py-8 text-center text-rdy-gray-400">
                   No tenants found
                 </TableCell>
               </TableRow>
             ) : (
               data.tenants.map((tenant) => (
-                <TableRow key={tenant.id} className="border-gray-800">
-                  <TableCell className="font-medium text-white">{tenant.name}</TableCell>
-                  <TableCell className="font-mono text-sm text-gray-400">{tenant.slug}</TableCell>
+                <TableRow key={tenant.id} className="border-rdy-gray-200">
+                  <TableCell className="font-medium text-rdy-black">{tenant.name}</TableCell>
+                  <TableCell className="font-mono text-sm text-rdy-gray-400">{tenant.slug}</TableCell>
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                         tenant.status === 'active'
-                          ? 'bg-green-900/30 text-green-400'
-                          : 'bg-red-900/30 text-red-400'
+                          ? 'bg-green-50 text-green-600'
+                          : 'bg-red-50 text-red-500'
                       }`}
                     >
                       {tenant.status}
                     </span>
                   </TableCell>
-                  <TableCell className="text-gray-400">{formatDate(tenant.createdAt)}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{formatDate(tenant.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setViewingStats(tenant.id)}
-                        className="text-gray-400 hover:text-white"
+                        className="text-rdy-gray-400 hover:text-rdy-black"
                       >
                         Stats
                       </Button>
@@ -214,7 +214,7 @@ export function TenantManagement() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingTenant(tenant.id)}
-                        className="text-gray-400 hover:text-white"
+                        className="text-rdy-gray-400 hover:text-rdy-black"
                       >
                         Edit
                       </Button>
@@ -252,7 +252,7 @@ export function TenantManagement() {
       {/* Pagination */}
       {data?.pagination && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
             {data.pagination.total} tenants
           </p>
@@ -262,7 +262,7 @@ export function TenantManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Previous
             </Button>
@@ -271,7 +271,7 @@ export function TenantManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
               disabled={page === data.pagination.totalPages}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Next
             </Button>

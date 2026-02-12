@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -48,7 +48,7 @@ export function ClassMembersTab({ classId }: ClassMembersTabProps) {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading members: {error.message}
       </div>
     );
@@ -57,57 +57,57 @@ export function ClassMembersTab({ classId }: ClassMembersTabProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium text-white">Class Members</h3>
+        <h3 className="text-lg font-medium text-rdy-black">Class Members</h3>
         <Button onClick={() => setShowAddDialog(true)}>Add Member</Button>
       </div>
 
-      <div className="rounded-lg border border-gray-800 bg-gray-900">
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="text-gray-400">Name</TableHead>
-              <TableHead className="text-gray-400">Email</TableHead>
-              <TableHead className="text-gray-400">Enrolled</TableHead>
-              <TableHead className="text-gray-400">Payment</TableHead>
-              <TableHead className="text-gray-400">Amount</TableHead>
-              <TableHead className="text-gray-400">Due Date</TableHead>
-              <TableHead className="text-right text-gray-400">Actions</TableHead>
+            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+              <TableHead className="text-rdy-gray-400">Name</TableHead>
+              <TableHead className="text-rdy-gray-400">Email</TableHead>
+              <TableHead className="text-rdy-gray-400">Enrolled</TableHead>
+              <TableHead className="text-rdy-gray-400">Payment</TableHead>
+              <TableHead className="text-rdy-gray-400">Amount</TableHead>
+              <TableHead className="text-rdy-gray-400">Due Date</TableHead>
+              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !members?.length ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
                   No members yet. Click &quot;Add Member&quot; to enroll students.
                 </TableCell>
               </TableRow>
             ) : (
               members.map((member) => (
-                <TableRow key={member.id} className="border-gray-800">
-                  <TableCell className="font-medium text-white">
+                <TableRow key={member.id} className="border-rdy-gray-200">
+                  <TableCell className="font-medium text-rdy-black">
                     {member.user.name || '-'}
                   </TableCell>
-                  <TableCell className="text-gray-400">{member.user.email}</TableCell>
-                  <TableCell className="text-gray-400">{formatDate(member.enrolledAt)}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{member.user.email}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{formatDate(member.enrolledAt)}</TableCell>
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                         member.paid
-                          ? 'bg-green-900/30 text-green-400'
-                          : 'bg-yellow-900/30 text-yellow-400'
+                          ? 'bg-green-50 text-green-600'
+                          : 'bg-yellow-50 text-yellow-600'
                       }`}
                     >
                       {member.paid ? 'Paid' : 'Pending'}
                     </span>
                   </TableCell>
-                  <TableCell className="text-gray-400">{formatCurrency(member.amount)}</TableCell>
-                  <TableCell className="text-gray-400">{formatDate(member.dueDate)}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{formatCurrency(member.amount)}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{formatDate(member.dueDate)}</TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"

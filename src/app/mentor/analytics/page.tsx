@@ -53,7 +53,7 @@ function ProgressBar({ value, className = '' }: { value: number; className?: str
   const color = value >= 70 ? 'bg-green-500' : value >= 40 ? 'bg-yellow-500' : 'bg-red-500';
 
   return (
-    <div className={`h-2 w-full overflow-hidden rounded-full bg-gray-700 ${className}`}>
+    <div className={`h-2 w-full overflow-hidden rounded-full bg-rdy-gray-200 ${className}`}>
       <div
         className={`h-full transition-all duration-300 ${color}`}
         style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
@@ -67,7 +67,7 @@ function PriorityBadge({ priority }: { priority: 'high' | 'medium' | 'low' }) {
   const colors = {
     high: 'bg-red-500/20 text-red-400',
     medium: 'bg-yellow-500/20 text-yellow-400',
-    low: 'bg-blue-500/20 text-blue-400',
+    low: 'bg-blue-500/20 text-rdy-orange-500',
   };
 
   return (
@@ -120,53 +120,53 @@ export default function MentorAnalyticsPage() {
       <div className="px-4 py-6" data-testid="mentor-analytics-page">
         {/* Overview Stats */}
         <div className="mb-6">
-          <h2 className="mb-4 text-lg font-semibold text-white">Overview</h2>
+          <h2 className="mb-4 text-lg font-semibold text-rdy-black">Overview</h2>
           <div className="grid grid-cols-2 gap-4" data-testid="overview-stats">
-            <div className="rounded-xl bg-gray-900 p-4" data-testid="stat-completion-rate">
-              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-twilight-500/20">
-                <TrendingUp className="h-5 w-5 text-twilight-400" />
+            <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="stat-completion-rate">
+              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-rdy-orange-500/10">
+                <TrendingUp className="h-5 w-5 text-rdy-orange-500" />
               </div>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold text-rdy-black">
                 {overviewLoading ? '-' : `${overview?.overallCompletionRate ?? 0}%`}
               </p>
-              <p className="text-sm text-gray-400">Completion Rate</p>
+              <p className="text-sm text-rdy-gray-400">Completion Rate</p>
             </div>
 
-            <div className="rounded-xl bg-gray-900 p-4" data-testid="stat-mood-score">
+            <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="stat-mood-score">
               <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/20">
                 <Activity className="h-5 w-5 text-cyan-400" />
               </div>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold text-rdy-black">
                 {overviewLoading ? '-' : overview?.overallMoodScore ?? 50}
               </p>
-              <p className="text-sm text-gray-400">Mood Score</p>
+              <p className="text-sm text-rdy-gray-400">Mood Score</p>
             </div>
 
-            <div className="rounded-xl bg-gray-900 p-4" data-testid="stat-total-mentees">
+            <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="stat-total-mentees">
               <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/20">
                 <Users className="h-5 w-5 text-green-400" />
               </div>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold text-rdy-black">
                 {overviewLoading ? '-' : overview?.totalMentees ?? 0}
               </p>
-              <p className="text-sm text-gray-400">Total Mentees</p>
+              <p className="text-sm text-rdy-gray-400">Total Mentees</p>
             </div>
 
-            <div className="rounded-xl bg-gray-900 p-4" data-testid="stat-needs-attention">
-              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/20">
-                <AlertTriangle className="h-5 w-5 text-amber-400" />
+            <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="stat-needs-attention">
+              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-rdy-orange-500/10">
+                <AlertTriangle className="h-5 w-5 text-rdy-orange-500" />
               </div>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold text-rdy-black">
                 {overviewLoading ? '-' : overview?.menteesNeedingAttentionCount ?? 0}
               </p>
-              <p className="text-sm text-gray-400">Need Attention</p>
+              <p className="text-sm text-rdy-gray-400">Need Attention</p>
             </div>
           </div>
         </div>
 
         {/* Tabs for detailed views */}
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-          <TabsList className="mb-4 grid w-full grid-cols-4 bg-gray-800">
+          <TabsList className="mb-4 grid w-full grid-cols-4 bg-rdy-gray-100">
             <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
             <TabsTrigger value="classes" className="text-xs">Classes</TabsTrigger>
             <TabsTrigger value="mentees" className="text-xs">Mentees</TabsTrigger>
@@ -178,43 +178,43 @@ export default function MentorAnalyticsPage() {
             <div className="space-y-4">
               {/* Top/Lowest Performing Classes */}
               {overview?.topPerformingClass && (
-                <div className="rounded-xl bg-gray-900 p-4" data-testid="top-performing-class">
+                <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="top-performing-class">
                   <div className="mb-2 flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-green-400" />
-                    <span className="text-sm text-gray-400">Top Performing</span>
+                    <span className="text-sm text-rdy-gray-400">Top Performing</span>
                   </div>
-                  <p className="font-medium text-white">{overview.topPerformingClass.name}</p>
+                  <p className="font-medium text-rdy-black">{overview.topPerformingClass.name}</p>
                   <p className="text-sm text-green-400">{overview.topPerformingClass.completionRate}% completion</p>
                 </div>
               )}
 
               {overview?.lowestPerformingClass && (
-                <div className="rounded-xl bg-gray-900 p-4" data-testid="lowest-performing-class">
+                <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="lowest-performing-class">
                   <div className="mb-2 flex items-center gap-2">
                     <TrendingDown className="h-4 w-4 text-red-400" />
-                    <span className="text-sm text-gray-400">Needs Attention</span>
+                    <span className="text-sm text-rdy-gray-400">Needs Attention</span>
                   </div>
-                  <p className="font-medium text-white">{overview.lowestPerformingClass.name}</p>
+                  <p className="font-medium text-rdy-black">{overview.lowestPerformingClass.name}</p>
                   <p className="text-sm text-red-400">{overview.lowestPerformingClass.completionRate}% completion</p>
                 </div>
               )}
 
               {/* Mentees Needing Attention Summary */}
-              <div className="rounded-xl bg-gray-900 p-4" data-testid="attention-summary">
-                <h3 className="mb-3 font-semibold text-white">Attention Required</h3>
+              <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="attention-summary">
+                <h3 className="mb-3 font-semibold text-rdy-black">Attention Required</h3>
                 {attentionLoading ? (
-                  <p className="text-gray-400">Loading...</p>
+                  <p className="text-rdy-gray-400">Loading...</p>
                 ) : attentionData?.menteesNeedingAttention && attentionData.menteesNeedingAttention.length > 0 ? (
                   <div className="space-y-3">
                     {attentionData.menteesNeedingAttention.slice(0, 3).map((mentee) => (
                       <div
                         key={mentee.id}
-                        className="flex items-center justify-between rounded-lg bg-gray-800 p-3"
+                        className="flex items-center justify-between rounded-lg bg-rdy-gray-100 p-3"
                         data-testid={`attention-mentee-${mentee.userId}`}
                       >
                         <div>
-                          <p className="font-medium text-white">{mentee.user.name || mentee.user.email}</p>
-                          <p className="text-xs text-gray-400">{mentee.reasons.slice(0, 2).join(' / ')}</p>
+                          <p className="font-medium text-rdy-black">{mentee.user.name || mentee.user.email}</p>
+                          <p className="text-xs text-rdy-gray-400">{mentee.reasons.slice(0, 2).join(' / ')}</p>
                         </div>
                         <PriorityBadge priority={mentee.priority as 'high' | 'medium' | 'low'} />
                       </div>
@@ -222,14 +222,14 @@ export default function MentorAnalyticsPage() {
                     {attentionData.menteesNeedingAttention.length > 3 && (
                       <button
                         onClick={() => setSelectedTab('mentees')}
-                        className="w-full rounded-lg bg-gray-800 p-2 text-center text-sm text-twilight-400 hover:bg-gray-700"
+                        className="w-full rounded-lg bg-rdy-gray-100 p-2 text-center text-sm text-rdy-orange-500 hover:bg-rdy-gray-200"
                       >
                         View all {attentionData.menteesNeedingAttention.length} mentees
                       </button>
                     )}
                   </div>
                 ) : (
-                  <p className="text-gray-400">All mentees are on track!</p>
+                  <p className="text-rdy-gray-400">All mentees are on track!</p>
                 )}
               </div>
             </div>
@@ -239,14 +239,14 @@ export default function MentorAnalyticsPage() {
           <TabsContent value="classes">
             <div className="space-y-4" data-testid="class-completion-list">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-semibold text-white">Class Completion Rates</h3>
-                <span className="text-sm text-gray-400">
+                <h3 className="font-semibold text-rdy-black">Class Completion Rates</h3>
+                <span className="text-sm text-rdy-gray-400">
                   Overall: {classCompletionData?.overallCompletionRate ?? 0}%
                 </span>
               </div>
 
               {classCompletionLoading ? (
-                <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+                <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                   Loading classes...
                 </div>
               ) : classCompletionData?.classes && classCompletionData.classes.length > 0 ? (
@@ -254,30 +254,30 @@ export default function MentorAnalyticsPage() {
                   <Link
                     key={cls.id}
                     href={`/mentor/classes/${cls.id}`}
-                    className="block rounded-xl bg-gray-900 p-4 transition-colors hover:bg-gray-800"
+                    className="block rounded-xl bg-rdy-gray-100 p-4 transition-colors hover:bg-rdy-gray-200"
                     data-testid={`class-completion-${cls.id}`}
                   >
                     <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4 text-twilight-400" />
-                        <span className="font-medium text-white">{cls.name}</span>
+                        <BookOpen className="h-4 w-4 text-rdy-orange-500" />
+                        <span className="font-medium text-rdy-black">{cls.name}</span>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                      <ChevronRight className="h-4 w-4 text-rdy-gray-400" />
                     </div>
                     <div className="mb-2 flex items-center justify-between text-sm">
-                      <span className="text-gray-400">{cls.memberCount} mentees</span>
+                      <span className="text-rdy-gray-400">{cls.memberCount} mentees</span>
                       <span className={cls.completionRate >= 70 ? 'text-green-400' : cls.completionRate >= 40 ? 'text-yellow-400' : 'text-red-400'}>
                         {cls.completionRate}%
                       </span>
                     </div>
                     <ProgressBar value={cls.completionRate} />
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 text-xs text-rdy-gray-500">
                       {cls.completedExercises} / {cls.totalExercises} exercises completed
                     </div>
                   </Link>
                 ))
               ) : (
-                <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+                <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                   No classes found
                 </div>
               )}
@@ -288,14 +288,14 @@ export default function MentorAnalyticsPage() {
           <TabsContent value="mentees">
             <div className="space-y-4" data-testid="mentee-progress-list">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-semibold text-white">Individual Progress</h3>
-                <span className="text-sm text-gray-400">
+                <h3 className="font-semibold text-rdy-black">Individual Progress</h3>
+                <span className="text-sm text-rdy-gray-400">
                   Avg: {menteeProgressData?.averageCompletionRate ?? 0}%
                 </span>
               </div>
 
               {menteeProgressLoading ? (
-                <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+                <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                   Loading mentees...
                 </div>
               ) : menteeProgressData?.mentees && menteeProgressData.mentees.length > 0 ? (
@@ -307,27 +307,27 @@ export default function MentorAnalyticsPage() {
                   return (
                     <div
                       key={mentee.id}
-                      className="rounded-xl bg-gray-900 p-4"
+                      className="rounded-xl bg-rdy-gray-100 p-4"
                       data-testid={`mentee-progress-${mentee.userId}`}
                     >
                       <div className="mb-2 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Users className="h-4 w-4 text-cyan-400" />
-                          <span className="font-medium text-white">{mentee.user.name || mentee.user.email}</span>
+                          <span className="font-medium text-rdy-black">{mentee.user.name || mentee.user.email}</span>
                         </div>
                         {needsAttention && (
                           <PriorityBadge priority={needsAttention.priority as 'high' | 'medium' | 'low'} />
                         )}
                       </div>
-                      <p className="mb-2 text-sm text-gray-400">{mentee.className}</p>
+                      <p className="mb-2 text-sm text-rdy-gray-400">{mentee.className}</p>
                       <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="text-gray-400">Progress</span>
+                        <span className="text-rdy-gray-400">Progress</span>
                         <span className={mentee.completionRate >= 70 ? 'text-green-400' : mentee.completionRate >= 40 ? 'text-yellow-400' : 'text-red-400'}>
                           {mentee.completionRate}%
                         </span>
                       </div>
                       <ProgressBar value={mentee.completionRate} />
-                      <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+                      <div className="mt-2 flex items-center justify-between text-xs text-rdy-gray-500">
                         <span>{mentee.completedExercises} / {mentee.totalExercises} exercises</span>
                         {mentee.lastActivity && (
                           <span className="flex items-center gap-1">
@@ -338,7 +338,7 @@ export default function MentorAnalyticsPage() {
                       </div>
                       {needsAttention && needsAttention.reasons.length > 0 && (
                         <div className="mt-2 rounded-lg bg-amber-500/10 p-2">
-                          <p className="text-xs text-amber-400">
+                          <p className="text-xs text-rdy-orange-500">
                             {needsAttention.reasons.join(' / ')}
                           </p>
                         </div>
@@ -347,7 +347,7 @@ export default function MentorAnalyticsPage() {
                   );
                 })
               ) : (
-                <div className="rounded-xl bg-gray-900 p-4 text-center text-gray-400">
+                <div className="rounded-xl bg-rdy-gray-100 p-4 text-center text-rdy-gray-400">
                   No mentees found
                 </div>
               )}
@@ -358,14 +358,14 @@ export default function MentorAnalyticsPage() {
           <TabsContent value="mood">
             <div className="space-y-4" data-testid="mood-trends">
               {/* Overall Mood Score */}
-              <div className="rounded-xl bg-gray-900 p-4" data-testid="overall-mood">
+              <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="overall-mood">
                 <div className="mb-3 flex items-center justify-between">
-                  <h3 className="font-semibold text-white">Overall Mood Score</h3>
+                  <h3 className="font-semibold text-rdy-black">Overall Mood Score</h3>
                   <MoodIndicator score={moodTrendsData?.overallMoodScore ?? 50} />
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
-                    <div className="relative h-4 overflow-hidden rounded-full bg-gray-700">
+                    <div className="relative h-4 overflow-hidden rounded-full bg-rdy-gray-200">
                       <div
                         className="absolute left-0 h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"
                         style={{ width: '100%' }}
@@ -375,54 +375,54 @@ export default function MentorAnalyticsPage() {
                         style={{ left: `${moodTrendsData?.overallMoodScore ?? 50}%` }}
                       />
                     </div>
-                    <div className="mt-1 flex justify-between text-xs text-gray-500">
+                    <div className="mt-1 flex justify-between text-xs text-rdy-gray-500">
                       <span>Low</span>
                       <span>Moderate</span>
                       <span>Good</span>
                     </div>
                   </div>
-                  <span className="text-3xl font-bold text-white">
+                  <span className="text-3xl font-bold text-rdy-black">
                     {moodTrendsLoading ? '-' : moodTrendsData?.overallMoodScore ?? 50}
                   </span>
                 </div>
               </div>
 
               {/* Class Mood Breakdown */}
-              <div className="rounded-xl bg-gray-900 p-4" data-testid="class-mood-breakdown">
-                <h3 className="mb-3 font-semibold text-white">Class Mood Breakdown</h3>
+              <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="class-mood-breakdown">
+                <h3 className="mb-3 font-semibold text-rdy-black">Class Mood Breakdown</h3>
                 {moodTrendsLoading ? (
-                  <p className="text-gray-400">Loading...</p>
+                  <p className="text-rdy-gray-400">Loading...</p>
                 ) : moodTrendsData?.classTrends && moodTrendsData.classTrends.length > 0 ? (
                   <div className="space-y-3">
                     {moodTrendsData.classTrends.map((cls) => (
                       <div
                         key={cls.classId}
-                        className="flex items-center justify-between rounded-lg bg-gray-800 p-3"
+                        className="flex items-center justify-between rounded-lg bg-rdy-gray-100 p-3"
                         data-testid={`class-mood-${cls.classId}`}
                       >
                         <div>
-                          <p className="font-medium text-white">{cls.className}</p>
-                          <p className="text-xs text-gray-400">{cls.participantCount} participants</p>
+                          <p className="font-medium text-rdy-black">{cls.className}</p>
+                          <p className="text-xs text-rdy-gray-400">{cls.participantCount} participants</p>
                         </div>
                         <div className="text-right">
                           <p className={`text-lg font-bold ${cls.moodScore >= 60 ? 'text-green-400' : cls.moodScore >= 40 ? 'text-yellow-400' : 'text-red-400'}`}>
                             {cls.moodScore}
                           </p>
-                          <p className="text-xs text-gray-500">{cls.totalEntries} entries</p>
+                          <p className="text-xs text-rdy-gray-500">{cls.totalEntries} entries</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-400">No mood data available</p>
+                  <p className="text-rdy-gray-400">No mood data available</p>
                 )}
               </div>
 
               {/* Pattern Distribution */}
-              <div className="rounded-xl bg-gray-900 p-4" data-testid="pattern-distribution">
-                <h3 className="mb-3 font-semibold text-white">Pattern Distribution</h3>
+              <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="pattern-distribution">
+                <h3 className="mb-3 font-semibold text-rdy-black">Pattern Distribution</h3>
                 {moodTrendsLoading ? (
-                  <p className="text-gray-400">Loading...</p>
+                  <p className="text-rdy-gray-400">Loading...</p>
                 ) : patternDistribution.length > 0 ? (
                   <div className="space-y-3">
                     {patternDistribution.map((pattern) => {
@@ -432,12 +432,12 @@ export default function MentorAnalyticsPage() {
                       return (
                         <div key={pattern.type} data-testid={`pattern-${pattern.type}`}>
                           <div className="mb-1 flex items-center justify-between text-sm">
-                            <span className="text-gray-300">{pattern.label}</span>
-                            <span className="text-gray-400">
+                            <span className="text-rdy-gray-600">{pattern.label}</span>
+                            <span className="text-rdy-gray-400">
                               {pattern.strong} strong / {pattern.weak} weak / {pattern.none} none
                             </span>
                           </div>
-                          <div className="flex h-2 overflow-hidden rounded-full bg-gray-700">
+                          <div className="flex h-2 overflow-hidden rounded-full bg-rdy-gray-200">
                             {pattern.total > 0 && (
                               <>
                                 <div
@@ -456,14 +456,14 @@ export default function MentorAnalyticsPage() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-gray-400">No pattern data available</p>
+                  <p className="text-rdy-gray-400">No pattern data available</p>
                 )}
               </div>
 
               {/* Daily Trends */}
               {moodTrendsData?.dailyTrends && moodTrendsData.dailyTrends.length > 0 && (
-                <div className="rounded-xl bg-gray-900 p-4" data-testid="daily-trends">
-                  <h3 className="mb-3 font-semibold text-white">Daily Mood Trends</h3>
+                <div className="rounded-xl bg-rdy-gray-100 p-4" data-testid="daily-trends">
+                  <h3 className="mb-3 font-semibold text-rdy-black">Daily Mood Trends</h3>
                   <div className="flex items-end justify-between gap-1">
                     {moodTrendsData.dailyTrends.slice(-14).map((day) => {
                       const height = Math.max(10, (day.moodScore / 100) * 60);
@@ -476,14 +476,14 @@ export default function MentorAnalyticsPage() {
                             style={{ height: `${height}px` }}
                             title={`${day.date}: ${day.moodScore}`}
                           />
-                          <span className="mt-1 text-[8px] text-gray-500">
+                          <span className="mt-1 text-[8px] text-rdy-gray-500">
                             {new Date(day.date).getDate()}
                           </span>
                         </div>
                       );
                     })}
                   </div>
-                  <p className="mt-2 text-center text-xs text-gray-500">Last 14 days</p>
+                  <p className="mt-2 text-center text-xs text-rdy-gray-500">Last 14 days</p>
                 </div>
               )}
             </div>

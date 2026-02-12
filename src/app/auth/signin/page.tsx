@@ -14,16 +14,20 @@ function SignInContent() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-950">
-      <div className="w-full max-w-md space-y-8 rounded-lg bg-gray-900 p-8 shadow-xl">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-white">RDY</h1>
-          <p className="mt-2 text-gray-400">Sign in to continue</p>
+    <div className="flex min-h-screen items-center justify-center bg-rdy-white">
+      <div className="rdy-content-width px-rdy-lg text-center space-y-rdy-2xl">
+        {/* RDY Logo */}
+        <div className="space-y-rdy-md">
+          <h1 className="text-[60px] font-bold text-rdy-black tracking-wider">
+            RDY
+          </h1>
+          <p className="rdy-subtitle">SIGN IN TO CONTINUE</p>
         </div>
 
+        {/* Error Message */}
         {error && (
-          <div className="rounded-md bg-red-900/50 p-4">
-            <p className="text-sm text-red-300">
+          <div className="bg-rdy-error/10 rounded-lg p-rdy-md">
+            <p className="text-rdy-sm text-rdy-error">
               {error === 'OAuthSignin' && 'Error starting the sign in process.'}
               {error === 'OAuthCallback' && 'Error during the OAuth callback.'}
               {error === 'OAuthCreateAccount' && 'Error creating user account.'}
@@ -46,20 +50,20 @@ function SignInContent() {
           </div>
         )}
 
-        <button
-          onClick={handleSignIn}
-          className="flex w-full items-center justify-center gap-3 rounded-lg bg-purple-600 px-4 py-3 text-white transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-        >
-          <svg
-            className="h-5 w-5"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
+        {/* Sign In Button - RDY Style */}
+        <div className="space-y-rdy-md">
+          <button
+            onClick={handleSignIn}
+            className="w-full py-rdy-lg text-rdy-lg uppercase font-bold text-rdy-orange-500 active:opacity-60 transition-opacity"
           >
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-          </svg>
-          Sign in with Keycloak
-        </button>
+            SIGN IN →
+          </button>
+
+          {/* Optional: Additional info */}
+          <p className="rdy-body text-rdy-gray-400">
+            Secure authentication via Keycloak
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -69,8 +73,8 @@ export default function SignInPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-gray-950">
-          <div className="text-white">Loading...</div>
+        <div className="flex min-h-screen items-center justify-center bg-rdy-white">
+          <div className="w-10 h-10 rounded-full bg-rdy-orange-500 animate-pulse" />
         </div>
       }
     >

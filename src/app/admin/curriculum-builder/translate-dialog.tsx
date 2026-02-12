@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -88,10 +88,10 @@ export function TranslateDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-gray-800 bg-gray-900 sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-white">AI Translation</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogTitle>AI Translation</DialogTitle>
+          <DialogDescription>
             Translate {fieldName} from {getLanguageName(sourceLang)} to {getLanguageName(targetLang)}
           </DialogDescription>
         </DialogHeader>
@@ -99,13 +99,13 @@ export function TranslateDialog({
         <div className="space-y-4 py-4">
           {/* Source Text */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">
+            <label className="text-sm font-medium text-rdy-gray-600">
               Source ({getLanguageName(sourceLang)})
             </label>
             <textarea
               value={sourceText}
               onChange={(e) => setSourceText(e.target.value)}
-              className="min-h-24 w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="min-h-24 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
               placeholder={`Enter ${getLanguageName(sourceLang)} text...`}
             />
           </div>
@@ -115,7 +115,7 @@ export function TranslateDialog({
             <Button
               onClick={handleTranslate}
               disabled={translateMutation.isPending || !sourceText.trim()}
-              className="w-full"
+              className="w-full bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
             >
               {translateMutation.isPending ? 'Translating...' : `Translate to ${getLanguageName(targetLang)}`}
             </Button>
@@ -125,30 +125,30 @@ export function TranslateDialog({
           {translatedText && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-300">
+                <label className="text-sm font-medium text-rdy-gray-600">
                   Translation ({getLanguageName(targetLang)})
                 </label>
                 <Button variant="ghost" size="sm" onClick={handleCopy} className="text-xs">
                   Copy to Clipboard
                 </Button>
               </div>
-              <div className="rounded-md border border-gray-700 bg-gray-800 p-3">
-                <p className="text-white">{translatedText}</p>
+              <div className="rounded-md border border-rdy-gray-200 bg-rdy-gray-100 p-3">
+                <p>{translatedText}</p>
               </div>
             </div>
           )}
 
           {/* Error/Info Message */}
           {errorMessage && (
-            <div className="rounded-md bg-yellow-900/20 p-3 text-sm text-yellow-400">
+            <div className="rounded-md bg-yellow-50 p-3 text-sm text-yellow-600">
               {errorMessage}
             </div>
           )}
 
           {/* Instructions */}
-          <div className="rounded-md bg-gray-800 p-3">
-            <h4 className="text-sm font-medium text-gray-300">How to use:</h4>
-            <ol className="mt-2 list-inside list-decimal space-y-1 text-sm text-gray-400">
+          <div className="rounded-md bg-rdy-gray-100 p-3">
+            <h4 className="text-sm font-medium text-rdy-gray-600">How to use:</h4>
+            <ol className="mt-2 list-inside list-decimal space-y-1 text-sm text-rdy-gray-400">
               <li>Enter or modify the source text above</li>
               <li>Click &quot;Translate&quot; to get the AI translation</li>
               <li>Copy the translated text and paste it into the appropriate field</li>
@@ -160,7 +160,7 @@ export function TranslateDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => handleClose(false)} className="border-gray-700">
+          <Button variant="outline" onClick={() => handleClose(false)} className="border-rdy-gray-200">
             Close
           </Button>
         </DialogFooter>

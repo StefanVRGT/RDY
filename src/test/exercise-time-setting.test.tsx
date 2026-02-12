@@ -314,11 +314,11 @@ describe('S6.10 - Exercise Time Setting UI', () => {
       // First 5 days (indices 0-4) should be selected (have twilight background)
       for (let i = 0; i < 5; i++) {
         const dayToggle = screen.getByTestId(`day-toggle-${i}`);
-        expect(dayToggle.className).toContain('bg-twilight-600');
+        expect(dayToggle.className).toContain('bg-rdy-orange-600');
       }
       // Last 2 days should not be selected
-      expect(screen.getByTestId('day-toggle-5').className).toContain('bg-gray-800');
-      expect(screen.getByTestId('day-toggle-6').className).toContain('bg-gray-800');
+      expect(screen.getByTestId('day-toggle-5').className).toContain('bg-rdy-gray-200');
+      expect(screen.getByTestId('day-toggle-6').className).toContain('bg-rdy-gray-200');
     });
 
     it('allows toggling days on and off', () => {
@@ -337,7 +337,7 @@ describe('S6.10 - Exercise Time Setting UI', () => {
       fireEvent.click(screen.getByTestId('day-toggle-0'));
 
       const firstDayToggle = screen.getByTestId('day-toggle-0');
-      expect(firstDayToggle.className).toContain('bg-gray-800');
+      expect(firstDayToggle.className).toContain('bg-rdy-gray-200');
     });
 
     it('displays the bulk time picker', () => {

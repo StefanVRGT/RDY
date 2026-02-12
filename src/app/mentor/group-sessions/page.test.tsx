@@ -307,7 +307,7 @@ describe('GroupSessionsPage', () => {
       // Check that accepted count has green styling (via text content)
       const sessionItem = screen.getByTestId('rsvp-summary-session-1');
       expect(sessionItem.innerHTML).toContain('text-green-400');
-      expect(sessionItem.innerHTML).toContain('text-amber-400');
+      expect(sessionItem.innerHTML).toContain('text-rdy-orange-500');
       expect(sessionItem.innerHTML).toContain('text-red-400');
     });
   });
@@ -481,7 +481,7 @@ describe('GroupSessionsPage', () => {
       render(<GroupSessionsPage />);
 
       const upcomingTab = screen.getByTestId('tab-upcoming');
-      expect(upcomingTab).toHaveClass('bg-twilight-600');
+      expect(upcomingTab).toHaveClass('bg-rdy-orange-600');
     });
 
     it('should switch to past tab when clicked', () => {
@@ -490,7 +490,7 @@ describe('GroupSessionsPage', () => {
       fireEvent.click(screen.getByTestId('tab-past'));
 
       const pastTab = screen.getByTestId('tab-past');
-      expect(pastTab).toHaveClass('bg-twilight-600');
+      expect(pastTab).toHaveClass('bg-rdy-orange-600');
     });
   });
 

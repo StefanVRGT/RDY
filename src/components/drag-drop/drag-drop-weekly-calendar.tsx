@@ -223,15 +223,15 @@ export function DragDropWeeklyCalendar({
 
         {/* Exercises Summary List with Draggable Cards */}
         <div className="mt-6" data-testid="drag-drop-exercises-summary">
-          <h3 className="mb-3 text-lg font-semibold text-white">
+          <h3 className="mb-3 text-lg font-semibold text-rdy-black">
             This Week&apos;s Exercises
           </h3>
           {daysData.every((d) => d.totalCount === 0) ? (
             <div
-              className="flex flex-col items-center justify-center rounded-xl bg-gray-900 py-8 text-center"
+              className="flex flex-col items-center justify-center rounded-xl bg-rdy-gray-100 py-8 text-center"
               data-testid="no-exercises-state"
             >
-              <p className="text-gray-400">No exercises scheduled for this week</p>
+              <p className="text-rdy-gray-400">No exercises scheduled for this week</p>
             </div>
           ) : (
             <div className="space-y-2" data-testid="exercises-list">
@@ -241,14 +241,14 @@ export function DragDropWeeklyCalendar({
                 return (
                   <div
                     key={dayInfo.date}
-                    className="rounded-xl bg-gray-900 p-3"
+                    className="rounded-xl bg-rdy-gray-100 p-3"
                     data-testid={`day-exercises-${dayInfo.date}`}
                   >
                     <div className="mb-2 flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-400">
+                      <span className="text-sm font-medium text-rdy-gray-400">
                         {format(dayDate, 'EEEE, MMM d')}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-rdy-gray-500">
                         {dayInfo.completedCount}/{dayInfo.totalCount} done
                       </span>
                     </div>

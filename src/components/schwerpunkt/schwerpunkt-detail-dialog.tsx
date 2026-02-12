@@ -73,7 +73,7 @@ export function SchwerpunktDetailDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-h-[90vh] overflow-y-auto bg-gray-900 text-white sm:max-w-lg"
+        className="max-h-[90vh] overflow-y-auto sm:max-w-lg"
         data-testid="schwerpunkt-detail-dialog"
       >
         <DialogHeader>
@@ -81,10 +81,10 @@ export function SchwerpunktDetailDialog({
             className="flex items-center gap-2 text-xl"
             data-testid="schwerpunkt-dialog-title"
           >
-            <BookOpen className="h-5 w-5 text-twilight-400" />
+            <BookOpen className="h-5 w-5 text-rdy-orange-500" />
             {language === 'de' ? 'Schwerpunkt Details' : 'Focus Area Details'}
           </DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             {language === 'de'
               ? `Monat ${monthNumber} - Woche ${weekNumber}`
               : `Month ${monthNumber} - Week ${weekNumber}`}
@@ -95,21 +95,21 @@ export function SchwerpunktDetailDialog({
           {/* Monthly Schwerpunktebene Section */}
           <section data-testid="monthly-schwerpunkt-section">
             <div className="mb-3 flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-twilight-400" />
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-twilight-300">
+              <Calendar className="h-4 w-4 text-rdy-orange-500" />
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-rdy-orange-500">
                 {language === 'de' ? 'Monatliches Schwerpunktthema' : 'Monthly Focus Theme'}
               </h3>
             </div>
-            <div className="rounded-lg bg-gray-800 p-4">
+            <div className="rounded-lg bg-rdy-gray-100 p-4">
               <h4
-                className="text-lg font-bold text-white"
+                className="text-lg font-bold text-rdy-black"
                 data-testid="monthly-schwerpunkt-title"
               >
                 {monthTitle}
               </h4>
               {monthDescription && (
                 <p
-                  className="mt-2 text-sm text-gray-300"
+                  className="mt-2 text-sm text-rdy-gray-600"
                   data-testid="monthly-schwerpunkt-description"
                 >
                   {monthDescription}
@@ -120,12 +120,12 @@ export function SchwerpunktDetailDialog({
               {monthHerkunft && (
                 <div className="mt-4" data-testid="monthly-herkunft-section">
                   <div className="mb-1 flex items-center gap-2">
-                    <Compass className="h-4 w-4 text-amber-400" />
-                    <span className="text-xs font-medium uppercase tracking-wide text-amber-400">
+                    <Compass className="h-4 w-4 text-rdy-orange-500" />
+                    <span className="text-xs font-medium uppercase tracking-wide text-rdy-orange-500">
                       {language === 'de' ? 'Herkunft' : 'Background'}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-300" data-testid="monthly-herkunft-text">
+                  <p className="text-sm text-rdy-gray-600" data-testid="monthly-herkunft-text">
                     {monthHerkunft}
                   </p>
                 </div>
@@ -135,12 +135,12 @@ export function SchwerpunktDetailDialog({
               {monthZiel && (
                 <div className="mt-4" data-testid="monthly-ziel-section">
                   <div className="mb-1 flex items-center gap-2">
-                    <Target className="h-4 w-4 text-green-400" />
-                    <span className="text-xs font-medium uppercase tracking-wide text-green-400">
+                    <Target className="h-4 w-4 text-green-500" />
+                    <span className="text-xs font-medium uppercase tracking-wide text-green-500">
                       {language === 'de' ? 'Ziel' : 'Goal'}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-300" data-testid="monthly-ziel-text">
+                  <p className="text-sm text-rdy-gray-600" data-testid="monthly-ziel-text">
                     {monthZiel}
                   </p>
                 </div>
@@ -152,23 +152,23 @@ export function SchwerpunktDetailDialog({
           {weekTheme && (
             <section data-testid="weekly-theme-section">
               <div className="mb-3 flex items-center gap-2">
-                <Target className="h-4 w-4 text-twilight-400" />
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-twilight-300">
+                <Target className="h-4 w-4 text-rdy-orange-500" />
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-rdy-orange-500">
                   {language === 'de'
                     ? `Woche ${weekTheme.weekNumber} Thema`
                     : `Week ${weekTheme.weekNumber} Theme`}
                 </h3>
               </div>
-              <div className="rounded-lg bg-gray-800 p-4">
+              <div className="rounded-lg bg-rdy-gray-100 p-4">
                 <h4
-                  className="text-lg font-bold text-white"
+                  className="text-lg font-bold text-rdy-black"
                   data-testid="weekly-theme-title"
                 >
                   {weekTitle}
                 </h4>
                 {weekDescription && (
                   <p
-                    className="mt-2 text-sm text-gray-300"
+                    className="mt-2 text-sm text-rdy-gray-600"
                     data-testid="weekly-theme-description"
                   >
                     {weekDescription}
@@ -179,12 +179,12 @@ export function SchwerpunktDetailDialog({
                 {weekHerkunft && (
                   <div className="mt-4" data-testid="weekly-herkunft-section">
                     <div className="mb-1 flex items-center gap-2">
-                      <Compass className="h-4 w-4 text-amber-400" />
-                      <span className="text-xs font-medium uppercase tracking-wide text-amber-400">
+                      <Compass className="h-4 w-4 text-rdy-orange-500" />
+                      <span className="text-xs font-medium uppercase tracking-wide text-rdy-orange-500">
                         {language === 'de' ? 'Herkunft' : 'Background'}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-300" data-testid="weekly-herkunft-text">
+                    <p className="text-sm text-rdy-gray-600" data-testid="weekly-herkunft-text">
                       {weekHerkunft}
                     </p>
                   </div>
@@ -194,12 +194,12 @@ export function SchwerpunktDetailDialog({
                 {weekZiel && (
                   <div className="mt-4" data-testid="weekly-ziel-section">
                     <div className="mb-1 flex items-center gap-2">
-                      <Target className="h-4 w-4 text-green-400" />
-                      <span className="text-xs font-medium uppercase tracking-wide text-green-400">
+                      <Target className="h-4 w-4 text-green-500" />
+                      <span className="text-xs font-medium uppercase tracking-wide text-green-500">
                         {language === 'de' ? 'Ziel' : 'Goal'}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-300" data-testid="weekly-ziel-text">
+                    <p className="text-sm text-rdy-gray-600" data-testid="weekly-ziel-text">
                       {weekZiel}
                     </p>
                   </div>
@@ -212,7 +212,7 @@ export function SchwerpunktDetailDialog({
         <div className="mt-6">
           <Button
             onClick={() => onOpenChange(false)}
-            className="w-full bg-twilight-600 text-white hover:bg-twilight-500"
+            className="w-full bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
             data-testid="close-schwerpunkt-dialog-button"
           >
             <X className="mr-2 h-4 w-4" />

@@ -1,7 +1,6 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
-    darkMode: ['class'],
     content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -12,38 +11,28 @@ const config: Config = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-  			twilight: {
-  				'50': '#f5f3ff',
-  				'100': '#ede9fe',
-  				'200': '#ddd6fe',
-  				'300': '#c4b5fd',
-  				'400': '#a78bfa',
-  				'500': '#8b5cf6',
-  				'600': '#7c3aed',
-  				'700': '#6d28d9',
-  				'800': '#5b21b6',
-  				'900': '#4c1d95',
-  				'950': '#2e1065'
-  			},
-  			surface: {
-  				'50': '#fafafa',
-  				'100': '#f4f4f5',
-  				'200': '#e4e4e7',
-  				'300': '#d4d4d8',
-  				'400': '#a1a1aa',
-  				'500': '#71717a',
-  				'600': '#52525b',
-  				'700': '#3f3f46',
-  				'800': '#27272a',
-  				'900': '#18181b',
-  				'950': '#09090b'
+  			// RDY Design System - Light theme with orange accent
+  			rdy: {
+  				white: '#FFFFFF',
+  				black: '#1A1A1A',
+  				gray: {
+  					'100': '#F5F5F5',
+  					'200': '#E0E0E0',
+  					'300': '#CCCCCC',
+  					'400': '#999999',
+  					'500': '#666666',
+  					'600': '#4D4D4D',
+  					'900': '#2A2A2A'
+  				},
+  				orange: {
+  					'400': '#FFA766',
+  					'500': '#FF8C42',
+  					'600': '#E67A35'
+  				},
+  				success: '#4CAF50',
+  				error: '#F44336'
   			},
   			accent: {
-  				primary: '#8b5cf6',
-  				secondary: '#06b6d4',
-  				success: '#10b981',
-  				warning: '#f59e0b',
-  				error: '#ef4444',
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
@@ -93,6 +82,22 @@ const config: Config = {
   				'var(--font-geist-mono)',
   				'monospace'
   			]
+  		},
+  		fontSize: {
+  			'rdy-xs': ['12px', { lineHeight: '16px', letterSpacing: '0.05em' }],
+  			'rdy-sm': ['14px', { lineHeight: '20px', letterSpacing: '0.05em' }],
+  			'rdy-base': ['16px', { lineHeight: '24px' }],
+  			'rdy-lg': ['24px', { lineHeight: '32px', letterSpacing: '-0.01em' }],
+  			'rdy-xl': ['32px', { lineHeight: '40px', letterSpacing: '-0.02em' }],
+  			'rdy-2xl': ['40px', { lineHeight: '48px', letterSpacing: '-0.02em' }]
+  		},
+  		spacing: {
+  			'rdy-xs': '8px',
+  			'rdy-sm': '16px',
+  			'rdy-md': '24px',
+  			'rdy-lg': '32px',
+  			'rdy-xl': '48px',
+  			'rdy-2xl': '64px'
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

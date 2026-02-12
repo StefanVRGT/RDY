@@ -193,7 +193,7 @@ describe('S6.11 - Appointment Shifting', () => {
 
       const card = screen.getByTestId(`draggable-exercise-${mockExercise.id}`);
       expect(card).toHaveAttribute('data-dragging', 'true');
-      expect(card).toHaveClass('scale-105', 'shadow-xl', 'ring-2', 'ring-twilight-400');
+      expect(card).toHaveClass('scale-105', 'shadow-xl', 'ring-2', 'ring-rdy-orange-500');
     });
 
     it('does not apply dragging styles when not dragging', () => {
@@ -223,7 +223,7 @@ describe('S6.11 - Appointment Shifting', () => {
       render(<ExerciseCardOverlay exercise={mockExercise} />);
 
       const overlay = screen.getByTestId('exercise-drag-overlay');
-      expect(overlay).toHaveClass('shadow-2xl', 'ring-2', 'ring-twilight-400');
+      expect(overlay).toHaveClass('shadow-2xl', 'ring-2', 'ring-rdy-orange-500');
     });
 
     it('shows obligatory indicator on draggable card', () => {

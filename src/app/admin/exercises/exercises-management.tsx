@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -78,13 +78,13 @@ export function ExercisesManagement() {
   const getTypeBadgeClass = (type: string) => {
     switch (type) {
       case 'video':
-        return 'bg-blue-900/30 text-blue-400';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
       case 'audio':
-        return 'bg-purple-900/30 text-purple-400';
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
       case 'text':
-        return 'bg-green-900/30 text-green-400';
+        return 'bg-rdy-orange-500/10 text-green-400';
       default:
-        return 'bg-gray-900/30 text-gray-400';
+        return 'bg-rdy-gray-100/30 text-rdy-gray-400';
     }
   };
 
@@ -98,7 +98,7 @@ export function ExercisesManagement() {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading exercises: {error.message}
       </div>
     );
@@ -116,52 +116,52 @@ export function ExercisesManagement() {
               setPage(1);
             }}
           >
-            <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="all" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="all" className="text-rdy-black">
                 All Types
               </SelectItem>
-              <SelectItem value="video" className="text-white">
+              <SelectItem value="video" className="text-rdy-black">
                 Video
               </SelectItem>
-              <SelectItem value="audio" className="text-white">
+              <SelectItem value="audio" className="text-rdy-black">
                 Audio
               </SelectItem>
-              <SelectItem value="text" className="text-white">
+              <SelectItem value="text" className="text-rdy-black">
                 Text
               </SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-            <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="createdAt" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="createdAt" className="text-rdy-black">
                 Created
               </SelectItem>
-              <SelectItem value="titleDe" className="text-white">
+              <SelectItem value="titleDe" className="text-rdy-black">
                 Title
               </SelectItem>
-              <SelectItem value="type" className="text-white">
+              <SelectItem value="type" className="text-rdy-black">
                 Type
               </SelectItem>
-              <SelectItem value="durationMinutes" className="text-white">
+              <SelectItem value="durationMinutes" className="text-rdy-black">
                 Duration
               </SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortOrder} onValueChange={(value: SortOrder) => setSortOrder(value)}>
-            <SelectTrigger className="w-[100px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[100px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Order" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="asc" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="asc" className="text-rdy-black">
                 Asc
               </SelectItem>
-              <SelectItem value="desc" className="text-white">
+              <SelectItem value="desc" className="text-rdy-black">
                 Desc
               </SelectItem>
             </SelectContent>
@@ -171,34 +171,34 @@ export function ExercisesManagement() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900">
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="text-gray-400">Type</TableHead>
-              <TableHead className="text-gray-400">Title (DE)</TableHead>
-              <TableHead className="text-gray-400">Title (EN)</TableHead>
-              <TableHead className="text-gray-400">Duration</TableHead>
-              <TableHead className="text-gray-400">Media</TableHead>
-              <TableHead className="text-right text-gray-400">Actions</TableHead>
+            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+              <TableHead className="text-rdy-gray-400">Type</TableHead>
+              <TableHead className="text-rdy-gray-400">Title (DE)</TableHead>
+              <TableHead className="text-rdy-gray-400">Title (EN)</TableHead>
+              <TableHead className="text-rdy-gray-400">Duration</TableHead>
+              <TableHead className="text-rdy-gray-400">Media</TableHead>
+              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !data?.exercises?.length ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
                   No exercises found
                 </TableCell>
               </TableRow>
             ) : (
               data.exercises.map((exercise) => (
-                <TableRow key={exercise.id} className="border-gray-800">
+                <TableRow key={exercise.id} className="border-rdy-gray-200">
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getTypeBadgeClass(exercise.type)}`}
@@ -206,24 +206,24 @@ export function ExercisesManagement() {
                       {getTypeLabel(exercise.type)}
                     </span>
                   </TableCell>
-                  <TableCell className="font-medium text-white">
+                  <TableCell className="font-medium text-rdy-black">
                     {exercise.titleDe}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {exercise.titleEn || '-'}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {formatDuration(exercise.durationMinutes)}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {exercise.type === 'video' && exercise.videoUrl ? (
-                      <span className="text-blue-400">Video</span>
+                      <span className="text-rdy-orange-500">Video</span>
                     ) : exercise.type === 'audio' && exercise.audioUrl ? (
-                      <span className="text-purple-400">Audio</span>
+                      <span className="text-rdy-orange-500">Audio</span>
                     ) : exercise.type === 'text' && exercise.contentDe ? (
                       <span className="text-green-400">Text</span>
                     ) : (
-                      <span className="text-gray-500">None</span>
+                      <span className="text-rdy-gray-500">None</span>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -232,7 +232,7 @@ export function ExercisesManagement() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingExercise(exercise)}
-                        className="text-gray-400 hover:text-white"
+                        className="text-rdy-gray-400 hover:text-rdy-black"
                       >
                         Edit
                       </Button>
@@ -261,7 +261,7 @@ export function ExercisesManagement() {
       {/* Pagination */}
       {data?.pagination && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
             {data.pagination.total} exercises
           </p>
@@ -271,7 +271,7 @@ export function ExercisesManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Previous
             </Button>
@@ -280,7 +280,7 @@ export function ExercisesManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
               disabled={page === data.pagination.totalPages}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Next
             </Button>

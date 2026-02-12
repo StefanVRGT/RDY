@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -70,11 +70,11 @@ export function ClassesManagement() {
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-900/30 text-green-400';
+        return 'bg-rdy-orange-500/10 text-green-400';
       case 'disabled':
-        return 'bg-gray-900/30 text-gray-400';
+        return 'bg-rdy-gray-100/30 text-rdy-gray-400';
       default:
-        return 'bg-gray-900/30 text-gray-400';
+        return 'bg-rdy-gray-100/30 text-rdy-gray-400';
     }
   };
 
@@ -88,7 +88,7 @@ export function ClassesManagement() {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading classes: {error.message}
       </div>
     );
@@ -106,17 +106,17 @@ export function ClassesManagement() {
               setPage(1);
             }}
           >
-            <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="all" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="all" className="text-rdy-black">
                 All Status
               </SelectItem>
-              <SelectItem value="active" className="text-white">
+              <SelectItem value="active" className="text-rdy-black">
                 Active
               </SelectItem>
-              <SelectItem value="disabled" className="text-white">
+              <SelectItem value="disabled" className="text-rdy-black">
                 Disabled
               </SelectItem>
             </SelectContent>
@@ -128,48 +128,48 @@ export function ClassesManagement() {
               setPage(1);
             }}
           >
-            <SelectTrigger className="w-[180px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[180px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Mentor" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="all" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="all" className="text-rdy-black">
                 All Mentors
               </SelectItem>
               {mentors?.map((mentor) => (
-                <SelectItem key={mentor.id} value={mentor.id} className="text-white">
+                <SelectItem key={mentor.id} value={mentor.id} className="text-rdy-black">
                   {mentor.name || mentor.email}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-            <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="createdAt" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="createdAt" className="text-rdy-black">
                 Created
               </SelectItem>
-              <SelectItem value="name" className="text-white">
+              <SelectItem value="name" className="text-rdy-black">
                 Name
               </SelectItem>
-              <SelectItem value="startDate" className="text-white">
+              <SelectItem value="startDate" className="text-rdy-black">
                 Start Date
               </SelectItem>
-              <SelectItem value="endDate" className="text-white">
+              <SelectItem value="endDate" className="text-rdy-black">
                 End Date
               </SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortOrder} onValueChange={(value: SortOrder) => setSortOrder(value)}>
-            <SelectTrigger className="w-[100px] border-gray-700 bg-gray-900 text-white">
+            <SelectTrigger className="w-[100px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
               <SelectValue placeholder="Order" />
             </SelectTrigger>
-            <SelectContent className="border-gray-700 bg-gray-900">
-              <SelectItem value="asc" className="text-white">
+            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="asc" className="text-rdy-black">
                 Asc
               </SelectItem>
-              <SelectItem value="desc" className="text-white">
+              <SelectItem value="desc" className="text-rdy-black">
                 Desc
               </SelectItem>
             </SelectContent>
@@ -179,36 +179,36 @@ export function ClassesManagement() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900">
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="text-gray-400">Name</TableHead>
-              <TableHead className="text-gray-400">Status</TableHead>
-              <TableHead className="text-gray-400">Mentor</TableHead>
-              <TableHead className="text-gray-400">Members</TableHead>
-              <TableHead className="text-gray-400">Duration</TableHead>
-              <TableHead className="text-gray-400">Period</TableHead>
-              <TableHead className="text-right text-gray-400">Actions</TableHead>
+            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+              <TableHead className="text-rdy-gray-400">Name</TableHead>
+              <TableHead className="text-rdy-gray-400">Status</TableHead>
+              <TableHead className="text-rdy-gray-400">Mentor</TableHead>
+              <TableHead className="text-rdy-gray-400">Members</TableHead>
+              <TableHead className="text-rdy-gray-400">Duration</TableHead>
+              <TableHead className="text-rdy-gray-400">Period</TableHead>
+              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !data?.classes?.length ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
                   No classes found
                 </TableCell>
               </TableRow>
             ) : (
               data.classes.map((cls) => (
-                <TableRow key={cls.id} className="border-gray-800">
-                  <TableCell className="font-medium text-white">{cls.name}</TableCell>
+                <TableRow key={cls.id} className="border-rdy-gray-200">
+                  <TableCell className="font-medium text-rdy-black">{cls.name}</TableCell>
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getStatusBadgeClass(cls.status)}`}
@@ -216,12 +216,12 @@ export function ClassesManagement() {
                       {cls.status === 'active' ? 'Active' : 'Disabled'}
                     </span>
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {cls.mentor?.name || cls.mentor?.email || '-'}
                   </TableCell>
-                  <TableCell className="text-gray-400">{cls.memberCount}</TableCell>
-                  <TableCell className="text-gray-400">{cls.durationMonths} months</TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">{cls.memberCount}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{cls.durationMonths} months</TableCell>
+                  <TableCell className="text-rdy-gray-400">
                     {formatDate(cls.startDate)} - {formatDate(cls.endDate)}
                   </TableCell>
                   <TableCell className="text-right">
@@ -230,7 +230,7 @@ export function ClassesManagement() {
                         variant="ghost"
                         size="sm"
                         onClick={() => router.push(`/admin/classes/${cls.id}`)}
-                        className="text-blue-400 hover:text-blue-300"
+                        className="text-rdy-orange-500 hover:text-rdy-orange-500"
                       >
                         View
                       </Button>
@@ -238,7 +238,7 @@ export function ClassesManagement() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingClass(cls as ClassItem)}
-                        className="text-gray-400 hover:text-white"
+                        className="text-rdy-gray-400 hover:text-rdy-black"
                       >
                         Edit
                       </Button>
@@ -267,7 +267,7 @@ export function ClassesManagement() {
       {/* Pagination */}
       {data?.pagination && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
             {data.pagination.total} classes
           </p>
@@ -277,7 +277,7 @@ export function ClassesManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Previous
             </Button>
@@ -286,7 +286,7 @@ export function ClassesManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
               disabled={page === data.pagination.totalPages}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Next
             </Button>

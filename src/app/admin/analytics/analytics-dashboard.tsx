@@ -1,6 +1,6 @@
 'use client';
 
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -29,14 +29,14 @@ export function AnalyticsDashboard() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-400">Loading analytics...</div>
+        <div className="text-rdy-gray-400">Loading analytics...</div>
       </div>
     );
   }
 
   if (hasError) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading analytics:{' '}
         {exerciseQuery.error?.message ||
           sessionQuery.error?.message ||
@@ -55,7 +55,7 @@ export function AnalyticsDashboard() {
     <div className="space-y-8">
       {/* Exercise Completion Rates Section */}
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-white">Exercise Completion Rates</h2>
+        <h2 className="mb-4 text-lg font-semibold text-rdy-black">Exercise Completion Rates</h2>
         <div className="grid gap-4 md:grid-cols-4">
           <MetricCard
             title="Total Exercises"
@@ -82,25 +82,25 @@ export function AnalyticsDashboard() {
         </div>
 
         {exerciseData.exercisesPerSchwerpunktebene.length > 0 && (
-          <div className="mt-4 rounded-lg border border-gray-800 bg-gray-900">
+          <div className="mt-4 rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
             <Table>
               <TableHeader>
-                <TableRow className="border-gray-800 hover:bg-transparent">
-                  <TableHead className="text-gray-400">Schwerpunktebene</TableHead>
-                  <TableHead className="text-gray-400">Month</TableHead>
-                  <TableHead className="text-right text-gray-400">Total Exercises</TableHead>
-                  <TableHead className="text-right text-gray-400">Obligatory</TableHead>
-                  <TableHead className="text-right text-gray-400">Optional</TableHead>
+                <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+                  <TableHead className="text-rdy-gray-400">Schwerpunktebene</TableHead>
+                  <TableHead className="text-rdy-gray-400">Month</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Total Exercises</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Obligatory</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Optional</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {exerciseData.exercisesPerSchwerpunktebene.map((s) => (
-                  <TableRow key={s.id} className="border-gray-800">
-                    <TableCell className="font-medium text-white">{s.title}</TableCell>
-                    <TableCell className="text-gray-400">Month {s.monthNumber}</TableCell>
-                    <TableCell className="text-right text-gray-300">{s.exerciseCount}</TableCell>
+                  <TableRow key={s.id} className="border-rdy-gray-200">
+                    <TableCell className="font-medium text-rdy-black">{s.title}</TableCell>
+                    <TableCell className="text-rdy-gray-400">Month {s.monthNumber}</TableCell>
+                    <TableCell className="text-right text-rdy-gray-600">{s.exerciseCount}</TableCell>
                     <TableCell className="text-right text-green-400">{s.obligatoryCount}</TableCell>
-                    <TableCell className="text-right text-gray-400">{s.optionalCount}</TableCell>
+                    <TableCell className="text-right text-rdy-gray-400">{s.optionalCount}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -111,7 +111,7 @@ export function AnalyticsDashboard() {
 
       {/* Session Utilization Section */}
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-white">Session Utilization</h2>
+        <h2 className="mb-4 text-lg font-semibold text-rdy-black">Session Utilization</h2>
         <div className="grid gap-4 md:grid-cols-4">
           <MetricCard
             title="Total Classes"
@@ -136,22 +136,22 @@ export function AnalyticsDashboard() {
         </div>
 
         {sessionData.classes.length > 0 && (
-          <div className="mt-4 rounded-lg border border-gray-800 bg-gray-900">
+          <div className="mt-4 rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
             <Table>
               <TableHeader>
-                <TableRow className="border-gray-800 hover:bg-transparent">
-                  <TableHead className="text-gray-400">Class Name</TableHead>
-                  <TableHead className="text-gray-400">Status</TableHead>
-                  <TableHead className="text-right text-gray-400">Members</TableHead>
-                  <TableHead className="text-right text-gray-400">Completed</TableHead>
-                  <TableHead className="text-right text-gray-400">Sessions/Month</TableHead>
-                  <TableHead className="text-right text-gray-400">Duration (min)</TableHead>
+                <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+                  <TableHead className="text-rdy-gray-400">Class Name</TableHead>
+                  <TableHead className="text-rdy-gray-400">Status</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Members</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Completed</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Sessions/Month</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Duration (min)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sessionData.classes.slice(0, 10).map((cls) => (
-                  <TableRow key={cls.id} className="border-gray-800">
-                    <TableCell className="font-medium text-white">{cls.name}</TableCell>
+                  <TableRow key={cls.id} className="border-rdy-gray-200">
+                    <TableCell className="font-medium text-rdy-black">{cls.name}</TableCell>
                     <TableCell>
                       <StatusBadge
                         isActive={cls.isActive}
@@ -159,12 +159,12 @@ export function AnalyticsDashboard() {
                         isUpcoming={cls.isUpcoming}
                       />
                     </TableCell>
-                    <TableCell className="text-right text-gray-300">{cls.totalMembers}</TableCell>
-                    <TableCell className="text-right text-gray-300">{cls.completedMembers}</TableCell>
-                    <TableCell className="text-right text-gray-300">
+                    <TableCell className="text-right text-rdy-gray-600">{cls.totalMembers}</TableCell>
+                    <TableCell className="text-right text-rdy-gray-600">{cls.completedMembers}</TableCell>
+                    <TableCell className="text-right text-rdy-gray-600">
                       {cls.monthlySessionCount}
                     </TableCell>
-                    <TableCell className="text-right text-gray-300">
+                    <TableCell className="text-right text-rdy-gray-600">
                       {cls.sessionDurationMinutes}
                     </TableCell>
                   </TableRow>
@@ -177,7 +177,7 @@ export function AnalyticsDashboard() {
 
       {/* Mentor Workload Section */}
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-white">Mentor Workload Overview</h2>
+        <h2 className="mb-4 text-lg font-semibold text-rdy-black">Mentor Workload Overview</h2>
         <div className="grid gap-4 md:grid-cols-4">
           <MetricCard
             title="Total Mentors"
@@ -202,28 +202,28 @@ export function AnalyticsDashboard() {
         </div>
 
         {mentorData.mentors.length > 0 && (
-          <div className="mt-4 rounded-lg border border-gray-800 bg-gray-900">
+          <div className="mt-4 rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
             <Table>
               <TableHeader>
-                <TableRow className="border-gray-800 hover:bg-transparent">
-                  <TableHead className="text-gray-400">Mentor</TableHead>
-                  <TableHead className="text-gray-400">Email</TableHead>
-                  <TableHead className="text-right text-gray-400">Mentees</TableHead>
-                  <TableHead className="text-right text-gray-400">Classes</TableHead>
-                  <TableHead className="text-right text-gray-400">Active Classes</TableHead>
-                  <TableHead className="text-gray-400">Status</TableHead>
+                <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+                  <TableHead className="text-rdy-gray-400">Mentor</TableHead>
+                  <TableHead className="text-rdy-gray-400">Email</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Mentees</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Classes</TableHead>
+                  <TableHead className="text-right text-rdy-gray-400">Active Classes</TableHead>
+                  <TableHead className="text-rdy-gray-400">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {mentorData.mentors.map((mentor) => (
-                  <TableRow key={mentor.id} className="border-gray-800">
-                    <TableCell className="font-medium text-white">
+                  <TableRow key={mentor.id} className="border-rdy-gray-200">
+                    <TableCell className="font-medium text-rdy-black">
                       {mentor.name || 'Unnamed'}
                     </TableCell>
-                    <TableCell className="text-gray-400">{mentor.email}</TableCell>
-                    <TableCell className="text-right text-gray-300">{mentor.menteeCount}</TableCell>
-                    <TableCell className="text-right text-gray-300">{mentor.totalClasses}</TableCell>
-                    <TableCell className="text-right text-gray-300">
+                    <TableCell className="text-rdy-gray-400">{mentor.email}</TableCell>
+                    <TableCell className="text-right text-rdy-gray-600">{mentor.menteeCount}</TableCell>
+                    <TableCell className="text-right text-rdy-gray-600">{mentor.totalClasses}</TableCell>
+                    <TableCell className="text-right text-rdy-gray-600">
                       {mentor.activeClasses}
                     </TableCell>
                     <TableCell>
@@ -239,7 +239,7 @@ export function AnalyticsDashboard() {
 
       {/* Mentee Progress Section */}
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-white">Mentee Progress Aggregates</h2>
+        <h2 className="mb-4 text-lg font-semibold text-rdy-black">Mentee Progress Aggregates</h2>
         <div className="grid gap-4 md:grid-cols-4">
           <MetricCard
             title="Total Mentees"
@@ -265,34 +265,34 @@ export function AnalyticsDashboard() {
 
         {menteeData.recentEnrollments.length > 0 && (
           <div className="mt-4">
-            <h3 className="mb-2 text-sm font-medium text-gray-400">Recent Enrollments</h3>
-            <div className="rounded-lg border border-gray-800 bg-gray-900">
+            <h3 className="mb-2 text-sm font-medium text-rdy-gray-400">Recent Enrollments</h3>
+            <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-gray-800 hover:bg-transparent">
-                    <TableHead className="text-gray-400">Mentee</TableHead>
-                    <TableHead className="text-gray-400">Class</TableHead>
-                    <TableHead className="text-gray-400">Enrolled</TableHead>
-                    <TableHead className="text-gray-400">Status</TableHead>
-                    <TableHead className="text-gray-400">Payment</TableHead>
+                  <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+                    <TableHead className="text-rdy-gray-400">Mentee</TableHead>
+                    <TableHead className="text-rdy-gray-400">Class</TableHead>
+                    <TableHead className="text-rdy-gray-400">Enrolled</TableHead>
+                    <TableHead className="text-rdy-gray-400">Status</TableHead>
+                    <TableHead className="text-rdy-gray-400">Payment</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {menteeData.recentEnrollments.map((enrollment, idx) => (
-                    <TableRow key={`${enrollment.userId}-${idx}`} className="border-gray-800">
-                      <TableCell className="font-medium text-white">
+                    <TableRow key={`${enrollment.userId}-${idx}`} className="border-rdy-gray-200">
+                      <TableCell className="font-medium text-rdy-black">
                         {enrollment.userName || enrollment.userEmail}
                       </TableCell>
-                      <TableCell className="text-gray-400">{enrollment.className}</TableCell>
-                      <TableCell className="text-gray-400">
+                      <TableCell className="text-rdy-gray-400">{enrollment.className}</TableCell>
+                      <TableCell className="text-rdy-gray-400">
                         {formatDate(enrollment.enrolledAt)}
                       </TableCell>
                       <TableCell>
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                             enrollment.status === 'completed'
-                              ? 'bg-green-900/30 text-green-400'
-                              : 'bg-blue-900/30 text-blue-400'
+                              ? 'bg-rdy-orange-500/10 text-green-400'
+                              : 'bg-rdy-orange-500/10 text-rdy-orange-500'
                           }`}
                         >
                           {enrollment.status === 'completed' ? 'Completed' : 'In Progress'}
@@ -302,7 +302,7 @@ export function AnalyticsDashboard() {
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                             enrollment.paid
-                              ? 'bg-green-900/30 text-green-400'
+                              ? 'bg-rdy-orange-500/10 text-green-400'
                               : 'bg-yellow-900/30 text-yellow-400'
                           }`}
                         >
@@ -331,13 +331,13 @@ function MetricCard({
   description: string;
 }) {
   return (
-    <Card className="border-gray-800 bg-gray-900">
+    <Card className="border-rdy-gray-200 bg-rdy-gray-100">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-gray-400">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-rdy-gray-400">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-white">{value}</div>
-        <p className="text-xs text-gray-500">{description}</p>
+        <div className="text-2xl font-bold text-rdy-black">{value}</div>
+        <p className="text-xs text-rdy-gray-500">{description}</p>
       </CardContent>
     </Card>
   );
@@ -354,27 +354,27 @@ function StatusBadge({
 }) {
   if (isActive) {
     return (
-      <span className="inline-flex items-center rounded-full bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400">
+      <span className="inline-flex items-center rounded-full bg-rdy-orange-500/10 px-2 py-1 text-xs font-medium text-green-400">
         Active
       </span>
     );
   }
   if (isCompleted) {
     return (
-      <span className="inline-flex items-center rounded-full bg-gray-700/30 px-2 py-1 text-xs font-medium text-gray-400">
+      <span className="inline-flex items-center rounded-full bg-rdy-gray-200/30 px-2 py-1 text-xs font-medium text-rdy-gray-400">
         Completed
       </span>
     );
   }
   if (isUpcoming) {
     return (
-      <span className="inline-flex items-center rounded-full bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-400">
+      <span className="inline-flex items-center rounded-full bg-rdy-orange-500/10 px-2 py-1 text-xs font-medium text-rdy-orange-500">
         Upcoming
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center rounded-full bg-gray-700/30 px-2 py-1 text-xs font-medium text-gray-400">
+    <span className="inline-flex items-center rounded-full bg-rdy-gray-200/30 px-2 py-1 text-xs font-medium text-rdy-gray-400">
       Inactive
     </span>
   );
@@ -383,7 +383,7 @@ function StatusBadge({
 function WorkloadBadge({ status }: { status: 'underloaded' | 'optimal' | 'overloaded' }) {
   const styles = {
     underloaded: 'bg-yellow-900/30 text-yellow-400',
-    optimal: 'bg-green-900/30 text-green-400',
+    optimal: 'bg-rdy-orange-500/10 text-green-400',
     overloaded: 'bg-red-900/30 text-red-400',
   };
 

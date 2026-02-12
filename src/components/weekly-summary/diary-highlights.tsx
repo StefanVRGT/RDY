@@ -33,8 +33,8 @@ interface DiaryHighlightsProps {
 
 const TYPE_ICONS = {
   text: { icon: FileText, label: 'Text', color: 'text-green-400' },
-  voice: { icon: Mic, label: 'Voice', color: 'text-blue-400' },
-  mixed: { icon: Layers, label: 'Mixed', color: 'text-purple-400' },
+  voice: { icon: Mic, label: 'Voice', color: 'text-rdy-orange-500' },
+  mixed: { icon: Layers, label: 'Mixed', color: 'text-rdy-orange-500' },
 };
 
 export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
@@ -42,7 +42,7 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
     const diff = stats.totalEntries - Number(stats.previousWeekEntries);
     if (diff > 0) return { type: 'up', value: diff, Icon: TrendingUp, color: 'text-green-400' };
     if (diff < 0) return { type: 'down', value: Math.abs(diff), Icon: TrendingDown, color: 'text-red-400' };
-    return { type: 'neutral', value: 0, Icon: Minus, color: 'text-gray-400' };
+    return { type: 'neutral', value: 0, Icon: Minus, color: 'text-rdy-gray-400' };
   }, [stats.totalEntries, stats.previousWeekEntries]);
 
   // Calculate daily bars
@@ -57,14 +57,14 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
 
   return (
     <div
-      className={cn('rounded-xl bg-gray-900 p-4', className)}
+      className={cn('rounded-xl bg-rdy-gray-100 p-4', className)}
       data-testid="diary-highlights"
     >
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-twilight-400" />
-          <h3 className="font-semibold text-white">Diary Entries</h3>
+          <BookOpen className="h-5 w-5 text-rdy-orange-500" />
+          <h3 className="font-semibold text-rdy-black">Diary Entries</h3>
         </div>
         <div className={cn('flex items-center gap-1 text-sm', trend.color)}>
           <trend.Icon className="h-4 w-4" />
@@ -76,27 +76,27 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
 
       {/* Stats row */}
       <div
-        className="mb-4 flex items-center justify-around rounded-lg bg-gray-800 p-3"
+        className="mb-4 flex items-center justify-around rounded-lg bg-rdy-gray-100 p-3"
         data-testid="diary-counts"
       >
         <div className="text-center">
-          <p className="text-2xl font-bold text-twilight-400" data-testid="total-entries">
+          <p className="text-2xl font-bold text-rdy-orange-500" data-testid="total-entries">
             {stats.totalEntries}
           </p>
-          <p className="text-xs text-gray-400">This Week</p>
+          <p className="text-xs text-rdy-gray-400">This Week</p>
         </div>
-        <div className="h-8 w-px bg-gray-700" />
+        <div className="h-8 w-px bg-rdy-gray-200" />
         <div className="text-center">
-          <p className="text-2xl font-bold text-gray-400" data-testid="previous-entries">
+          <p className="text-2xl font-bold text-rdy-gray-400" data-testid="previous-entries">
             {stats.previousWeekEntries}
           </p>
-          <p className="text-xs text-gray-400">Last Week</p>
+          <p className="text-xs text-rdy-gray-400">Last Week</p>
         </div>
       </div>
 
       {/* Daily activity bars */}
       <div className="mb-4">
-        <p className="mb-2 text-xs font-medium text-gray-400">Daily Activity</p>
+        <p className="mb-2 text-xs font-medium text-rdy-gray-400">Daily Activity</p>
         <div className="flex items-end justify-between gap-1" data-testid="diary-daily-bars">
           {dailyBars.map((day, idx) => (
             <div
@@ -104,7 +104,7 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
               className="flex flex-1 flex-col items-center"
               data-testid={`diary-bar-${idx}`}
             >
-              <div className="relative mb-1 h-12 w-full rounded-t bg-gray-800">
+              <div className="relative mb-1 h-12 w-full rounded-t bg-rdy-gray-100">
                 <div
                   className="absolute bottom-0 left-0 right-0 rounded-t bg-emerald-500 transition-all duration-300"
                   style={{ height: `${day.height}%` }}
@@ -112,7 +112,7 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
                   data-count={day.count}
                 />
               </div>
-              <span className="text-[10px] text-gray-500">{day.dayLabel}</span>
+              <span className="text-[10px] text-rdy-gray-500">{day.dayLabel}</span>
             </div>
           ))}
         </div>
@@ -121,7 +121,7 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
       {/* By type */}
       {Object.keys(stats.byType).length > 0 && (
         <div className="mb-4" data-testid="diary-by-type">
-          <p className="mb-2 text-xs font-medium text-gray-400">Entry Types</p>
+          <p className="mb-2 text-xs font-medium text-rdy-gray-400">Entry Types</p>
           <div className="flex items-center gap-4">
             {Object.entries(stats.byType).map(([type, count]) => {
               const config = TYPE_ICONS[type as keyof typeof TYPE_ICONS];
@@ -135,7 +135,7 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
                   data-testid={`diary-type-${type}`}
                 >
                   <Icon className={cn('h-4 w-4', config.color)} />
-                  <span className="text-sm text-gray-300">
+                  <span className="text-sm text-rdy-gray-600">
                     {count} {config.label}
                   </span>
                 </div>
@@ -148,7 +148,7 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
       {/* Recent highlights */}
       {stats.highlights.length > 0 && (
         <div data-testid="diary-recent-highlights">
-          <p className="mb-2 text-xs font-medium text-gray-400">Recent Highlights</p>
+          <p className="mb-2 text-xs font-medium text-rdy-gray-400">Recent Highlights</p>
           <div className="space-y-2">
             {stats.highlights.map(highlight => {
               const config = TYPE_ICONS[highlight.entryType as keyof typeof TYPE_ICONS] || TYPE_ICONS.text;
@@ -157,18 +157,18 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
               return (
                 <div
                   key={highlight.id}
-                  className="rounded-lg bg-gray-800 p-3"
+                  className="rounded-lg bg-rdy-gray-100 p-3"
                   data-testid={`highlight-${highlight.id}`}
                 >
                   <div className="mb-1 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Icon className={cn('h-3 w-3', config.color)} />
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-rdy-gray-400">
                         {format(new Date(highlight.entryDate), 'EEE, MMM d')}
                       </span>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-300 line-clamp-2">
+                  <p className="text-sm text-rdy-gray-600 line-clamp-2">
                     {highlight.preview || 'No text content'}
                   </p>
                 </div>
@@ -179,9 +179,9 @@ export function DiaryHighlights({ stats, className }: DiaryHighlightsProps) {
       )}
 
       {stats.highlights.length === 0 && stats.totalEntries === 0 && (
-        <div className="rounded-lg bg-gray-800 p-4 text-center">
-          <p className="text-sm text-gray-400">No diary entries this week</p>
-          <p className="mt-1 text-xs text-gray-500">Start journaling to see your highlights here</p>
+        <div className="rounded-lg bg-rdy-gray-100 p-4 text-center">
+          <p className="text-sm text-rdy-gray-400">No diary entries this week</p>
+          <p className="mt-1 text-xs text-rdy-gray-500">Start journaling to see your highlights here</p>
         </div>
       )}
     </div>

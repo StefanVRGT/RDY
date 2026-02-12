@@ -555,7 +555,7 @@ describe('S6.7 - Mentor Mobile Class View', () => {
       render(<ClassDetailPage />);
 
       const menteesTab = screen.getByTestId('tab-mentees');
-      expect(menteesTab).toHaveClass('bg-twilight-600');
+      expect(menteesTab).toHaveClass('bg-rdy-orange-600');
     });
 
     it('switches between mentees and sessions tabs', async () => {

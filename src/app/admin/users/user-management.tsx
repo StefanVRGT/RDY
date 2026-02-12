@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -66,7 +66,7 @@ export function UserManagement() {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading users: {error.message}
       </div>
     );
@@ -84,7 +84,7 @@ export function UserManagement() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="max-w-sm border-gray-700 bg-gray-900 text-white placeholder:text-gray-500"
+            className="max-w-sm border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black placeholder:text-rdy-gray-500"
           />
         </div>
         <Select
@@ -94,49 +94,49 @@ export function UserManagement() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+          <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Role" />
           </SelectTrigger>
-          <SelectContent className="border-gray-700 bg-gray-900">
-            <SelectItem value="all" className="text-white">
+          <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+            <SelectItem value="all" className="text-rdy-black">
               All Roles
             </SelectItem>
-            <SelectItem value="mentor" className="text-white">
+            <SelectItem value="mentor" className="text-rdy-black">
               Mentors
             </SelectItem>
-            <SelectItem value="mentee" className="text-white">
+            <SelectItem value="mentee" className="text-rdy-black">
               Mentees
             </SelectItem>
           </SelectContent>
         </Select>
         <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-          <SelectTrigger className="w-[140px] border-gray-700 bg-gray-900 text-white">
+          <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent className="border-gray-700 bg-gray-900">
-            <SelectItem value="createdAt" className="text-white">
+          <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+            <SelectItem value="createdAt" className="text-rdy-black">
               Created
             </SelectItem>
-            <SelectItem value="name" className="text-white">
+            <SelectItem value="name" className="text-rdy-black">
               Name
             </SelectItem>
-            <SelectItem value="email" className="text-white">
+            <SelectItem value="email" className="text-rdy-black">
               Email
             </SelectItem>
-            <SelectItem value="role" className="text-white">
+            <SelectItem value="role" className="text-rdy-black">
               Role
             </SelectItem>
           </SelectContent>
         </Select>
         <Select value={sortOrder} onValueChange={(value: SortOrder) => setSortOrder(value)}>
-          <SelectTrigger className="w-[100px] border-gray-700 bg-gray-900 text-white">
+          <SelectTrigger className="w-[100px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Order" />
           </SelectTrigger>
-          <SelectContent className="border-gray-700 bg-gray-900">
-            <SelectItem value="desc" className="text-white">
+          <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+            <SelectItem value="desc" className="text-rdy-black">
               Desc
             </SelectItem>
-            <SelectItem value="asc" className="text-white">
+            <SelectItem value="asc" className="text-rdy-black">
               Asc
             </SelectItem>
           </SelectContent>
@@ -144,61 +144,61 @@ export function UserManagement() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900">
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="text-gray-400">Name</TableHead>
-              <TableHead className="text-gray-400">Email</TableHead>
-              <TableHead className="text-gray-400">Role</TableHead>
-              <TableHead className="text-gray-400">Mentor</TableHead>
-              <TableHead className="text-gray-400">Created</TableHead>
-              <TableHead className="text-right text-gray-400">Actions</TableHead>
+            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
+              <TableHead className="text-rdy-gray-400">Name</TableHead>
+              <TableHead className="text-rdy-gray-400">Email</TableHead>
+              <TableHead className="text-rdy-gray-400">Role</TableHead>
+              <TableHead className="text-rdy-gray-400">Mentor</TableHead>
+              <TableHead className="text-rdy-gray-400">Created</TableHead>
+              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !data?.users?.length ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-gray-400">
+                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
                   No users found
                 </TableCell>
               </TableRow>
             ) : (
               data.users.map((user) => (
-                <TableRow key={user.id} className="border-gray-800">
-                  <TableCell className="font-medium text-white">{user.name || '-'}</TableCell>
-                  <TableCell className="text-gray-400">{user.email}</TableCell>
+                <TableRow key={user.id} className="border-rdy-gray-200">
+                  <TableCell className="font-medium text-rdy-black">{user.name || '-'}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{user.email}</TableCell>
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                         user.role === 'mentor'
-                          ? 'bg-blue-900/30 text-blue-400'
-                          : 'bg-purple-900/30 text-purple-400'
+                          ? 'bg-rdy-orange-500/10 text-rdy-orange-500'
+                          : 'bg-rdy-orange-500/10 text-rdy-orange-500'
                       }`}
                     >
                       {user.role}
                     </span>
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-rdy-gray-400">
                     {user.role === 'mentee' ? (
                       user.mentor ? (
-                        <span className="text-gray-300">
+                        <span className="text-rdy-gray-600">
                           {user.mentor.name || user.mentor.email}
                         </span>
                       ) : (
-                        <span className="italic text-gray-500">Not assigned</span>
+                        <span className="italic text-rdy-gray-500">Not assigned</span>
                       )
                     ) : (
-                      <span className="text-gray-600">-</span>
+                      <span className="text-rdy-gray-400">-</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-gray-400">{formatDate(user.createdAt)}</TableCell>
+                  <TableCell className="text-rdy-gray-400">{formatDate(user.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -212,7 +212,7 @@ export function UserManagement() {
                             role: user.role as 'mentor' | 'mentee',
                           })
                         }
-                        className="text-gray-400 hover:text-white"
+                        className="text-rdy-gray-400 hover:text-rdy-black"
                       >
                         Change Role
                       </Button>
@@ -228,7 +228,7 @@ export function UserManagement() {
                               mentorId: user.mentorId,
                             })
                           }
-                          className="text-gray-400 hover:text-white"
+                          className="text-rdy-gray-400 hover:text-rdy-black"
                         >
                           Assign Mentor
                         </Button>
@@ -245,7 +245,7 @@ export function UserManagement() {
       {/* Pagination */}
       {data?.pagination && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
             {data.pagination.total} users
           </p>
@@ -255,7 +255,7 @@ export function UserManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Previous
             </Button>
@@ -264,7 +264,7 @@ export function UserManagement() {
               size="sm"
               onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
               disabled={page === data.pagination.totalPages}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
             >
               Next
             </Button>

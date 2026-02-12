@@ -231,7 +231,7 @@ export default function MenteeBookingPage() {
           className={`mb-4 rounded-xl p-4 ${
             usageData?.limitReached
               ? 'bg-gradient-to-br from-red-600 to-red-800'
-              : 'bg-gradient-to-br from-twilight-600 to-twilight-800'
+              : 'bg-gradient-to-br from-rdy-orange-500 to-rdy-orange-600'
           }`}
           data-testid="monthly-usage-card"
         >
@@ -274,7 +274,7 @@ export default function MenteeBookingPage() {
         <div className="mb-4 flex items-center justify-between" data-testid="month-navigation">
           <button
             onClick={goToPreviousMonth}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-white transition-colors hover:bg-gray-700"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-gray-100 text-rdy-black transition-colors hover:bg-rdy-gray-200"
             aria-label="Previous month"
             data-testid="prev-month-button"
           >
@@ -282,13 +282,13 @@ export default function MenteeBookingPage() {
           </button>
 
           <div className="text-center">
-            <h2 className="text-xl font-bold text-white" data-testid="current-month">
+            <h2 className="text-xl font-bold text-rdy-black" data-testid="current-month">
               {format(currentMonth, 'MMMM yyyy')}
             </h2>
             {!isCurrentMonth && (
               <button
                 onClick={goToCurrentMonth}
-                className="mt-1 text-sm text-twilight-400 hover:text-twilight-300"
+                className="mt-1 text-sm text-rdy-orange-500 hover:text-rdy-orange-500"
                 data-testid="today-button"
               >
                 Back to Current Month
@@ -298,7 +298,7 @@ export default function MenteeBookingPage() {
 
           <button
             onClick={goToNextMonth}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-white transition-colors hover:bg-gray-700"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-gray-100 text-rdy-black transition-colors hover:bg-rdy-gray-200"
             aria-label="Next month"
             data-testid="next-month-button"
           >
@@ -307,10 +307,10 @@ export default function MenteeBookingPage() {
         </div>
 
         {/* Calendar */}
-        <div className="mb-4 rounded-xl bg-gray-900 p-4" data-testid="booking-calendar">
+        <div className="mb-4 rounded-xl bg-rdy-gray-100 p-4" data-testid="booking-calendar">
           {slotsLoading ? (
             <div className="flex items-center justify-center py-8">
-              <RefreshCw className="h-6 w-6 animate-spin text-twilight-400" />
+              <RefreshCw className="h-6 w-6 animate-spin text-rdy-orange-500" />
             </div>
           ) : (
             <Calendar
@@ -328,7 +328,7 @@ export default function MenteeBookingPage() {
                 hasBooking: (date) => datesWithBookings.has(date.toISOString().split('T')[0]),
               }}
               modifiersClassNames={{
-                hasSlots: 'ring-2 ring-twilight-400 ring-inset',
+                hasSlots: 'ring-2 ring-rdy-orange-500 ring-inset',
                 hasBooking: 'bg-green-600/20',
               }}
               disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
@@ -337,9 +337,9 @@ export default function MenteeBookingPage() {
         </div>
 
         {/* Legend */}
-        <div className="mb-4 flex items-center justify-center gap-4 text-xs text-gray-400">
+        <div className="mb-4 flex items-center justify-center gap-4 text-xs text-rdy-gray-400">
           <div className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded-sm ring-2 ring-twilight-400 ring-inset" />
+            <div className="h-3 w-3 rounded-sm ring-2 ring-rdy-orange-500 ring-inset" />
             <span>Available</span>
           </div>
           <div className="flex items-center gap-1">
@@ -351,7 +351,7 @@ export default function MenteeBookingPage() {
         {/* Selected Date Section */}
         {selectedDate && (
           <div className="space-y-4" data-testid="selected-date-section">
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg font-semibold text-rdy-black">
               {isToday(selectedDate)
                 ? 'Today'
                 : format(selectedDate, 'EEEE, MMMM d, yyyy')}
@@ -360,11 +360,11 @@ export default function MenteeBookingPage() {
             {/* Existing bookings for this date */}
             {bookingsForSelectedDate.length > 0 && (
               <div className="space-y-2" data-testid="existing-bookings">
-                <h4 className="text-sm font-medium text-gray-400">Your Bookings</h4>
+                <h4 className="text-sm font-medium text-rdy-gray-400">Your Bookings</h4>
                 {bookingsForSelectedDate.map(booking => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between rounded-xl bg-green-900/30 p-4"
+                    className="flex items-center justify-between rounded-xl bg-rdy-orange-500/10 p-4"
                     data-testid={`booking-${booking.id}`}
                   >
                     <div className="flex items-center gap-3">
@@ -372,13 +372,13 @@ export default function MenteeBookingPage() {
                         <CheckCircle2 className="h-5 w-5 text-green-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-rdy-black">
                           {formatTime(booking.scheduledAt)}
                         </p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-rdy-gray-400">
                           {booking.durationMinutes} min with {booking.mentor?.name || 'Mentor'}
                         </p>
-                        <p className="text-xs text-gray-500 capitalize">
+                        <p className="text-xs text-rdy-gray-500 capitalize">
                           {booking.status}
                         </p>
                       </div>
@@ -402,7 +402,7 @@ export default function MenteeBookingPage() {
             {/* Available slots for this date */}
             {slotsForSelectedDate.length > 0 ? (
               <div className="space-y-2" data-testid="available-slots">
-                <h4 className="text-sm font-medium text-gray-400">Available Slots</h4>
+                <h4 className="text-sm font-medium text-rdy-gray-400">Available Slots</h4>
                 {slotsForSelectedDate.map(slot => {
                   const mentor = getMentor(slot.mentorId);
                   return (
@@ -412,40 +412,40 @@ export default function MenteeBookingPage() {
                       disabled={usageData?.limitReached}
                       className={`flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors ${
                         usageData?.limitReached
-                          ? 'cursor-not-allowed bg-gray-900 opacity-50'
-                          : 'bg-gray-900 hover:bg-gray-800'
+                          ? 'cursor-not-allowed bg-rdy-gray-100 opacity-50'
+                          : 'bg-rdy-gray-100 hover:bg-rdy-gray-200'
                       }`}
                       data-testid={`slot-${slot.id}`}
                     >
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-twilight-500/20">
-                        <Clock className="h-5 w-5 text-twilight-400" />
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                        <Clock className="h-5 w-5 text-rdy-orange-500" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-rdy-black">
                           {formatTimeRange(slot.startTime, slot.endTime)}
                         </p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-rdy-gray-400">
                           {getDurationMinutes(slot.startTime, slot.endTime)} min with{' '}
                           {mentor?.name || 'Mentor'}
                         </p>
                       </div>
-                      <CalendarIcon className="h-5 w-5 text-gray-500" />
+                      <CalendarIcon className="h-5 w-5 text-rdy-gray-500" />
                     </button>
                   );
                 })}
               </div>
             ) : (
               bookingsForSelectedDate.length === 0 && (
-                <div className="rounded-xl bg-gray-900 p-6 text-center">
-                  <AlertCircle className="mx-auto mb-2 h-8 w-8 text-gray-500" />
-                  <p className="text-gray-400">No available slots for this date</p>
+                <div className="rounded-xl bg-rdy-gray-100 p-6 text-center">
+                  <AlertCircle className="mx-auto mb-2 h-8 w-8 text-rdy-gray-500" />
+                  <p className="text-rdy-gray-400">No available slots for this date</p>
                 </div>
               )
             )}
 
             {/* Limit reached warning */}
             {usageData?.limitReached && slotsForSelectedDate.length > 0 && (
-              <div className="flex items-center gap-2 rounded-lg bg-red-900/30 p-3 text-sm text-red-300">
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-500">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 <span>
                   You have reached your monthly session limit. You can book more
@@ -458,51 +458,51 @@ export default function MenteeBookingPage() {
 
         {/* No date selected message */}
         {!selectedDate && (
-          <div className="rounded-xl bg-gray-900 p-6 text-center" data-testid="no-date-selected">
-            <CalendarIcon className="mx-auto mb-2 h-8 w-8 text-gray-500" />
-            <p className="text-gray-400">Select a date to view available slots</p>
+          <div className="rounded-xl bg-rdy-gray-100 p-6 text-center" data-testid="no-date-selected">
+            <CalendarIcon className="mx-auto mb-2 h-8 w-8 text-rdy-gray-500" />
+            <p className="text-rdy-gray-400">Select a date to view available slots</p>
           </div>
         )}
       </div>
 
       {/* Booking Confirmation Dialog */}
       <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
-        <DialogContent className="max-w-md bg-gray-900 text-white">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Confirm Booking</DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-rdy-gray-400">
               Review and confirm your session booking
             </DialogDescription>
           </DialogHeader>
 
           {selectedSlot && (
             <div className="space-y-4" data-testid="booking-confirmation">
-              <div className="rounded-lg bg-gray-800 p-4">
+              <div className="rounded-lg bg-rdy-gray-100 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-twilight-500/20">
-                    <User className="h-6 w-6 text-twilight-400" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                    <User className="h-6 w-6 text-rdy-orange-500" />
                   </div>
                   <div>
-                    <p className="font-medium text-white">
+                    <p className="font-medium text-rdy-black">
                       {getMentor(selectedSlot.mentorId)?.name || 'Mentor'}
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-rdy-gray-400">
                       {format(new Date(selectedSlot.startTime), 'EEEE, MMMM d, yyyy')}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center gap-2 text-sm text-gray-300">
+                <div className="mt-4 flex items-center gap-2 text-sm text-rdy-gray-600">
                   <Clock className="h-4 w-4" />
                   <span>{formatTimeRange(selectedSlot.startTime, selectedSlot.endTime)}</span>
-                  <span className="text-gray-500">
+                  <span className="text-rdy-gray-500">
                     ({getDurationMinutes(selectedSlot.startTime, selectedSlot.endTime)} min)
                   </span>
                 </div>
               </div>
 
               <div>
-                <label htmlFor="booking-notes" className="mb-1 block text-sm text-gray-400">
+                <label htmlFor="booking-notes" className="mb-1 block text-sm text-rdy-gray-400">
                   Notes (optional)
                 </label>
                 <textarea
@@ -510,7 +510,7 @@ export default function MenteeBookingPage() {
                   value={bookingNotes}
                   onChange={e => setBookingNotes(e.target.value)}
                   placeholder="Add any notes for your mentor..."
-                  className="w-full rounded-lg bg-gray-800 p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-twilight-500"
+                  className="w-full rounded-lg bg-rdy-gray-100 p-3 text-rdy-black placeholder-rdy-gray-400 focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
                   rows={3}
                   data-testid="booking-notes-input"
                 />
@@ -522,14 +522,14 @@ export default function MenteeBookingPage() {
             <Button
               variant="ghost"
               onClick={() => setShowBookingDialog(false)}
-              className="text-gray-400 hover:bg-gray-800 hover:text-white"
+              className="text-rdy-gray-400 hover:bg-rdy-gray-100 hover:text-rdy-black"
             >
               Cancel
             </Button>
             <Button
               onClick={handleConfirmBooking}
               disabled={bookSlot.isPending}
-              className="bg-twilight-600 text-white hover:bg-twilight-500"
+              className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-500"
               data-testid="confirm-booking-button"
             >
               {bookSlot.isPending ? (
@@ -541,7 +541,7 @@ export default function MenteeBookingPage() {
           </DialogFooter>
 
           {bookSlot.error && (
-            <div className="mt-2 rounded-lg bg-red-900/30 p-3 text-sm text-red-300">
+            <div className="mt-2 rounded-lg bg-red-50 p-3 text-sm text-red-500">
               {bookSlot.error.message}
             </div>
           )}
@@ -550,13 +550,13 @@ export default function MenteeBookingPage() {
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <DialogContent className="max-w-md bg-gray-900 text-white">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-400">
               <XCircle className="h-5 w-5" />
               Cancel Booking
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-rdy-gray-400">
               Are you sure you want to cancel this session? This action cannot be
               undone.
             </DialogDescription>
@@ -566,7 +566,7 @@ export default function MenteeBookingPage() {
             <Button
               variant="ghost"
               onClick={() => setShowCancelDialog(false)}
-              className="text-gray-400 hover:bg-gray-800 hover:text-white"
+              className="text-rdy-gray-400 hover:bg-rdy-gray-100 hover:text-rdy-black"
             >
               Keep Booking
             </Button>
@@ -585,7 +585,7 @@ export default function MenteeBookingPage() {
           </DialogFooter>
 
           {cancelBooking.error && (
-            <div className="mt-2 rounded-lg bg-red-900/30 p-3 text-sm text-red-300">
+            <div className="mt-2 rounded-lg bg-red-50 p-3 text-sm text-red-500">
               {cancelBooking.error.message}
             </div>
           )}

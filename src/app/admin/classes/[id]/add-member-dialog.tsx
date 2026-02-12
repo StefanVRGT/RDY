@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -82,10 +82,10 @@ export function AddMemberDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-gray-800 bg-gray-900 text-white sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Add Member</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Enroll a mentee in this class
           </DialogDescription>
         </DialogHeader>
@@ -93,19 +93,19 @@ export function AddMemberDialog({
         <div className="space-y-4 py-4">
           {/* Mentee Selection */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Mentee *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Mentee *</label>
             <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-              <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={menteesLoading ? 'Loading...' : 'Select a mentee'} />
               </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-gray-800">
+              <SelectContent>
                 {!availableMentees?.length ? (
-                  <SelectItem value="none" disabled className="text-gray-400">
+                  <SelectItem value="none" disabled className="text-rdy-gray-400">
                     No available mentees
                   </SelectItem>
                 ) : (
                   availableMentees.map((mentee) => (
-                    <SelectItem key={mentee.id} value={mentee.id} className="text-white">
+                    <SelectItem key={mentee.id} value={mentee.id}>
                       {mentee.name || mentee.email}
                     </SelectItem>
                   ))
@@ -121,7 +121,7 @@ export function AddMemberDialog({
 
           {/* Payment Amount */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Payment Amount (EUR)</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Payment Amount (EUR)</label>
             <Input
               type="number"
               min="0"
@@ -129,23 +129,21 @@ export function AddMemberDialog({
               placeholder="e.g., 299.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Due Date */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Payment Due Date</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Payment Due Date</label>
             <Input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           {errorMessage && (
-            <div className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">{errorMessage}</div>
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{errorMessage}</div>
           )}
         </div>
 
@@ -153,13 +151,14 @@ export function AddMemberDialog({
           <Button
             variant="outline"
             onClick={() => handleClose(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={!selectedUserId || addMemberMutation.isPending}
+            className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
           >
             {addMemberMutation.isPending ? 'Adding...' : 'Add Member'}
           </Button>

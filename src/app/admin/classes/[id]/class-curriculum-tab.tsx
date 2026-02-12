@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AssignCurriculumDialog } from './assign-curriculum-dialog';
@@ -46,7 +46,7 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-900/20 p-4 text-red-400">
+      <div className="rounded-lg bg-red-50 p-4 text-red-500">
         Error loading curriculum: {error.message}
       </div>
     );
@@ -73,8 +73,8 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium text-white">Curriculum Plan</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-medium text-rdy-black">Curriculum Plan</h3>
+          <p className="text-sm text-rdy-gray-400">
             Assign focus areas (Schwerpunktebenen) to each month of the class
           </p>
         </div>
@@ -82,7 +82,7 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
 
       {isLoading ? (
         <div className="flex h-32 items-center justify-center">
-          <p className="text-gray-400">Loading curriculum...</p>
+          <p className="text-rdy-gray-400">Loading curriculum...</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -90,17 +90,17 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
             const curriculum = curriculumByMonth[monthNumber];
 
             return (
-              <Card key={monthNumber} className="border-gray-800 bg-gray-900">
+              <Card key={monthNumber} className="border-rdy-gray-200 bg-rdy-gray-100">
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center justify-between text-white">
+                  <CardTitle className="flex items-center justify-between text-rdy-black">
                     <span>Month {monthNumber}</span>
                     {curriculum && (
-                      <span className="rounded-full bg-green-900/30 px-2 py-1 text-xs text-green-400">
+                      <span className="rounded-full bg-green-50 px-2 py-1 text-xs text-green-600">
                         Assigned
                       </span>
                     )}
                   </CardTitle>
-                  <CardDescription className="text-gray-400">
+                  <CardDescription className="text-rdy-gray-400">
                     {curriculum
                       ? curriculum.customTitleDe || curriculum.schwerpunktebene.titleDe
                       : 'No focus area assigned'}
@@ -109,15 +109,15 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
                 <CardContent>
                   {curriculum ? (
                     <div className="space-y-3">
-                      <p className="line-clamp-2 text-sm text-gray-400">
+                      <p className="line-clamp-2 text-sm text-rdy-gray-400">
                         {curriculum.customDescriptionDe ||
                           curriculum.schwerpunktebene.descriptionDe ||
                           'No description'}
                       </p>
                       {curriculum.mentorNotes && (
-                        <div className="rounded-lg bg-blue-900/20 p-2">
-                          <p className="text-xs text-blue-400">Mentor Notes:</p>
-                          <p className="line-clamp-2 text-sm text-gray-300">
+                        <div className="rounded-lg bg-blue-50 p-2">
+                          <p className="text-xs text-rdy-orange-500">Mentor Notes:</p>
+                          <p className="line-clamp-2 text-sm text-rdy-gray-600">
                             {curriculum.mentorNotes}
                           </p>
                         </div>
@@ -127,7 +127,7 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
                           variant="outline"
                           size="sm"
                           onClick={() => setEditingCurriculum(curriculum)}
-                          className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800"
+                          className="flex-1 border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
                         >
                           Edit
                         </Button>
@@ -136,7 +136,7 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
                           size="sm"
                           onClick={() => handleRemove(monthNumber)}
                           disabled={removeCurriculumMutation.isPending}
-                          className="flex-1 border-gray-700 text-red-400 hover:bg-red-900/20 hover:text-red-300"
+                          className="flex-1 border-rdy-gray-200 text-red-400 hover:bg-red-50 hover:text-red-300"
                         >
                           Remove
                         </Button>
@@ -145,7 +145,7 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
                   ) : (
                     <Button
                       variant="outline"
-                      className="w-full border-dashed border-gray-700 text-gray-400 hover:border-gray-600 hover:bg-gray-800 hover:text-white"
+                      className="w-full border-dashed border-rdy-gray-200 text-rdy-gray-400 hover:border-rdy-gray-400 hover:bg-rdy-gray-100 hover:text-rdy-black"
                       onClick={() => setAssigningMonth(monthNumber)}
                     >
                       + Assign Focus Area

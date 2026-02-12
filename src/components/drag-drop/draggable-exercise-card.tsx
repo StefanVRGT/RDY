@@ -92,10 +92,10 @@ export function DraggableExerciseCard({
       className={cn(
         'group flex items-center gap-2 rounded-lg p-2 transition-all',
         exercise.isObligatory
-          ? 'border-l-2 border-amber-500 bg-gray-800'
-          : 'bg-gray-800',
-        isCurrentlyDragging && 'scale-105 shadow-xl ring-2 ring-twilight-400 opacity-90',
-        !isCurrentlyDragging && 'hover:bg-gray-750'
+          ? 'border-l-2 border-amber-500 bg-rdy-gray-100'
+          : 'bg-rdy-gray-100',
+        isCurrentlyDragging && 'scale-105 shadow-xl ring-2 ring-rdy-orange-500 opacity-90',
+        !isCurrentlyDragging && 'hover:bg-rdy-gray-200'
       )}
       data-testid={`draggable-exercise-${exercise.id}`}
       data-dragging={isCurrentlyDragging}
@@ -105,8 +105,8 @@ export function DraggableExerciseCard({
         {...attributes}
         {...listeners}
         className={cn(
-          'flex h-8 w-6 cursor-grab items-center justify-center rounded text-gray-600 transition-colors active:cursor-grabbing',
-          'hover:bg-gray-700 hover:text-gray-400',
+          'flex h-8 w-6 cursor-grab items-center justify-center rounded text-rdy-gray-300 transition-colors active:cursor-grabbing',
+          'hover:bg-rdy-gray-200 hover:text-rdy-gray-500',
           'touch-none'
         )}
         data-testid={`drag-handle-${exercise.id}`}
@@ -119,7 +119,7 @@ export function DraggableExerciseCard({
         {exercise.completed ? (
           <CheckCircle2 className="h-5 w-5 text-green-500" />
         ) : (
-          <div className="h-5 w-5 rounded-full border-2 border-gray-600" />
+          <div className="h-5 w-5 rounded-full border-2 border-rdy-gray-300" />
         )}
       </div>
 
@@ -128,15 +128,15 @@ export function DraggableExerciseCard({
         <p
           className={cn(
             'truncate text-sm font-medium',
-            exercise.completed ? 'text-gray-500 line-through' : 'text-white'
+            exercise.completed ? 'text-rdy-gray-400 line-through' : 'text-rdy-black'
           )}
         >
           {exercise.exercise?.titleDe || 'Unknown Exercise'}
         </p>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-rdy-gray-400">
           <Clock className="h-3 w-3" />
           <span>{formatTime(exercise.scheduledAt)}</span>
-          {exercise.isObligatory && <Star className="h-3 w-3 text-amber-400" />}
+          {exercise.isObligatory && <Star className="h-3 w-3 text-rdy-orange-500" />}
         </div>
       </div>
 
@@ -144,7 +144,7 @@ export function DraggableExerciseCard({
       {exercise.exercise && (
         <ExerciseTypeIcon
           type={exercise.exercise.type}
-          className="h-4 w-4 flex-shrink-0 text-gray-500"
+          className="h-4 w-4 flex-shrink-0 text-rdy-gray-400"
         />
       )}
     </div>
@@ -156,15 +156,15 @@ export function ExerciseCardOverlay({ exercise }: { exercise: ExerciseData }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-2 rounded-lg p-2 shadow-2xl ring-2 ring-twilight-400',
+        'flex items-center gap-2 rounded-lg p-2 shadow-2xl ring-2 ring-rdy-orange-500',
         exercise.isObligatory
-          ? 'border-l-2 border-amber-500 bg-gray-800'
-          : 'bg-gray-800'
+          ? 'border-l-2 border-amber-500 bg-rdy-gray-100'
+          : 'bg-rdy-gray-100'
       )}
       data-testid="exercise-drag-overlay"
     >
       {/* Drag handle */}
-      <div className="flex h-8 w-6 cursor-grabbing items-center justify-center rounded text-twilight-400">
+      <div className="flex h-8 w-6 cursor-grabbing items-center justify-center rounded text-rdy-orange-500">
         <GripVertical className="h-4 w-4" />
       </div>
 
@@ -173,7 +173,7 @@ export function ExerciseCardOverlay({ exercise }: { exercise: ExerciseData }) {
         {exercise.completed ? (
           <CheckCircle2 className="h-5 w-5 text-green-500" />
         ) : (
-          <div className="h-5 w-5 rounded-full border-2 border-gray-600" />
+          <div className="h-5 w-5 rounded-full border-2 border-rdy-gray-300" />
         )}
       </div>
 
@@ -182,15 +182,15 @@ export function ExerciseCardOverlay({ exercise }: { exercise: ExerciseData }) {
         <p
           className={cn(
             'truncate text-sm font-medium',
-            exercise.completed ? 'text-gray-500 line-through' : 'text-white'
+            exercise.completed ? 'text-rdy-gray-400 line-through' : 'text-rdy-black'
           )}
         >
           {exercise.exercise?.titleDe || 'Unknown Exercise'}
         </p>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-rdy-gray-400">
           <Clock className="h-3 w-3" />
           <span>{formatTime(exercise.scheduledAt)}</span>
-          {exercise.isObligatory && <Star className="h-3 w-3 text-amber-400" />}
+          {exercise.isObligatory && <Star className="h-3 w-3 text-rdy-orange-500" />}
         </div>
       </div>
 
@@ -198,7 +198,7 @@ export function ExerciseCardOverlay({ exercise }: { exercise: ExerciseData }) {
       {exercise.exercise && (
         <ExerciseTypeIcon
           type={exercise.exercise.type}
-          className="h-4 w-4 flex-shrink-0 text-gray-500"
+          className="h-4 w-4 flex-shrink-0 text-rdy-gray-400"
         />
       )}
     </div>

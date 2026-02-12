@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -124,10 +124,10 @@ export function CreateClassDialog({ open, onOpenChange, onSuccess }: CreateClass
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto border-gray-800 bg-gray-900 text-white sm:max-w-[600px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Create Class</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription>
             Create a new class with a mentor and schedule
           </DialogDescription>
         </DialogHeader>
@@ -135,25 +135,24 @@ export function CreateClassDialog({ open, onOpenChange, onSuccess }: CreateClass
         <div className="space-y-4 py-4">
           {/* Name */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Name *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Name *</label>
             <Input
               placeholder="Class name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Mentor */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Mentor *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Mentor *</label>
             <Select value={mentorId} onValueChange={setMentorId}>
-              <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select mentor" />
               </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-gray-800">
+              <SelectContent>
                 {mentors?.map((mentor) => (
-                  <SelectItem key={mentor.id} value={mentor.id} className="text-white">
+                  <SelectItem key={mentor.id} value={mentor.id}>
                     {mentor.name || mentor.email}
                   </SelectItem>
                 ))}
@@ -163,19 +162,19 @@ export function CreateClassDialog({ open, onOpenChange, onSuccess }: CreateClass
 
           {/* Status */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Status</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Status</label>
             <Select
               value={status}
               onValueChange={(value: 'active' | 'disabled') => setStatus(value)}
             >
-              <SelectTrigger className="w-full border-gray-700 bg-gray-800 text-white">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
-              <SelectContent className="border-gray-700 bg-gray-800">
-                <SelectItem value="active" className="text-white">
+              <SelectContent>
+                <SelectItem value="active">
                   Active
                 </SelectItem>
-                <SelectItem value="disabled" className="text-white">
+                <SelectItem value="disabled">
                   Disabled
                 </SelectItem>
               </SelectContent>
@@ -184,57 +183,53 @@ export function CreateClassDialog({ open, onOpenChange, onSuccess }: CreateClass
 
           {/* Duration */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Duration (months) *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Duration (months) *</label>
             <Input
               type="number"
               min="1"
               placeholder="3"
               value={durationMonths}
               onChange={(e) => handleDurationChange(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Start Date */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Start Date *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Start Date *</label>
             <Input
               type="date"
               value={startDate}
               onChange={(e) => handleStartDateChange(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* End Date */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">End Date *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">End Date *</label>
             <Input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Session Configuration */}
-          <div className="space-y-4 rounded-lg border border-gray-700 p-4">
-            <p className="text-sm font-medium text-gray-300">Session Configuration</p>
+          <div className="space-y-4 rounded-lg border border-rdy-gray-200 p-4">
+            <p className="text-sm font-medium text-rdy-gray-600">Session Configuration</p>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm text-gray-400">Sessions per month</label>
+                <label className="text-sm text-rdy-gray-400">Sessions per month</label>
                 <Input
                   type="number"
                   min="1"
                   placeholder="2"
                   value={monthlySessionCount}
                   onChange={(e) => setMonthlySessionCount(e.target.value)}
-                  className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-gray-400">Duration (minutes)</label>
+                <label className="text-sm text-rdy-gray-400">Duration (minutes)</label>
                 <Input
                   type="number"
                   min="15"
@@ -242,14 +237,13 @@ export function CreateClassDialog({ open, onOpenChange, onSuccess }: CreateClass
                   placeholder="60"
                   value={sessionDurationMinutes}
                   onChange={(e) => setSessionDurationMinutes(e.target.value)}
-                  className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
                 />
               </div>
             </div>
           </div>
 
           {errorMessage && (
-            <div className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">{errorMessage}</div>
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{errorMessage}</div>
           )}
         </div>
 
@@ -257,13 +251,14 @@ export function CreateClassDialog({ open, onOpenChange, onSuccess }: CreateClass
           <Button
             variant="outline"
             onClick={() => handleClose(false)}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={!name.trim() || !mentorId || !startDate || !endDate || createMutation.isPending}
+            className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
           >
             {createMutation.isPending ? 'Creating...' : 'Create Class'}
           </Button>

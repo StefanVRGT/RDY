@@ -32,7 +32,7 @@ export function MobileLayout({
   return (
     <div
       className={cn(
-        'flex min-h-screen flex-col bg-gray-950 text-white',
+        'flex min-h-screen flex-col bg-white text-rdy-black',
         className
       )}
     >

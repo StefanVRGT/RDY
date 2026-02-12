@@ -420,7 +420,7 @@ describe('GroupSessionDetailPage', () => {
       fireEvent.click(menteeButton);
 
       // Button should have selected styling
-      expect(menteeButton).toHaveClass('bg-twilight-600/20');
+      expect(menteeButton).toHaveClass('bg-rdy-orange-600/20');
     });
 
     it('should submit invite with selected mentees', async () => {
@@ -452,7 +452,7 @@ describe('GroupSessionDetailPage', () => {
       render(<GroupSessionDetailPage />);
 
       const rsvpsTab = screen.getByTestId('tab-rsvps');
-      expect(rsvpsTab).toHaveClass('bg-twilight-600');
+      expect(rsvpsTab).toHaveClass('bg-rdy-orange-600');
     });
 
     it('should switch to details tab when clicked', () => {
@@ -461,7 +461,7 @@ describe('GroupSessionDetailPage', () => {
       fireEvent.click(screen.getByTestId('tab-details'));
 
       const detailsTab = screen.getByTestId('tab-details');
-      expect(detailsTab).toHaveClass('bg-twilight-600');
+      expect(detailsTab).toHaveClass('bg-rdy-orange-600');
     });
 
     it('should show session details when details tab is active', () => {
