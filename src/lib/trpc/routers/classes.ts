@@ -915,25 +915,37 @@ export const classesRouter = router({
         scheduledAt: Date;
       }> = [];
 
+      // Load exercise_days per module for dynamic durations
+      const moduleDurations: Record<string, number> = {};
+      if (Object.values(curriculumByLevel).length > 0) {
+        const spRows = await ctx.db
+          .select({ id: schwerpunktebenen.id, exerciseDays: schwerpunktebenen.exerciseDays })
+          .from(schwerpunktebenen)
+          .where(inArray(schwerpunktebenen.id, Object.values(curriculumByLevel)));
+        for (const sp of spRows) moduleDurations[sp.id] = sp.exerciseDays;
+      }
+
+      // Calculate cumulative start offset for each level
+      let cumulativeOffset = 0;
       for (let level = 1; level <= cls.durationLevels; level++) {
         const spId = curriculumByLevel[level];
-        if (!spId) continue; // level has no curriculum assigned
+        if (!spId) continue;
 
+        const levelExerciseDays = moduleDurations[spId] ?? 20;
         const levelStart = new Date(cls.startDate);
-        levelStart.setTime(levelStart.getTime() + (level - 1) * DAYS_PER_LEVEL * MS_PER_DAY);
+        levelStart.setTime(levelStart.getTime() + cumulativeOffset * MS_PER_DAY);
 
-        // Load weeks for this schwerpunktebene (max 3 per level)
+        // Load weeks for this schwerpunktebene
         const levelWeeks = await ctx.db
           .select({ id: weeks.id })
           .from(weeks)
           .where(eq(weeks.schwerpunktebeneId, spId))
           .orderBy(asc(weeks.orderIndex));
 
-        for (let weekIdx = 0; weekIdx < Math.min(levelWeeks.length, 3); weekIdx++) {
+        for (let weekIdx = 0; weekIdx < levelWeeks.length; weekIdx++) {
           const week = levelWeeks[weekIdx];
           const weekStartMs = levelStart.getTime() + weekIdx * 7 * MS_PER_DAY;
 
-          // Load exercises for this week
           const weekExercisesList = await ctx.db
             .select({
               exerciseId: weekExercises.exerciseId,
@@ -950,11 +962,11 @@ export const classesRouter = router({
               const scheduledAt = new Date(weekStartMs + (d - 1) * MS_PER_DAY);
               scheduledAt.setUTCHours(9, 0, 0, 0);
 
-              // Skip rest day (day 21 of each level, 0-indexed offset 20)
+              // Skip if beyond this module's exercise days
               const dayWithinLevel = Math.floor(
                 (scheduledAt.getTime() - levelStart.getTime()) / MS_PER_DAY
               );
-              if (dayWithinLevel >= DAYS_PER_LEVEL - 1) continue; // day 21+ is rest / out of level
+              if (dayWithinLevel >= levelExerciseDays) continue;
 
               for (const userId of memberIds) {
                 insertRows.push({
@@ -967,6 +979,9 @@ export const classesRouter = router({
             }
           }
         }
+
+        // Move offset: exercise days + 1 day for the module event
+        cumulativeOffset += levelExerciseDays + 1;
       }
 
       // 6. Batch insert (chunks of 500 to stay within DB limits)
