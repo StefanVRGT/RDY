@@ -189,6 +189,10 @@ export const weeks = pgTable(
     // Bilingual measurement question fields (DE/EN)
     measurementQuestionDe: text('measurement_question_de'),
     measurementQuestionEn: text('measurement_question_en'),
+    // Diary prompts/guiding questions for this week (JSON array of strings)
+    diaryPrompts: jsonb('diary_prompts'),
+    // Tracking categories specific to this week (overrides module-level if set)
+    trackingCategories: jsonb('tracking_categories'),
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),

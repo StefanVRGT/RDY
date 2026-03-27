@@ -31,7 +31,7 @@ const mentorNavItems: NavItem[] = [
 const menteeNavItems: NavItem[] = [
   { href: '/mentee/calendar', label: 'Today', icon: Home },
   { href: '/mentee/calendar/weekly', label: 'Week', icon: Calendar },
-  { href: '/mentee/calendar/tracking', label: 'Reflect', icon: Target },
+  { href: '/mentee/calendar/tracking', label: 'Reflection', icon: Target },
   { href: '/mentee/profile', label: 'Profile', icon: User },
 ];
 

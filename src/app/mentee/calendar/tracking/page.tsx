@@ -54,6 +54,9 @@ export default function ReflectPage() {
     [saveMutation]
   );
 
+  // ── Diary prompts (guiding questions for this week) ──
+  const { data: diaryPrompts } = trpc.mentee.getDiaryPrompts.useQuery();
+
   // ── Diary ──
   const { data: diaryEntries, isLoading: loadingDiary } = trpc.diary.getEntries.useQuery({
     startDate: dateStr,
@@ -204,11 +207,25 @@ export default function ReflectPage() {
               </div>
             )}
 
-            {/* ── DIARY ────────────────────────────────── */}
+            {/* ── DIARY / REFLECTION ────────────────────── */}
             <div className="border-t border-rdy-gray-200 pt-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-rdy-black mb-3">
-                Diary
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-rdy-black mb-2">
+                Reflection
               </h2>
+
+              {/* Weekly guiding questions */}
+              {diaryPrompts && diaryPrompts.length > 0 && (
+                <div className="mb-3 rounded-lg bg-rdy-orange-500/5 px-3 py-2">
+                  <p className="text-[10px] uppercase tracking-wider text-rdy-orange-500 font-medium mb-1">
+                    Leitfragen dieser Woche
+                  </p>
+                  {diaryPrompts.map((prompt, i) => (
+                    <p key={i} className="text-xs text-rdy-gray-500 leading-relaxed">
+                      &bull; {prompt}
+                    </p>
+                  ))}
+                </div>
+              )}
 
               <div className="flex items-end gap-2">
                 <textarea

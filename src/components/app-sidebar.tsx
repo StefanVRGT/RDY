@@ -97,7 +97,7 @@ const menteeSections: NavSection[] = [
     items: [
       { href: '/mentee/calendar', label: 'Today', icon: Sun },
       { href: '/mentee/calendar/weekly', label: 'Week', icon: Calendar },
-      { href: '/mentee/calendar/tracking', label: 'Reflect', icon: BookOpen },
+      { href: '/mentee/calendar/tracking', label: 'Reflection', icon: BookOpen },
       { href: '/mentee/booking', label: 'Booking', icon: CalendarPlus },
       { href: '/mentee/profile', label: 'Profile', icon: User },
     ],

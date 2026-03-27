@@ -1609,6 +1609,24 @@ export const menteeRouter = router({
         .limit(1);
 
       if (curriculum) {
+        // Check week-level categories first
+        const weekWithinModule = ((weekNumber - 1) % WEEKS_PER_LEVEL) + 1;
+        const [weekData] = await ctx.db
+          .select({ trackingCategories: weeks.trackingCategories })
+          .from(weeks)
+          .where(
+            and(
+              eq(weeks.schwerpunktebeneId, curriculum.schwerpunktebeneId),
+              eq(weeks.weekNumber, String(weekWithinModule))
+            )
+          )
+          .limit(1);
+
+        if (weekData?.trackingCategories && Array.isArray(weekData.trackingCategories) && weekData.trackingCategories.length > 0) {
+          return weekData.trackingCategories as Array<{ key: string; label: string; emoji: string }>;
+        }
+
+        // Then module-level categories
         const [sp] = await ctx.db
           .select({ trackingCategories: schwerpunktebenen.trackingCategories })
           .from(schwerpunktebenen)
@@ -1639,6 +1657,58 @@ export const menteeRouter = router({
       { key: 'body', label: 'Körper', emoji: '🧘' },
       { key: 'thoughts', label: 'Gedanken', emoji: '💭' },
     ];
+  }),
+
+  /**
+   * Get diary prompts/guiding questions for the current week
+   */
+  getDiaryPrompts: menteeProcedure.query(async ({ ctx }) => {
+    const memberships = await ctx.db
+      .select({ classId: classMembers.classId, startDate: classes.startDate })
+      .from(classMembers)
+      .innerJoin(classes, eq(classMembers.classId, classes.id))
+      .where(eq(classMembers.userId, ctx.userId))
+      .limit(1);
+
+    if (memberships.length === 0) return [];
+
+    const classStartDate = new Date(memberships[0].startDate);
+    const weeksSinceStart = Math.floor(
+      (Date.now() - classStartDate.getTime()) / MS_PER_WEEK
+    );
+    const weekNumber = Math.max(1, weeksSinceStart + 1);
+    const levelNumber = Math.ceil(weekNumber / WEEKS_PER_LEVEL);
+    const weekWithinModule = ((weekNumber - 1) % WEEKS_PER_LEVEL) + 1;
+
+    const [curriculum] = await ctx.db
+      .select({ schwerpunktebeneId: classCurriculum.schwerpunktebeneId })
+      .from(classCurriculum)
+      .where(
+        and(
+          eq(classCurriculum.classId, memberships[0].classId),
+          eq(classCurriculum.levelNumber, levelNumber)
+        )
+      )
+      .limit(1);
+
+    if (!curriculum) return [];
+
+    const [weekData] = await ctx.db
+      .select({ diaryPrompts: weeks.diaryPrompts })
+      .from(weeks)
+      .where(
+        and(
+          eq(weeks.schwerpunktebeneId, curriculum.schwerpunktebeneId),
+          eq(weeks.weekNumber, String(weekWithinModule))
+        )
+      )
+      .limit(1);
+
+    if (weekData?.diaryPrompts && Array.isArray(weekData.diaryPrompts)) {
+      return weekData.diaryPrompts as string[];
+    }
+
+    return [];
   }),
 
   // ── Daily Tracking ──────────────────────────────────────────────
