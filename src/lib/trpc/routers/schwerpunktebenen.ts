@@ -25,6 +25,7 @@ const createSchwerpunktebeneSchema = z.object({
   zielEn: z.string().optional().nullable(),
   imageUrl: z.string().url().optional().nullable(),
   trackingCategories: z.array(trackingCategorySchema).optional().nullable(),
+  exerciseDays: z.number().int().min(1).max(90).optional(),
 });
 
 const updateSchwerpunktebeneSchema = z.object({
@@ -40,6 +41,7 @@ const updateSchwerpunktebeneSchema = z.object({
   zielEn: z.string().optional().nullable(),
   imageUrl: z.string().url().optional().nullable(),
   trackingCategories: z.array(trackingCategorySchema).optional().nullable(),
+  exerciseDays: z.number().int().min(1).max(90).optional(),
 });
 
 const listSchwerpunktebenenSchema = z.object({
@@ -181,6 +183,7 @@ export const schwerpunktebenenRouter = router({
         zielEn: input.zielEn,
         imageUrl: input.imageUrl,
         trackingCategories: input.trackingCategories,
+        exerciseDays: input.exerciseDays ?? 20,
       })
       .returning();
 

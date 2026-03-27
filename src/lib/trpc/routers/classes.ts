@@ -334,20 +334,47 @@ export const classesRouter = router({
       })
       .returning();
 
-    // Auto-generate program events based on RDY Masterclass timing
+    // Auto-generate program events with dynamic module durations
+    // Fetch module durations from schwerpunktebenen assigned to this class's curriculum
     const MS_PER_DAY_LOCAL = 24 * 60 * 60 * 1000;
-    const eventOffsets: Array<{ type: 'basics' | 'module' | 'endtalk'; label: string; dayOffset: number }> = [
-      { type: 'basics', label: 'BASICS', dayOffset: 0 },
-      { type: 'module', label: 'MODUL 1', dayOffset: 7 },
-      { type: 'module', label: 'MODUL 2', dayOffset: 28 },
-      { type: 'module', label: 'MODUL 3', dayOffset: 49 },
-      { type: 'module', label: 'MODUL 4', dayOffset: 70 },
-      { type: 'module', label: 'MODUL 5', dayOffset: 91 },
-      { type: 'endtalk', label: 'END TALK', dayOffset: 112 },
-    ];
+
+    const curriculum = await ctx.db
+      .select({
+        levelNumber: classCurriculum.levelNumber,
+        exerciseDays: schwerpunktebenen.exerciseDays,
+      })
+      .from(classCurriculum)
+      .innerJoin(schwerpunktebenen, eq(classCurriculum.schwerpunktebeneId, schwerpunktebenen.id))
+      .where(eq(classCurriculum.classId, newClass.id))
+      .orderBy(asc(classCurriculum.levelNumber));
+
+    // Build timeline: BASICS(day 0) + exerciseDays[0] → MODUL 1 + exerciseDays[1] → ...
+    // Default durations if no curriculum assigned yet: 6 for BASICS, 20 for modules
+    const defaultDurations = [6, 20, 20, 20, 20, 20];
+    const durations = defaultDurations.map((d, i) => {
+      const cur = curriculum.find((c) => c.levelNumber === i);
+      return cur?.exerciseDays ?? d;
+    });
+
+    type EventType = 'basics' | 'module' | 'endtalk';
+    const events: Array<{ type: EventType; label: string; dayOffset: number }> = [];
+    let offset = 0;
+
+    // BASICS at day 0
+    events.push({ type: 'basics', label: 'BASICS', dayOffset: offset });
+    offset += durations[0] + 1; // exercise days + 1 day for the event itself
+
+    // Modules 1-5
+    for (let i = 1; i <= 5; i++) {
+      events.push({ type: 'module', label: `MODUL ${i}`, dayOffset: offset });
+      offset += (durations[i] ?? 20) + 1;
+    }
+
+    // END TALK
+    events.push({ type: 'endtalk', label: 'END TALK', dayOffset: offset });
 
     await ctx.db.insert(programEvents).values(
-      eventOffsets.map((o) => ({
+      events.map((o) => ({
         classId: newClass.id,
         type: o.type,
         label: o.label,

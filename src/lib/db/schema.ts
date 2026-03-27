@@ -135,6 +135,8 @@ export const schwerpunktebenen = pgTable(
     reflectionQuestions: jsonb('reflection_questions'),
     // Tracking categories/themes for this module (JSON array of {key, label, emoji})
     trackingCategories: jsonb('tracking_categories'),
+    // Number of exercise days for this module (default 20, BASICS=6)
+    exerciseDays: integer('exercise_days').default(20).notNull(),
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),

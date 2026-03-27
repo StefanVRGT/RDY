@@ -66,6 +66,7 @@ export function EditSchwerpunktebeneDialog({
   const [zielEn, setZielEn] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [trackingCategories, setTrackingCategories] = useState<TrackingCategory[]>([]);
+  const [exerciseDays, setExerciseDays] = useState(20);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Populate form when schwerpunktebene changes
@@ -86,6 +87,7 @@ export function EditSchwerpunktebeneDialog({
           ? schwerpunktebene.trackingCategories
           : []
       );
+      setExerciseDays(('exerciseDays' in schwerpunktebene ? schwerpunktebene.exerciseDays : 20) as number);
       setErrorMessage(null);
     }
   }, [schwerpunktebene]);
@@ -123,6 +125,7 @@ export function EditSchwerpunktebeneDialog({
       trackingCategories: trackingCategories.length > 0
         ? trackingCategories.filter((c) => c.label.trim())
         : null,
+      exerciseDays,
     });
   };
 
@@ -271,6 +274,22 @@ export function EditSchwerpunktebeneDialog({
               value={imageUrl}
               onChange={setImageUrl}
               onError={setErrorMessage}
+            />
+          </div>
+
+          {/* Exercise Days */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-rdy-gray-600">Exercise-Tage</label>
+            <p className="text-xs text-rdy-gray-400">
+              Anzahl Tage f&uuml;r Exercises in diesem Modul (Standard: 20, BASICS: 6)
+            </p>
+            <Input
+              type="number"
+              min={1}
+              max={90}
+              value={exerciseDays}
+              onChange={(e) => setExerciseDays(parseInt(e.target.value, 10) || 20)}
+              className="w-24"
             />
           </div>
 
