@@ -44,6 +44,12 @@ export const users = pgTable('users', {
   address: varchar('address', { length: 500 }),
   plz: varchar('plz', { length: 20 }),
   city: varchar('city', { length: 255 }),
+  // Privacy settings — mentee controls visibility to their mentor
+  shareDiaryWithMentor: boolean('share_diary_with_mentor').default(false).notNull(),
+  shareWeeklySummaryWithMentor: boolean('share_weekly_summary_with_mentor').default(false).notNull(),
+  // Mentor-assigned tracking categories (JSON array of {key, label, emoji})
+  // Default: null = use system defaults (Stresslevel, Atmung, Körper, Gedanken)
+  trackingCategories: jsonb('tracking_categories'),
   // Timestamps
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -100,7 +106,7 @@ export const invitations = pgTable(
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
 
-// Schwerpunktebenen table - monthly focus areas in the 3-month program cycle
+// Schwerpunktebenen table - levels in the RDY program (1-5)
 export const schwerpunktebenen = pgTable(
   'schwerpunktebenen',
   {
@@ -109,8 +115,8 @@ export const schwerpunktebenen = pgTable(
     tenantId: uuid('tenant_id')
       .references(() => tenants.id)
       .notNull(),
-    // Month number in the 3-month cycle (1, 2, or 3)
-    monthNumber: varchar('month_number', { length: 1 }).notNull(),
+    // Level number in the program (1-5)
+    levelNumber: varchar('level_number', { length: 1 }).notNull(),
     // Bilingual title fields (DE/EN)
     titleDe: varchar('title_de', { length: 255 }).notNull(),
     titleEn: varchar('title_en', { length: 255 }),
@@ -125,13 +131,17 @@ export const schwerpunktebenen = pgTable(
     zielEn: text('ziel_en'),
     // Image URL for visual representation
     imageUrl: text('image_url'),
+    // Reflection questions for this module (JSON array of strings)
+    reflectionQuestions: jsonb('reflection_questions'),
+    // Tracking categories/themes for this module (JSON array of {key, label, emoji})
+    trackingCategories: jsonb('tracking_categories'),
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => [
     index('schwerpunktebenen_tenant_idx').on(table.tenantId),
-    index('schwerpunktebenen_month_idx').on(table.monthNumber),
+    index('schwerpunktebenen_level_idx').on(table.levelNumber),
   ]
 );
 
@@ -210,16 +220,22 @@ export const exercises = pgTable(
     // Bilingual description fields (DE/EN)
     descriptionDe: text('description_de'),
     descriptionEn: text('description_en'),
+    // Exercise group / category (e.g. "Atemübungen")
+    groupName: varchar('group_name', { length: 100 }),
     // Duration in minutes
     durationMinutes: integer('duration_minutes'),
     // Media URLs
     videoUrl: text('video_url'),
+    videoUrlDe: text('video_url_de'),
+    videoUrlEn: text('video_url_en'),
     audioUrl: text('audio_url'),
     // Text content for text-type exercises (bilingual)
     contentDe: text('content_de'),
     contentEn: text('content_en'),
     // Order index for custom ordering
     orderIndex: varchar('order_index', { length: 10 }).notNull().default('0'),
+    // Image URL for exercise visual
+    imageUrl: text('image_url'),
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -258,6 +274,8 @@ export const weekExercises = pgTable(
     frequency: exerciseFrequencyEnum('frequency').notNull().default('daily'),
     // Custom frequency description (used when frequency is 'custom')
     customFrequency: varchar('custom_frequency', { length: 255 }),
+    // Applicable days of the week (1=Mon … 7=Sun). null = every day (daily).
+    applicableDays: jsonb('applicable_days').$type<number[]>(),
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -288,12 +306,14 @@ export const classes = pgTable(
     mentorId: uuid('mentor_id')
       .references(() => users.id)
       .notNull(),
+    // Auto-generated class number (YYNN format, e.g. 2601)
+    classNumber: varchar('class_number', { length: 10 }),
     // Class name
     name: varchar('name', { length: 255 }).notNull(),
     // Status (active/disabled)
     status: classStatusEnum('status').default('active').notNull(),
-    // Duration in months (default 3 months)
-    durationMonths: integer('duration_months').default(3).notNull(),
+    // Number of levels (default 5)
+    durationLevels: integer('duration_levels').default(5).notNull(),
     // Start and end dates
     startDate: timestamp('start_date').notNull(),
     endDate: timestamp('end_date').notNull(),
@@ -374,8 +394,8 @@ export const classCurriculum = pgTable(
     schwerpunktebeneId: uuid('schwerpunktebene_id')
       .references(() => schwerpunktebenen.id, { onDelete: 'cascade' })
       .notNull(),
-    // Month assignment within the class (1, 2, 3, etc.)
-    monthNumber: integer('month_number').notNull(),
+    // Level assignment within the class (1, 2, 3, etc.)
+    levelNumber: integer('level_number').notNull(),
     // Customization fields - allows mentor to override default schwerpunktebene content
     customTitleDe: varchar('custom_title_de', { length: 255 }),
     customTitleEn: varchar('custom_title_en', { length: 255 }),
@@ -388,11 +408,11 @@ export const classCurriculum = pgTable(
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => [
-    // Unique constraint on class_id + month_number to prevent duplicate month assignments
-    unique('class_curriculum_class_month_unique').on(table.classId, table.monthNumber),
+    // Unique constraint on class_id + level_number to prevent duplicate level assignments
+    unique('class_curriculum_class_level_unique').on(table.classId, table.levelNumber),
     index('class_curriculum_class_idx').on(table.classId),
     index('class_curriculum_schwerpunktebene_idx').on(table.schwerpunktebeneId),
-    index('class_curriculum_month_idx').on(table.monthNumber),
+    index('class_curriculum_level_idx').on(table.levelNumber),
   ]
 );
 
@@ -1181,3 +1201,100 @@ export const patternEntries = pgTable(
 
 export type PatternEntry = typeof patternEntries.$inferSelect;
 export type NewPatternEntry = typeof patternEntries.$inferInsert;
+
+// Enum for experience tracking time blocks (kept for backwards compat)
+export const timeBlockEnum = pgEnum('time_block', ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM']);
+
+// Legacy experience entries table
+export const experienceEntries = pgTable(
+  'experience_entries',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    schwerpunktebeneId: uuid('schwerpunktebene_id')
+      .references(() => schwerpunktebenen.id, { onDelete: 'cascade' })
+      .notNull(),
+    timeBlock: timeBlockEnum('time_block').notNull(),
+    entryDate: timestamp('entry_date').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('experience_entries_user_idx').on(table.userId),
+    index('experience_entries_date_idx').on(table.userId, table.entryDate),
+    unique('experience_entries_user_schwerpunkt_time_date_unique').on(
+      table.userId,
+      table.schwerpunktebeneId,
+      table.timeBlock,
+      table.entryDate
+    ),
+  ]
+);
+
+export type ExperienceEntry = typeof experienceEntries.$inferSelect;
+export type NewExperienceEntry = typeof experienceEntries.$inferInsert;
+
+// Tracking entries - 0-10 scale ratings logged throughout the day
+// Multiple entries per category per day allowed (e.g. stress=8 at 10am, stress=6 at 3pm)
+export const trackingEntries = pgTable(
+  'tracking_entries',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    entryDate: timestamp('entry_date').notNull(),
+    // Category key: e.g. "stress", "breathing", "body", "thoughts"
+    category: varchar('category', { length: 50 }).notNull(),
+    // Tap-to-log: 0 = logged (timestamp is the data point)
+    value: integer('value').notNull(),
+    // When exactly the entry was recorded (time of day matters)
+    recordedAt: timestamp('recorded_at').defaultNow().notNull(),
+    // Optional link to which module/schwerpunktebene this belongs to
+    schwerpunktebeneId: uuid('schwerpunktebene_id')
+      .references(() => schwerpunktebenen.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('tracking_entries_user_idx').on(table.userId),
+    index('tracking_entries_date_idx').on(table.userId, table.entryDate),
+  ]
+);
+
+export type TrackingEntry = typeof trackingEntries.$inferSelect;
+export type NewTrackingEntry = typeof trackingEntries.$inferInsert;
+
+// Reflection sheets - end-of-module questionnaire answers sent to mentor
+export const reflectionEntries = pgTable(
+  'reflection_entries',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    schwerpunktebeneId: uuid('schwerpunktebene_id')
+      .references(() => schwerpunktebenen.id, { onDelete: 'cascade' })
+      .notNull(),
+    // The questions + answers stored as JSON array
+    responses: jsonb('responses').notNull().default([]),
+    // When the mentee submitted it
+    submittedAt: timestamp('submitted_at'),
+    // Mentor feedback
+    mentorFeedback: text('mentor_feedback'),
+    mentorFeedbackAt: timestamp('mentor_feedback_at'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('reflection_entries_user_idx').on(table.userId),
+    unique('reflection_entries_user_schwerpunkt_unique').on(
+      table.userId,
+      table.schwerpunktebeneId
+    ),
+  ]
+);
+
+export type ReflectionEntry = typeof reflectionEntries.$inferSelect;
+export type NewReflectionEntry = typeof reflectionEntries.$inferInsert;

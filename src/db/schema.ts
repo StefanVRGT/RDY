@@ -100,7 +100,7 @@ export const invitations = pgTable(
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
 
-// Schwerpunktebenen table - monthly focus areas in the 3-month program cycle
+// Schwerpunktebenen table - level-based focus areas in the program cycle
 export const schwerpunktebenen = pgTable(
   'schwerpunktebenen',
   {
@@ -109,8 +109,8 @@ export const schwerpunktebenen = pgTable(
     tenantId: uuid('tenant_id')
       .references(() => tenants.id)
       .notNull(),
-    // Month number in the 3-month cycle (1, 2, or 3)
-    monthNumber: varchar('month_number', { length: 1 }).notNull(),
+    // Level number in the program cycle (1-5)
+    levelNumber: varchar('level_number', { length: 1 }).notNull(),
     // Bilingual title fields (DE/EN)
     titleDe: varchar('title_de', { length: 255 }).notNull(),
     titleEn: varchar('title_en', { length: 255 }),
@@ -125,13 +125,17 @@ export const schwerpunktebenen = pgTable(
     zielEn: text('ziel_en'),
     // Image URL for visual representation
     imageUrl: text('image_url'),
+    // Reflection questions for this module (JSON array of strings)
+    reflectionQuestions: jsonb('reflection_questions'),
+    // Tracking categories/themes for this module (JSON array of {key, label, emoji})
+    trackingCategories: jsonb('tracking_categories'),
     // Timestamps
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => [
     index('schwerpunktebenen_tenant_idx').on(table.tenantId),
-    index('schwerpunktebenen_month_idx').on(table.monthNumber),
+    index('schwerpunktebenen_level_idx').on(table.levelNumber),
   ]
 );
 
@@ -292,8 +296,8 @@ export const classes = pgTable(
     name: varchar('name', { length: 255 }).notNull(),
     // Status (active/disabled)
     status: classStatusEnum('status').default('active').notNull(),
-    // Duration in months (default 3 months)
-    durationMonths: integer('duration_months').default(3).notNull(),
+    // Duration in levels (default 5 levels)
+    durationLevels: integer('duration_levels').default(5).notNull(),
     // Start and end dates
     startDate: timestamp('start_date').notNull(),
     endDate: timestamp('end_date').notNull(),
@@ -374,8 +378,8 @@ export const classCurriculum = pgTable(
     schwerpunktebeneId: uuid('schwerpunktebene_id')
       .references(() => schwerpunktebenen.id, { onDelete: 'cascade' })
       .notNull(),
-    // Month assignment within the class (1, 2, 3, etc.)
-    monthNumber: integer('month_number').notNull(),
+    // Level assignment within the class (1, 2, 3, etc.)
+    levelNumber: integer('level_number').notNull(),
     // Customization fields - allows mentor to override default schwerpunktebene content
     customTitleDe: varchar('custom_title_de', { length: 255 }),
     customTitleEn: varchar('custom_title_en', { length: 255 }),
@@ -388,11 +392,11 @@ export const classCurriculum = pgTable(
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => [
-    // Unique constraint on class_id + month_number to prevent duplicate month assignments
-    unique('class_curriculum_class_month_unique').on(table.classId, table.monthNumber),
+    // Unique constraint on class_id + level_number to prevent duplicate level assignments
+    unique('class_curriculum_class_level_unique').on(table.classId, table.levelNumber),
     index('class_curriculum_class_idx').on(table.classId),
     index('class_curriculum_schwerpunktebene_idx').on(table.schwerpunktebeneId),
-    index('class_curriculum_month_idx').on(table.monthNumber),
+    index('class_curriculum_level_idx').on(table.levelNumber),
   ]
 );
 

@@ -85,6 +85,34 @@
       "when": 1769183721779,
       "tag": "0011_fixed_spencer_smythe",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1771842457054,
+      "tag": "0012_add_privacy_settings_to_users",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1741795200000,
+      "tag": "0014_rename_levels",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1742428800000,
+      "tag": "0015_experience_tracking_and_exercise_images",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1742601600000,
+      "tag": "0016_tracking_scales_and_reflections",
+      "breakpoints": true
     }
   ]
 }

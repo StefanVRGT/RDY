@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rdy-cache-v1';
+const CACHE_NAME = 'rdy-cache-v6';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -43,19 +43,25 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip API and auth requests
-  if (event.request.url.includes('/api/') || event.request.url.includes('/auth/')) {
+  // Skip API, auth, and Next.js internal session requests
+  if (
+    event.request.url.includes('/api/') ||
+    event.request.url.includes('/auth/') ||
+    event.request.url.includes('/session/')
+  ) {
     return;
   }
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Clone the response for caching
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
+        // Only cache successful responses to avoid TypeError on non-cacheable responses
+        if (response.ok) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
         return response;
       })
       .catch(() => {
@@ -67,10 +73,11 @@ self.addEventListener('fetch', (event) => {
 
 // Sound URLs for notification tones
 const TONE_SOUNDS = {
-  default: '/sounds/default.mp3',
-  gentle: '/sounds/gentle.mp3',
-  chime: '/sounds/chime.mp3',
-  alert: '/sounds/alert.mp3',
+  default: '/sounds/tingsha.webm',
+  tingsha: '/sounds/tingsha.webm',
+  gentle: '/sounds/tingsha.webm',
+  chime: '/sounds/tingsha.webm',
+  alert: '/sounds/tingsha.webm',
   silent: null, // No sound for silent
 };
 
@@ -125,8 +132,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: payload.body || '',
-    icon: payload.icon || '/icons/icon-192x192.png',
-    badge: payload.badge || '/icons/icon-72x72.png',
+    icon: payload.icon || '/icons/icon.svg',
+    badge: payload.badge || '/icons/icon.svg',
     tag: payload.tag || 'rdy-notification',
     data: { ...payload.data, tone } || { tone },
     actions: payload.actions || [],
@@ -160,7 +167,7 @@ self.addEventListener('notificationclick', (event) => {
   }
 
   // Determine URL to open
-  const urlToOpen = data.url || '/dashboard';
+  const urlToOpen = data.url || '/';
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true })

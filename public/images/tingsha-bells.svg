@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200" height="120">
+  <!-- Left bell -->
+  <ellipse cx="65" cy="90" rx="35" ry="12" fill="#C4A44A" stroke="#A8893A" stroke-width="1.5"/>
+  <ellipse cx="65" cy="88" rx="35" ry="12" fill="#D4B85A"/>
+  <ellipse cx="65" cy="86" rx="32" ry="10" fill="none" stroke="#BFA04A" stroke-width="0.8"/>
+  <ellipse cx="65" cy="84" rx="28" ry="8" fill="none" stroke="#BFA04A" stroke-width="0.5"/>
+  <ellipse cx="65" cy="74" rx="8" ry="5" fill="#D4B85A" stroke="#A8893A" stroke-width="1"/>
+  <!-- Left cord -->
+  <path d="M65 69 Q80 30 100 20" fill="none" stroke="#5C4A2A" stroke-width="2" stroke-linecap="round"/>
+  <!-- Right bell -->
+  <ellipse cx="135" cy="90" rx="35" ry="12" fill="#C4A44A" stroke="#A8893A" stroke-width="1.5"/>
+  <ellipse cx="135" cy="88" rx="35" ry="12" fill="#D4B85A"/>
+  <ellipse cx="135" cy="86" rx="32" ry="10" fill="none" stroke="#BFA04A" stroke-width="0.8"/>
+  <ellipse cx="135" cy="84" rx="28" ry="8" fill="none" stroke="#BFA04A" stroke-width="0.5"/>
+  <ellipse cx="135" cy="74" rx="8" ry="5" fill="#D4B85A" stroke="#A8893A" stroke-width="1"/>
+  <!-- Right cord -->
+  <path d="M135 69 Q120 30 100 20" fill="none" stroke="#5C4A2A" stroke-width="2" stroke-linecap="round"/>
+  <!-- Cord knot -->
+  <circle cx="100" cy="18" r="4" fill="#5C4A2A"/>
+</svg>

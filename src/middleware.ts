@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 
 // Define routes that don't require authentication
-const publicRoutes = ['/', '/auth/signin', '/auth/error', '/api/auth'];
+const publicRoutes = ['/', '/auth/signin', '/auth/error', '/api/auth', '/api/reminders'];
 
 // Define role-based route protection
 // Routes are matched by prefix - e.g., '/admin' matches '/admin/users', '/admin/settings', etc.
@@ -41,6 +41,11 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
+  // Redirect stale /session/ URLs to home (PWA cache artifacts)
+  if (pathname.startsWith('/session/')) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
   // Redirect unauthenticated users to sign in
   if (!session?.user) {
     const signInUrl = new URL('/auth/signin', req.url);
@@ -76,6 +81,6 @@ export const config = {
      * - public files (public folder)
      * - api routes that don't need auth (handled in the middleware itself)
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|sounds/|videos/|images/|icons/|uploads/|help/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|js|css|woff|woff2|webm|m4a|mp3|mp4|ico)$).*)',
   ],
 };
