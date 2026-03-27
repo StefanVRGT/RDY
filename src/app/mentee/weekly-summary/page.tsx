@@ -208,6 +208,18 @@ export default function WeeklySummaryPage() {
         {/* Dashboard content */}
         {!isLoading && summaryData && (
           <div className="space-y-4" data-testid="dashboard-content">
+            {/* AI Motivational Feedback */}
+            {summaryData.aiFeedback && (
+              <div className="rounded-xl bg-gradient-to-br from-rdy-orange-500 to-rdy-orange-600 p-4 text-white">
+                <p className="text-xs font-medium uppercase tracking-wider opacity-80 mb-1">
+                  Dein Wochen-Feedback
+                </p>
+                <p className="text-sm leading-relaxed">
+                  {summaryData.aiFeedback}
+                </p>
+              </div>
+            )}
+
             {/* Mood Barometer - Featured at top */}
             <MoodBarometer
               data={summaryData.moodBarometer}

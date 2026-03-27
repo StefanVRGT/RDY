@@ -12,6 +12,55 @@ import { TRPCError } from '@trpc/server';
 import { MOOD_NEUTRAL_SCORE } from '@/lib/constants';
 
 /**
+ * Generate motivational weekly feedback based on completion stats.
+ * Rule-based (no API call) — fast, free, always available.
+ * Later can be replaced with Gemini/Claude API call for personalized feedback.
+ */
+function generateWeeklyFeedback(
+  completed: number,
+  total: number,
+  prevCompleted: number,
+  prevTotal: number,
+  diaryEntries: number,
+  trackingEntries: number,
+): string {
+  const rate = total > 0 ? completed / total : 0;
+  const prevRate = prevTotal > 0 ? prevCompleted / prevTotal : 0;
+  const improving = rate > prevRate;
+  const perfect = rate >= 1;
+  const good = rate >= 0.8;
+  const ok = rate >= 0.5;
+
+  let message = '';
+
+  if (perfect) {
+    message = 'Mega! Du hast diese Woche alle Exercises durchgezogen — das ist herausragend. Bleib genau so dran!';
+  } else if (good && improving) {
+    message = `Super Woche! ${completed} von ${total} Exercises erledigt und du hast dich im Vergleich zur Vorwoche verbessert. Weiter so!`;
+  } else if (good) {
+    message = `Starke Leistung — ${completed} von ${total} Exercises geschafft. Schau, ob du nächste Woche die letzten ${total - completed} auch noch packst!`;
+  } else if (ok && improving) {
+    message = `Du bist auf dem richtigen Weg! ${completed} von ${total} ist ein solider Start und du verbesserst dich. Achte nächste Woche darauf, dir feste Zeiten für die Exercises einzuplanen.`;
+  } else if (ok) {
+    message = `${completed} von ${total} Exercises — ein guter Anfang. Tipp: Plane dir morgens direkt feste Zeiten ein, damit die Exercises nicht untergehen.`;
+  } else if (total > 0) {
+    message = `Diese Woche war's tough — nur ${completed} von ${total} Exercises. Das ist okay, jede Woche ist ein neuer Start. Schau, dass du dir nächste Woche bewusst Slots freihältst.`;
+  } else {
+    message = 'Willkommen in einer neuen Woche! Nutze die Exercises um dein Bewusstsein zu schärfen — selbst 5 Minuten pro Tag machen einen Unterschied.';
+  }
+
+  // Add diary/tracking nudges
+  if (diaryEntries === 0 && total > 0) {
+    message += ' Schreib auch kurz ins Diary — das hilft dir, Muster zu erkennen.';
+  }
+  if (trackingEntries === 0 && total > 0) {
+    message += ' Vergiss das Tracking nicht — ein Tap wenn du etwas bemerkst, reicht schon.';
+  }
+
+  return message;
+}
+
+/**
  * Mentee middleware - ensures user has mentee role and extracts mentee user info
  */
 const weeklySummaryProcedure = protectedProcedure.use(async ({ ctx, next }) => {
@@ -424,6 +473,16 @@ export const weeklySummaryRouter = router({
           })),
           highlights: diaryHighlights,
         },
+
+        // AI-generated motivational feedback
+        aiFeedback: generateWeeklyFeedback(
+          currentCompleted,
+          currentTotal,
+          previousCompleted,
+          previousTotal,
+          weekDiaryEntries.length,
+          totalPatternEntries
+        ),
       };
     }),
 
