@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 
 // Define routes that don't require authentication
-const publicRoutes = ['/', '/auth/signin', '/auth/error', '/api/auth', '/api/reminders'];
+const publicRoutes = ['/', '/auth/signin', '/auth/error', '/api/auth', '/api/reminders', '/api/cron'];
 
 // Define role-based route protection
 // Routes are matched by prefix - e.g., '/admin' matches '/admin/users', '/admin/settings', etc.
