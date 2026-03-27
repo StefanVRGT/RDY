@@ -1,0 +1,385 @@
+/* RDY Keycloak Theme - Minimal Design */
+
+/* Overall page styling */
+body {
+  background-color: #FFFFFF !important;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  margin: 0;
+  padding: 0;
+}
+
+/* Login container */
+#kc-container {
+  background-color: transparent !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#kc-container-wrapper {
+  background-color: transparent !important;
+  width: 100%;
+}
+
+/* Login box */
+#kc-content {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+#kc-content-wrapper {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+/* Header styling - RDY Logo */
+#kc-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+#kc-header-wrapper {
+  font-size: 60px;
+  font-weight: bold;
+  color: #1A1A1A;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #999999;
+  margin-top: 16px;
+}
+
+/* Form styling */
+#kc-form {
+  background: transparent;
+}
+
+#kc-form-login {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Input fields */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label,
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #1A1A1A;
+  margin-bottom: 8px;
+}
+
+.form-control,
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100% !important;
+  padding: 16px !important;
+  font-size: 16px !important;
+  color: #1A1A1A !important;
+  background-color: #F5F5F5 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  outline: none !important;
+  box-sizing: border-box;
+}
+
+.form-control:focus,
+input:focus {
+  background-color: #E0E0E0 !important;
+  border: 2px solid #FF8C42 !important;
+}
+
+/* Submit button - RDY Orange */
+#kc-login,
+.btn-primary,
+input[type="submit"],
+button[type="submit"] {
+  width: 100% !important;
+  padding: 20px !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: #FFFFFF !important;
+  background-color: #FF8C42 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+  box-shadow: none !important;
+}
+
+#kc-login:hover,
+.btn-primary:hover,
+input[type="submit"]:hover,
+button[type="submit"]:hover {
+  opacity: 0.9 !important;
+  background-color: #E67A35 !important;
+}
+
+#kc-login:active,
+.btn-primary:active,
+input[type="submit"]:active,
+button[type="submit"]:active {
+  opacity: 0.6 !important;
+}
+
+/* Links */
+a {
+  color: #FF8C42 !important;
+  text-decoration: none !important;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+a:hover {
+  color: #E67A35 !important;
+}
+
+/* Form options (remember me, etc.) */
+#kc-form-options {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox input[type="checkbox"] {
+  width: auto !important;
+  padding: 0 !important;
+}
+
+.checkbox label {
+  font-size: 14px;
+  text-transform: none;
+  color: #666666;
+}
+
+/* Error messages */
+.alert-error,
+.pf-c-alert.pf-m-danger,
+.alert.alert-error {
+  background-color: #F44336 !important;
+  color: #FFFFFF !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  margin-bottom: 24px !important;
+  border: none !important;
+}
+
+/* Success messages */
+.alert-success,
+.pf-c-alert.pf-m-success,
+.alert.alert-success {
+  background-color: #4CAF50 !important;
+  color: #FFFFFF !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  margin-bottom: 24px !important;
+  border: none !important;
+}
+
+/* Warning messages */
+.alert-warning,
+.pf-c-alert.pf-m-warning,
+.alert.alert-warning {
+  background-color: #FFA766 !important;
+  color: #1A1A1A !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  margin-bottom: 24px !important;
+  border: none !important;
+}
+
+/* Remove shadows and borders */
+.card-pf,
+.login-pf-page {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Footer */
+#kc-info {
+  text-align: center;
+  margin-top: 48px;
+}
+
+#kc-info-wrapper {
+  font-size: 12px;
+  color: #999999;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Remove Keycloak branding */
+#kc-logo-wrapper {
+  display: none;
+}
+
+/* Social providers (if used) */
+#kc-social-providers {
+  margin-top: 32px;
+}
+
+#kc-social-providers ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#kc-social-providers li {
+  margin: 0;
+}
+
+#kc-social-providers button,
+#kc-social-providers a {
+  width: 100% !important;
+  padding: 16px !important;
+  background-color: #F5F5F5 !important;
+  color: #1A1A1A !important;
+  border: none !important;
+  border-radius: 8px !important;
+  text-transform: uppercase !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: background-color 0.2s ease;
+}
+
+#kc-social-providers button:hover,
+#kc-social-providers a:hover {
+  background-color: #E0E0E0 !important;
+}
+
+/* Registration form */
+#kc-registration {
+  margin-top: 32px;
+  text-align: center;
+}
+
+#kc-registration span {
+  color: #666666;
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+/* Password reset */
+#kc-reset-password-form {
+  margin-top: 32px;
+  text-align: center;
+}
+
+/* Required field indicator */
+.required {
+  color: #F44336;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  #kc-content-wrapper {
+    padding: 24px 16px;
+  }
+
+  #kc-header-wrapper {
+    font-size: 48px;
+  }
+
+  #kc-login,
+  .btn-primary,
+  input[type="submit"],
+  button[type="submit"] {
+    padding: 16px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Loading state */
+.kc-loading {
+  text-align: center;
+  padding: 20px;
+}
+
+.kc-loading::after {
+  content: '';
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #FF8C42;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Remove default Keycloak styles */
+.login-pf body {
+  background: #FFFFFF !important;
+}
+
+.login-pf .container {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Clean up PatternFly styles */
+.pf-c-form__group {
+  margin-bottom: 24px !important;
+}
+
+.pf-c-form__label {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: #1A1A1A !important;
+}
+
+.pf-c-form-control {
+  padding: 16px !important;
+  font-size: 16px !important;
+  background-color: #F5F5F5 !important;
+  border: none !important;
+  border-radius: 8px !important;
+}
+
+.pf-c-button {
+  padding: 20px !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  background-color: #FF8C42 !important;
+  border: none !important;
+  border-radius: 8px !important;
+}

@@ -1,0 +1,2 @@
+ALTER TABLE "users" ADD COLUMN "share_diary_with_mentor" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+ALTER TABLE "users" ADD COLUMN "share_weekly_summary_with_mentor" boolean DEFAULT false NOT NULL;
