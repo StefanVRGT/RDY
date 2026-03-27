@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useViewContext, type ViewMode } from '@/components/providers/view-context';
 import {
   Select,
@@ -16,13 +17,14 @@ const viewLabels: Record<ViewMode, string> = {
   mentee: 'Mentee View',
 };
 
-const viewColors: Record<ViewMode, string> = {
-  admin: 'text-rdy-orange-500',
-  mentor: 'text-rdy-orange-500',
-  mentee: 'text-rdy-orange-500',
+const roleHomeUrls: Record<ViewMode, string> = {
+  admin: '/admin/dashboard',
+  mentor: '/mentor',
+  mentee: '/mentee/calendar',
 };
 
 export function ViewSwitcher() {
+  const router = useRouter();
   const { currentView, setCurrentView, availableViews } = useViewContext();
 
   // Don't render if user has only one view available
@@ -30,10 +32,16 @@ export function ViewSwitcher() {
     return null;
   }
 
+  function handleViewChange(value: string) {
+    const view = value as ViewMode;
+    setCurrentView(view);
+    router.push(roleHomeUrls[view]);
+  }
+
   return (
     <div className="flex items-center gap-2" data-testid="view-switcher">
       <Eye className="h-4 w-4 text-rdy-gray-400" />
-      <Select value={currentView} onValueChange={(value) => setCurrentView(value as ViewMode)}>
+      <Select value={currentView} onValueChange={handleViewChange}>
         <SelectTrigger
           className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-sm text-rdy-black hover:bg-rdy-gray-200"
           data-testid="view-switcher-trigger"
@@ -47,7 +55,7 @@ export function ViewSwitcher() {
               value={view}
               data-testid={`view-option-${view}`}
             >
-              <span className={viewColors[view]}>{viewLabels[view]}</span>
+              <span className="text-rdy-orange-500">{viewLabels[view]}</span>
             </SelectItem>
           ))}
         </SelectContent>

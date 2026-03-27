@@ -10,7 +10,7 @@ const mockClasses = [
     memberCount: 3,
     startDate: new Date('2026-01-01'),
     endDate: new Date('2026-03-31'),
-    durationMonths: 3,
+    durationLevels: 3,
   },
   {
     id: 'class-2',
@@ -19,7 +19,7 @@ const mockClasses = [
     memberCount: 2,
     startDate: new Date('2026-02-01'),
     endDate: new Date('2026-04-30'),
-    durationMonths: 3,
+    durationLevels: 3,
   },
   {
     id: 'class-3',
@@ -28,7 +28,7 @@ const mockClasses = [
     memberCount: 5,
     startDate: new Date('2025-10-01'),
     endDate: new Date('2025-12-31'),
-    durationMonths: 3,
+    durationLevels: 3,
   },
 ];
 
@@ -38,7 +38,7 @@ const mockClassDetail = {
   status: 'active' as const,
   startDate: new Date('2026-01-01'),
   endDate: new Date('2026-03-31'),
-  durationMonths: 3,
+  durationLevels: 3,
   memberCount: 3,
   members: [
     {

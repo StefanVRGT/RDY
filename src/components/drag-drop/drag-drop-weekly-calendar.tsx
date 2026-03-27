@@ -191,7 +191,7 @@ export function DragDropWeeklyCalendar({
           {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
             <div
               key={day}
-              className="text-center text-xs font-medium uppercase text-gray-500"
+              className="text-center text-xs font-medium uppercase text-rdy-gray-500"
               data-testid={`day-header-${day.toLowerCase()}`}
             >
               {day}

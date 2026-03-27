@@ -100,7 +100,7 @@ export function InstallPrompt() {
   return (
     <div
       className={cn(
-        'fixed bottom-20 left-4 right-4 z-50 rounded-xl bg-white p-4 shadow-lg border border-rdy-gray-200',
+        'fixed bottom-20 left-4 right-4 z-50 rounded-xl bg-background p-4 shadow-lg border border-rdy-gray-200',
         'animate-in slide-in-from-bottom-4 duration-300',
         'safe-area-inset-bottom'
       )}

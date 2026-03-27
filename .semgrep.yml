@@ -1,0 +1,55 @@
+rules:
+  - id: no-server-import-in-client
+    patterns:
+      - pattern: import { ... } from '@/lib/trpc/trpc'
+      - pattern-inside: |
+          'use client';
+          ...
+    message: "Server-only tRPC imports in 'use client' component will cause runtime errors"
+    languages: [typescript, tsx]
+    severity: ERROR
+
+  - id: no-server-action-in-client
+    patterns:
+      - pattern: import { ... } from '@/app/actions/...'
+      - pattern-inside: |
+          'use client';
+          ...
+    message: "Server action imports in 'use client' component cause auth module conflicts"
+    languages: [typescript, tsx]
+    severity: ERROR
+
+  - id: no-raw-sql
+    patterns:
+      - pattern-either:
+          - pattern: sql`...`
+          - pattern: $DB.execute($SQL)
+    message: "Avoid raw SQL — use Drizzle ORM query builder for parameterized queries"
+    languages: [typescript]
+    severity: WARNING
+
+  - id: no-dangerouslysetinnerhtml
+    pattern: dangerouslySetInnerHTML={...}
+    message: "dangerouslySetInnerHTML is a XSS risk — use safe rendering"
+    languages: [tsx]
+    severity: ERROR
+
+  - id: auth-required-on-mutation
+    patterns:
+      - pattern: |
+          .$PROC.mutation(async ({ ctx, input }) => {
+            ...
+            await ctx.db.$METHOD(...).$WHERE(...)
+            ...
+          })
+      - pattern-not-inside: |
+          const $PROC = protectedProcedure.use(...)
+    message: "Mutations should use protectedProcedure to ensure authentication"
+    languages: [typescript]
+    severity: WARNING
+
+  - id: no-bg-white-use-bg-background
+    pattern: className="... bg-white ..."
+    message: "Use bg-background instead of bg-white for consistent RDY theming"
+    languages: [tsx]
+    severity: WARNING

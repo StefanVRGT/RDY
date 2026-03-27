@@ -31,9 +31,9 @@ export function ViewProvider({ children }: { children: React.ReactNode }) {
     if (hasRole('superadmin')) {
       views.push('admin', 'mentor', 'mentee');
     }
-    // Admins can switch to Mentor and Mentee views
+    // Admins can switch between Admin, Mentor and Mentee views
     else if (hasRole('admin')) {
-      views.push('mentor', 'mentee');
+      views.push('admin', 'mentor', 'mentee');
     }
     // Mentors only see mentor and mentee views (no switcher needed for them in this context)
     else if (hasRole('mentor')) {

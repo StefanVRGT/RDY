@@ -5,10 +5,10 @@ import { usePathname } from 'next/navigation';
 import {
   Home,
   Calendar,
-  ClipboardList,
   User,
   Clock,
   Users,
+  Target,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -31,7 +31,7 @@ const mentorNavItems: NavItem[] = [
 const menteeNavItems: NavItem[] = [
   { href: '/mentee/calendar', label: 'Today', icon: Home },
   { href: '/mentee/calendar/weekly', label: 'Week', icon: Calendar },
-  { href: '/mentee/diary', label: 'Diary', icon: ClipboardList },
+  { href: '/mentee/calendar/tracking', label: 'Reflect', icon: Target },
   { href: '/mentee/profile', label: 'Profile', icon: User },
 ];
 
@@ -61,7 +61,7 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
   return (
     <nav
       className={cn(
-        'safe-area-inset-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-rdy-gray-200 bg-white/95 backdrop-blur-sm',
+        'safe-area-inset-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-rdy-gray-200 bg-background/95 backdrop-blur-sm',
         className
       )}
       role="navigation"
@@ -71,7 +71,7 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== '/mentor' && item.href !== '/mentee' && pathname.startsWith(item.href));
+            (item.href !== '/mentor' && item.href !== '/mentee' && item.href !== '/mentee/calendar' && pathname.startsWith(item.href));
           const Icon = item.icon;
 
           return (

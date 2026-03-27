@@ -41,21 +41,22 @@ describe('BottomNavigation', () => {
     render(<BottomNavigation />);
 
     expect(screen.getByText('Today')).toBeInTheDocument();
-    expect(screen.getByText('Sessions')).toBeInTheDocument();
-    expect(screen.getByText('Exercises')).toBeInTheDocument();
-    expect(screen.getByText('Diary')).toBeInTheDocument();
+    expect(screen.getByText('Week')).toBeInTheDocument();
+    expect(screen.getByText('Reflect')).toBeInTheDocument();
     expect(screen.getByText('Profile')).toBeInTheDocument();
   });
 
   it('renders correct hrefs for mentee navigation', () => {
     render(<BottomNavigation />);
 
-    // "Today" now points to /mentee/calendar (daily view as default for mentees)
     const todayLink = screen.getByText('Today').closest('a');
     expect(todayLink).toHaveAttribute('href', '/mentee/calendar');
 
-    const exercisesLink = screen.getByText('Exercises').closest('a');
-    expect(exercisesLink).toHaveAttribute('href', '/mentee/exercises');
+    const weekLink = screen.getByText('Week').closest('a');
+    expect(weekLink).toHaveAttribute('href', '/mentee/calendar/weekly');
+
+    const reflectLink = screen.getByText('Reflect').closest('a');
+    expect(reflectLink).toHaveAttribute('href', '/mentee/calendar/tracking');
   });
 
   it('has fixed positioning for mobile bottom bar', () => {

@@ -3,6 +3,8 @@
 import { cn } from '@/lib/utils';
 import { BottomNavigation } from './bottom-navigation';
 import { MobileHeader } from './mobile-header';
+import { useSidebarContext } from '@/components/providers/sidebar-context';
+import { useCallback } from 'react';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -29,10 +31,17 @@ export function MobileLayout({
   className,
   contentClassName,
 }: MobileLayoutProps) {
+  const { hasSidebar, toggleSidebar } = useSidebarContext();
+  const shouldShowBottomNav = showBottomNav && !hasSidebar;
+  const handleMenuClick = useCallback(
+    () => (onMenuClick ? onMenuClick() : toggleSidebar()),
+    [onMenuClick, toggleSidebar]
+  );
+
   return (
     <div
       className={cn(
-        'flex min-h-screen flex-col bg-white text-rdy-black',
+        'flex min-h-screen flex-col bg-background text-rdy-black',
         className
       )}
     >
@@ -43,7 +52,7 @@ export function MobileLayout({
           showBack={showBack}
           showMenu={showMenu}
           showNotifications={showNotifications}
-          onMenuClick={onMenuClick}
+          onMenuClick={handleMenuClick}
         />
       )}
 
@@ -52,7 +61,7 @@ export function MobileLayout({
         className={cn(
           'flex-1 overflow-y-auto',
           showHeader && 'pt-14 pt-safe-offset-14',
-          showBottomNav && 'pb-16 pb-safe-offset-16',
+          shouldShowBottomNav && 'pb-16 pb-safe-offset-16',
           contentClassName
         )}
       >
@@ -60,7 +69,7 @@ export function MobileLayout({
       </main>
 
       {/* Bottom Navigation */}
-      {showBottomNav && <BottomNavigation />}
+      {shouldShowBottomNav && <BottomNavigation />}
     </div>
   );
 }

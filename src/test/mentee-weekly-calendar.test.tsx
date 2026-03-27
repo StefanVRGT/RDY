@@ -114,7 +114,7 @@ const mockWeekThemeData = {
     zielEn: 'Establish daily mindfulness practices',
   },
   weekNumber: 1,
-  monthNumber: 1,
+  levelNumber: 1,
 };
 
 // Mock exercises data - create exercises for each day

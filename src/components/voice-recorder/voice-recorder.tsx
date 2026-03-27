@@ -2,8 +2,13 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Mic, Square, Play, Pause, Trash2, RotateCcw } from 'lucide-react';
+import { Mic, Square, Play, Pause, Trash2, RotateCcw, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Canvas colors — keep in sync with the RDY design system in tailwind.config.ts
+const CANVAS_BG = 'rgb(245, 245, 245)';         // ~rdy-gray-100
+const CANVAS_ORANGE = 'rgb(243, 146, 55)';       // ~rdy-orange-500
+const CANVAS_GRAY = 'rgb(189, 189, 189)';        // ~rdy-gray-300
 
 export type VoiceRecorderState = 'idle' | 'recording' | 'recorded';
 
@@ -35,6 +40,8 @@ export function VoiceRecorder({
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackProgress, setPlaybackProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string>('');
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -47,6 +54,28 @@ export function VoiceRecorder({
   const streamRef = useRef<MediaStream | null>(null);
   const recordingDurationRef = useRef<number>(0);
   const stopRecordingRef = useRef<() => void>(() => {});
+
+  // Enumerate audio input devices
+  const loadDevices = useCallback(async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const inputs = devices.filter((d) => d.kind === 'audioinput');
+      setAudioDevices(inputs);
+      // Pre-select default device if nothing chosen yet
+      if (!selectedDeviceId && inputs.length > 0) {
+        setSelectedDeviceId(inputs[0].deviceId);
+      }
+    } catch {
+      // enumerateDevices not supported — silently ignore
+    }
+  }, [selectedDeviceId]);
+
+  // Load devices on mount; also re-enumerate after permissions may have been granted
+  useEffect(() => {
+    loadDevices();
+    navigator.mediaDevices.addEventListener('devicechange', loadDevices);
+    return () => navigator.mediaDevices.removeEventListener('devicechange', loadDevices);
+  }, [loadDevices]);
 
   // Draw waveform visualization
   const drawWaveform = useCallback(() => {
@@ -65,11 +94,11 @@ export function VoiceRecorder({
     const width = canvas.width;
     const height = canvas.height;
 
-    ctx.fillStyle = 'rgb(245, 245, 245)'; // rdy-gray-100
+    ctx.fillStyle = CANVAS_BG;
     ctx.fillRect(0, 0, width, height);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgb(243, 146, 55)'; // rdy-orange-500
+    ctx.strokeStyle = CANVAS_ORANGE;
     ctx.beginPath();
 
     const sliceWidth = width / bufferLength;
@@ -115,7 +144,7 @@ export function VoiceRecorder({
       const step = Math.ceil(channelData.length / width);
       const amp = height / 2;
 
-      ctx.fillStyle = 'rgb(245, 245, 245)'; // rdy-gray-100
+      ctx.fillStyle = CANVAS_BG;
       ctx.fillRect(0, 0, width, height);
 
       ctx.beginPath();
@@ -134,9 +163,9 @@ export function VoiceRecorder({
         // Draw progress indicator
         const progressX = playbackProgress * width;
         if (i < progressX) {
-          ctx.strokeStyle = 'rgb(243, 146, 55)'; // rdy-orange-500 (played)
+          ctx.strokeStyle = CANVAS_ORANGE;
         } else {
-          ctx.strokeStyle = 'rgb(189, 189, 189)'; // rdy-gray-300 (not played)
+          ctx.strokeStyle = CANVAS_GRAY;
         }
 
         ctx.beginPath();
@@ -155,7 +184,11 @@ export function VoiceRecorder({
   const startRecording = useCallback(async () => {
     try {
       setError(null);
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioConstraints: MediaTrackConstraints =
+        selectedDeviceId ? { deviceId: { exact: selectedDeviceId } } : true as unknown as MediaTrackConstraints;
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+      // Re-enumerate now that permission is granted (labels become available)
+      loadDevices();
       streamRef.current = stream;
 
       // Set up audio analyzer for visualization
@@ -368,16 +401,36 @@ export function VoiceRecorder({
 
       {/* Controls */}
       {state === 'idle' && (
-        <div className="flex items-center justify-center">
-          <Button
-            onClick={startRecording}
-            disabled={disabled}
-            className="gap-2 bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
-            data-testid="voice-record-button"
-          >
-            <Mic className="h-4 w-4" />
-            Start Recording
-          </Button>
+        <div className="space-y-3">
+          {audioDevices.length > 1 && (
+            <div className="relative">
+              <Mic className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-rdy-gray-400" />
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-rdy-gray-400" />
+              <select
+                value={selectedDeviceId}
+                onChange={(e) => setSelectedDeviceId(e.target.value)}
+                className="w-full appearance-none rounded-lg border border-rdy-gray-200 bg-background py-2 pl-9 pr-8 text-sm text-rdy-black focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+                aria-label="Select microphone"
+              >
+                {audioDevices.map((device) => (
+                  <option key={device.deviceId} value={device.deviceId}>
+                    {device.label || `Microphone ${audioDevices.indexOf(device) + 1}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div className="flex items-center justify-center">
+            <Button
+              onClick={startRecording}
+              disabled={disabled}
+              className="gap-2 bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
+              data-testid="voice-record-button"
+            >
+              <Mic className="h-4 w-4" />
+              Start Recording
+            </Button>
+          </div>
         </div>
       )}
 

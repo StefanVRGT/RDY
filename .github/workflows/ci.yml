@@ -1,0 +1,35 @@
+name: CI — Quality & Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: ESLint
+        run: npx next lint
+      - name: Biome (security + complexity)
+        run: npx biome check src/
+      - name: TypeScript
+        run: npx tsc --noEmit
+      - name: npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+      - name: Unit tests
+        run: npx vitest run
+      - name: Build
+        run: npx next build
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          NEXTAUTH_SECRET: ci-secret
+          AUTH_SECRET: ci-secret
