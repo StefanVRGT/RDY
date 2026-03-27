@@ -114,7 +114,7 @@ export function TenantManagement() {
           <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="border-rdy-gray-200 bg-white">
+          <SelectContent className="border-rdy-gray-200 bg-background">
             <SelectItem value="all" className="text-rdy-black">
               All Status
             </SelectItem>
@@ -130,7 +130,7 @@ export function TenantManagement() {
           <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent className="border-rdy-gray-200 bg-white">
+          <SelectContent className="border-rdy-gray-200 bg-background">
             <SelectItem value="createdAt" className="text-rdy-black">
               Created
             </SelectItem>
@@ -146,7 +146,7 @@ export function TenantManagement() {
           <SelectTrigger className="w-[100px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
             <SelectValue placeholder="Order" />
           </SelectTrigger>
-          <SelectContent className="border-rdy-gray-200 bg-white">
+          <SelectContent className="border-rdy-gray-200 bg-background">
             <SelectItem value="desc" className="text-rdy-black">
               Desc
             </SelectItem>

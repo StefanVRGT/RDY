@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { trpc } from '@/lib/trpc/client';
-import { CheckCircle2, Circle, Video, Mic, FileText } from 'lucide-react';
+import { CheckCircle2, Circle, Video, Mic, Music, FileText } from 'lucide-react';
 import { RdyHeader } from '@/components/ui/rdy-header';
 import { MobileLayout } from '@/components/mobile';
 
@@ -157,7 +157,7 @@ export default function ExerciseExecutionPage() {
           <div className="mb-rdy-xl">
             <div className="flex justify-center mb-rdy-md">
               <div className="w-32 h-32 rounded-full bg-rdy-gray-100 flex items-center justify-center">
-                <span className="text-5xl">🎵</span>
+                <Music className="h-12 w-12 text-purple-500" />
               </div>
             </div>
             <div className="bg-rdy-gray-100 rounded-lg p-rdy-md">
