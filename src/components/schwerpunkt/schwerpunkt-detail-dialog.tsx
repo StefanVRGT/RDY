@@ -42,7 +42,7 @@ interface SchwerpunktDetailDialogProps {
   onOpenChange: (open: boolean) => void;
   monthTheme: MonthTheme | null;
   weekTheme: WeekTheme | null;
-  monthNumber: number;
+  levelNumber: number;
   weekNumber: number;
 }
 
@@ -51,7 +51,7 @@ export function SchwerpunktDetailDialog({
   onOpenChange,
   monthTheme,
   weekTheme,
-  monthNumber,
+  levelNumber,
   weekNumber,
 }: SchwerpunktDetailDialogProps) {
   const { t, language } = useLanguage();
@@ -82,12 +82,12 @@ export function SchwerpunktDetailDialog({
             data-testid="schwerpunkt-dialog-title"
           >
             <BookOpen className="h-5 w-5 text-rdy-orange-500" />
-            {language === 'de' ? 'Schwerpunkt Details' : 'Focus Area Details'}
+            {language === 'de' ? 'Modul Details' : 'Module Details'}
           </DialogTitle>
           <DialogDescription>
             {language === 'de'
-              ? `Monat ${monthNumber} - Woche ${weekNumber}`
-              : `Month ${monthNumber} - Week ${weekNumber}`}
+              ? `Modul ${levelNumber} - Woche ${weekNumber}`
+              : `Module ${levelNumber} - Week ${weekNumber}`}
           </DialogDescription>
         </DialogHeader>
 
@@ -97,7 +97,7 @@ export function SchwerpunktDetailDialog({
             <div className="mb-3 flex items-center gap-2">
               <Calendar className="h-4 w-4 text-rdy-orange-500" />
               <h3 className="text-sm font-semibold uppercase tracking-wide text-rdy-orange-500">
-                {language === 'de' ? 'Monatliches Schwerpunktthema' : 'Monthly Focus Theme'}
+                {language === 'de' ? 'Modul-Thema' : 'Module Theme'}
               </h3>
             </div>
             <div className="rounded-lg bg-rdy-gray-100 p-4">

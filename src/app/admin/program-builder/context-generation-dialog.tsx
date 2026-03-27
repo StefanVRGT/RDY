@@ -172,7 +172,7 @@ export function ContextGenerationDialog({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
               placeholder="Enter title for additional context..."
             />
           </div>
@@ -185,7 +185,7 @@ export function ContextGenerationDialog({
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-24 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
+              className="min-h-24 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
               placeholder="Enter the description to generate context from..."
             />
           </div>
@@ -196,7 +196,7 @@ export function ContextGenerationDialog({
             <textarea
               value={additionalContext}
               onChange={(e) => setAdditionalContext(e.target.value)}
-              className="min-h-16 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
+              className="min-h-16 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
               placeholder="E.g., 'This is for a week about mindfulness meditation'..."
             />
           </div>
@@ -277,7 +277,7 @@ export function ContextGenerationDialog({
                 participant will achieve
               </li>
             </ul>
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-2 text-xs text-rdy-gray-500">
               Powered by AI. Review the generated content before saving.
             </p>
           </div>

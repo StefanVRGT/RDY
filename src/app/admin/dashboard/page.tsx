@@ -67,8 +67,8 @@ export default function AdminDashboardPage() {
         );
       default:
         return (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-500/10">
-            <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rdy-gray-400/10">
+            <svg className="h-4 w-4 text-rdy-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
@@ -189,12 +189,12 @@ export default function AdminDashboardPage() {
                 Manage Users
               </Button>
             </Link>
-            <Link href="/admin/curriculum-builder">
+            <Link href="/admin/program-builder">
               <Button variant="outline" className="w-full justify-start border-rdy-gray-200 text-rdy-black hover:bg-rdy-gray-200">
                 <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
-                Curriculum Builder
+                Programm Builder
               </Button>
             </Link>
             <Link href="/admin/exercises">
@@ -264,7 +264,7 @@ export default function AdminDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-lg border border-rdy-gray-200 bg-white p-4">
+            <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-rdy-gray-400">Total Users</span>
                 <span className="text-2xl font-bold text-rdy-black">
@@ -275,7 +275,7 @@ export default function AdminDashboardPage() {
                 <div className="h-full bg-blue-500" style={{ width: '100%' }} />
               </div>
             </div>
-            <div className="rounded-lg border border-rdy-gray-200 bg-white p-4">
+            <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-rdy-gray-400">Mentors</span>
                 <span className="text-2xl font-bold text-rdy-black">
@@ -293,7 +293,7 @@ export default function AdminDashboardPage() {
                 />
               </div>
             </div>
-            <div className="rounded-lg border border-rdy-gray-200 bg-white p-4">
+            <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-rdy-gray-400">Mentees</span>
                 <span className="text-2xl font-bold text-rdy-black">

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { FileDropZone } from '@/components/ui/file-dropzone';
 import {
   Dialog,
   DialogContent,
@@ -20,9 +21,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+interface TrackingCategory {
+  key: string;
+  label: string;
+  emoji: string;
+}
+
 interface Schwerpunktebene {
   id: string;
-  monthNumber: string;
+  levelNumber: string;
   titleDe: string;
   titleEn: string | null;
   descriptionDe: string | null;
@@ -32,6 +39,7 @@ interface Schwerpunktebene {
   zielDe: string | null;
   zielEn: string | null;
   imageUrl: string | null;
+  trackingCategories?: TrackingCategory[] | null;
 }
 
 interface EditSchwerpunktebeneDialogProps {
@@ -47,7 +55,7 @@ export function EditSchwerpunktebeneDialog({
   schwerpunktebene,
   onSuccess,
 }: EditSchwerpunktebeneDialogProps) {
-  const [monthNumber, setMonthNumber] = useState<'1' | '2' | '3'>('1');
+  const [levelNumber, setMonthNumber] = useState<'1' | '2' | '3'>('1');
   const [titleDe, setTitleDe] = useState('');
   const [titleEn, setTitleEn] = useState('');
   const [descriptionDe, setDescriptionDe] = useState('');
@@ -57,12 +65,13 @@ export function EditSchwerpunktebeneDialog({
   const [zielDe, setZielDe] = useState('');
   const [zielEn, setZielEn] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [trackingCategories, setTrackingCategories] = useState<TrackingCategory[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Populate form when schwerpunktebene changes
   useEffect(() => {
     if (schwerpunktebene) {
-      setMonthNumber(schwerpunktebene.monthNumber as '1' | '2' | '3');
+      setMonthNumber(schwerpunktebene.levelNumber as '1' | '2' | '3');
       setTitleDe(schwerpunktebene.titleDe);
       setTitleEn(schwerpunktebene.titleEn || '');
       setDescriptionDe(schwerpunktebene.descriptionDe || '');
@@ -72,6 +81,11 @@ export function EditSchwerpunktebeneDialog({
       setZielDe(schwerpunktebene.zielDe || '');
       setZielEn(schwerpunktebene.zielEn || '');
       setImageUrl(schwerpunktebene.imageUrl || '');
+      setTrackingCategories(
+        schwerpunktebene.trackingCategories && Array.isArray(schwerpunktebene.trackingCategories)
+          ? schwerpunktebene.trackingCategories
+          : []
+      );
       setErrorMessage(null);
     }
   }, [schwerpunktebene]);
@@ -96,7 +110,7 @@ export function EditSchwerpunktebeneDialog({
     setErrorMessage(null);
     await updateMutation.mutateAsync({
       id: schwerpunktebene.id,
-      monthNumber,
+      levelNumber,
       titleDe: titleDe.trim(),
       titleEn: titleEn.trim() || null,
       descriptionDe: descriptionDe.trim() || null,
@@ -106,6 +120,9 @@ export function EditSchwerpunktebeneDialog({
       zielDe: zielDe.trim() || null,
       zielEn: zielEn.trim() || null,
       imageUrl: imageUrl.trim() || null,
+      trackingCategories: trackingCategories.length > 0
+        ? trackingCategories.filter((c) => c.label.trim())
+        : null,
     });
   };
 
@@ -120,9 +137,9 @@ export function EditSchwerpunktebeneDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Edit Focus Area</DialogTitle>
+          <DialogTitle>Modul bearbeiten</DialogTitle>
           <DialogDescription>
-            Update the focus area details
+            Modul-Details aktualisieren
           </DialogDescription>
         </DialogHeader>
 
@@ -131,7 +148,7 @@ export function EditSchwerpunktebeneDialog({
           <div className="space-y-2">
             <label className="text-sm font-medium text-rdy-gray-600">Month Number</label>
             <Select
-              value={monthNumber}
+              value={levelNumber}
               onValueChange={(value: '1' | '2' | '3') => setMonthNumber(value)}
             >
               <SelectTrigger className="w-full">
@@ -179,7 +196,7 @@ export function EditSchwerpunktebeneDialog({
               value={descriptionDe}
               onChange={(e) => setDescriptionDe(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -191,7 +208,7 @@ export function EditSchwerpunktebeneDialog({
               value={descriptionEn}
               onChange={(e) => setDescriptionEn(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -203,7 +220,7 @@ export function EditSchwerpunktebeneDialog({
               value={herkunftDe}
               onChange={(e) => setHerkunftDe(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -215,7 +232,7 @@ export function EditSchwerpunktebeneDialog({
               value={herkunftEn}
               onChange={(e) => setHerkunftEn(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -227,7 +244,7 @@ export function EditSchwerpunktebeneDialog({
               value={zielDe}
               onChange={(e) => setZielDe(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -239,19 +256,87 @@ export function EditSchwerpunktebeneDialog({
               value={zielEn}
               onChange={(e) => setZielEn(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
-          {/* Image URL */}
+          {/* Image */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Image URL</label>
-            <Input
-              type="url"
-              placeholder="https://example.com/image.jpg"
+            <label className="text-sm font-medium text-rdy-gray-600">Image</label>
+            <FileDropZone
+              accept="image/*"
+              endpoint="/api/upload/image"
+              label="Upload image"
+              hint="JPG, PNG, WebP, SVG — max 10 MB"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+              onChange={setImageUrl}
+              onError={setErrorMessage}
             />
+          </div>
+
+          {/* Tracking Categories */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-rdy-gray-600">
+              Tracking-Kategorien
+            </label>
+            <p className="text-xs text-rdy-gray-400">
+              Definiere die Tracking-Themen f&uuml;r dieses Modul (z.B. Stresslevel, Atmung, K&ouml;rper, Gedanken).
+            </p>
+            <div className="space-y-2">
+              {trackingCategories.map((cat, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <Input
+                    placeholder="Label (z.B. Stresslevel)"
+                    value={cat.label}
+                    onChange={(e) => {
+                      const updated = [...trackingCategories];
+                      updated[index] = {
+                        ...updated[index],
+                        label: e.target.value,
+                        key: e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+                      };
+                      setTrackingCategories(updated);
+                    }}
+                    className="flex-1"
+                  />
+                  <Input
+                    placeholder="Icon"
+                    value={cat.emoji}
+                    onChange={(e) => {
+                      const updated = [...trackingCategories];
+                      updated[index] = { ...updated[index], emoji: e.target.value };
+                      setTrackingCategories(updated);
+                    }}
+                    className="w-20"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setTrackingCategories(trackingCategories.filter((_, i) => i !== index));
+                    }}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    X
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setTrackingCategories([
+                  ...trackingCategories,
+                  { key: '', label: '', emoji: 'flame' },
+                ]);
+              }}
+              className="text-xs"
+            >
+              + Kategorie hinzuf&uuml;gen
+            </Button>
           </div>
 
           {errorMessage && (

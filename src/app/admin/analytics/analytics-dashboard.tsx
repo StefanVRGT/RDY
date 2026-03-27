@@ -63,7 +63,7 @@ export function AnalyticsDashboard() {
             description="Content library size"
           />
           <MetricCard
-            title="Assigned to Curriculum"
+            title="Assigned to Programm"
             value={exerciseData.assignedExercisesCount}
             description={`${exerciseData.curriculumCoverage}% coverage`}
           />
@@ -86,8 +86,8 @@ export function AnalyticsDashboard() {
             <Table>
               <TableHeader>
                 <TableRow className="border-rdy-gray-200 hover:bg-transparent">
-                  <TableHead className="text-rdy-gray-400">Schwerpunktebene</TableHead>
-                  <TableHead className="text-rdy-gray-400">Month</TableHead>
+                  <TableHead className="text-rdy-gray-400">Modul</TableHead>
+                  <TableHead className="text-rdy-gray-400">Modul Nr.</TableHead>
                   <TableHead className="text-right text-rdy-gray-400">Total Exercises</TableHead>
                   <TableHead className="text-right text-rdy-gray-400">Obligatory</TableHead>
                   <TableHead className="text-right text-rdy-gray-400">Optional</TableHead>
@@ -97,7 +97,7 @@ export function AnalyticsDashboard() {
                 {exerciseData.exercisesPerSchwerpunktebene.map((s) => (
                   <TableRow key={s.id} className="border-rdy-gray-200">
                     <TableCell className="font-medium text-rdy-black">{s.title}</TableCell>
-                    <TableCell className="text-rdy-gray-400">Month {s.monthNumber}</TableCell>
+                    <TableCell className="text-rdy-gray-400">Modul {s.levelNumber}</TableCell>
                     <TableCell className="text-right text-rdy-gray-600">{s.exerciseCount}</TableCell>
                     <TableCell className="text-right text-green-400">{s.obligatoryCount}</TableCell>
                     <TableCell className="text-right text-rdy-gray-400">{s.optionalCount}</TableCell>

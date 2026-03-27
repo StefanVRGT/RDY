@@ -24,12 +24,12 @@ import { EditSchwerpunktebeneDialog } from './edit-schwerpunktebene-dialog';
 import { DeleteSchwerpunktebeneDialog } from './delete-schwerpunktebene-dialog';
 
 type MonthFilter = 'all' | '1' | '2' | '3';
-type SortBy = 'monthNumber' | 'titleDe' | 'createdAt';
+type SortBy = 'levelNumber' | 'titleDe' | 'createdAt';
 type SortOrder = 'asc' | 'desc';
 
 interface Schwerpunktebene {
   id: string;
-  monthNumber: string;
+  levelNumber: string;
   titleDe: string;
   titleEn: string | null;
   descriptionDe: string | null;
@@ -44,7 +44,7 @@ interface Schwerpunktebene {
 export function SchwerpunktebenenManagement() {
   const router = useRouter();
   const [monthFilter, setMonthFilter] = useState<MonthFilter>('all');
-  const [sortBy, setSortBy] = useState<SortBy>('monthNumber');
+  const [sortBy, setSortBy] = useState<SortBy>('levelNumber');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [page, setPage] = useState(1);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -59,15 +59,15 @@ export function SchwerpunktebenenManagement() {
   const utils = trpc.useUtils();
 
   const { data, isLoading, error } = trpc.schwerpunktebenen.list.useQuery({
-    monthNumber: monthFilter,
+    levelNumber: monthFilter,
     sortBy,
     sortOrder,
     page,
     limit: 20,
   });
 
-  const getMonthLabel = (monthNumber: string) => {
-    switch (monthNumber) {
+  const getMonthLabel = (levelNumber: string) => {
+    switch (levelNumber) {
       case '1':
         return 'Month 1';
       case '2':
@@ -75,12 +75,12 @@ export function SchwerpunktebenenManagement() {
       case '3':
         return 'Month 3';
       default:
-        return monthNumber;
+        return levelNumber;
     }
   };
 
-  const getMonthBadgeClass = (monthNumber: string) => {
-    switch (monthNumber) {
+  const getMonthBadgeClass = (levelNumber: string) => {
+    switch (levelNumber) {
       case '1':
         return 'bg-rdy-orange-500/10 text-rdy-orange-500';
       case '2':
@@ -100,7 +100,7 @@ export function SchwerpunktebenenManagement() {
   if (error) {
     return (
       <div className="rounded-lg bg-red-50 p-4 text-red-500">
-        Error loading focus areas: {error.message}
+        Error loading Module: {error.message}
       </div>
     );
   }
@@ -140,7 +140,7 @@ export function SchwerpunktebenenManagement() {
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
-              <SelectItem value="monthNumber" className="text-rdy-black">
+              <SelectItem value="levelNumber" className="text-rdy-black">
                 Month
               </SelectItem>
               <SelectItem value="titleDe" className="text-rdy-black">
@@ -165,7 +165,7 @@ export function SchwerpunktebenenManagement() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)}>Add Focus Area</Button>
+        <Button onClick={() => setShowCreateDialog(true)}>Modul hinzufügen</Button>
       </div>
 
       {/* Table */}
@@ -191,7 +191,7 @@ export function SchwerpunktebenenManagement() {
             ) : !data?.schwerpunktebenen?.length ? (
               <TableRow>
                 <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
-                  No focus areas found
+                  Keine Module gefunden
                 </TableCell>
               </TableRow>
             ) : (
@@ -199,9 +199,9 @@ export function SchwerpunktebenenManagement() {
                 <TableRow key={schwerpunktebene.id} className="border-rdy-gray-200">
                   <TableCell>
                     <span
-                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getMonthBadgeClass(schwerpunktebene.monthNumber)}`}
+                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getMonthBadgeClass(schwerpunktebene.levelNumber)}`}
                     >
-                      {getMonthLabel(schwerpunktebene.monthNumber)}
+                      {getMonthLabel(schwerpunktebene.levelNumber)}
                     </span>
                   </TableCell>
                   <TableCell className="font-medium text-rdy-black">
@@ -269,7 +269,7 @@ export function SchwerpunktebenenManagement() {
         <div className="flex items-center justify-between">
           <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
-            {data.pagination.total} focus areas
+            {data.pagination.total} Module
           </p>
           <div className="flex gap-2">
             <Button

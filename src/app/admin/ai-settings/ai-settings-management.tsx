@@ -475,7 +475,7 @@ export function AISettingsManagement() {
           setApiKeyTestResult(null);
         }
       }}>
-        <DialogContent className="border-rdy-gray-200 bg-white">
+        <DialogContent className="border-rdy-gray-200">
           <DialogHeader>
             <DialogTitle className="text-rdy-black">
               {editingProvider === 'anthropic' ? 'Anthropic' : 'Gemini'} API Key
@@ -748,7 +748,7 @@ export function AISettingsManagement() {
 
       {/* Model Configuration Dialog */}
       <Dialog open={showModelConfigDialog} onOpenChange={setShowModelConfigDialog}>
-        <DialogContent className="border-rdy-gray-200 bg-white">
+        <DialogContent className="border-rdy-gray-200">
           <DialogHeader>
             <DialogTitle className="text-rdy-black">
               Configure {editingTaskType ? TASK_TYPE_LABELS[editingTaskType].label : ''} Model

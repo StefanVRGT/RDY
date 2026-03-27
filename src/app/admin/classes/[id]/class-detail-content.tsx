@@ -111,7 +111,7 @@ export function ClassDetailContent({ classId }: ClassDetailContentProps) {
             value="curriculum"
             className="data-[state=active]:bg-white data-[state=active]:text-rdy-black"
           >
-            Curriculum
+            Program
           </TabsTrigger>
         </TabsList>
 
@@ -128,7 +128,7 @@ export function ClassDetailContent({ classId }: ClassDetailContentProps) {
               <CardContent className="space-y-4">
                 <div className="flex justify-between border-b border-rdy-gray-200 pb-2">
                   <span className="text-rdy-gray-400">Duration</span>
-                  <span className="text-rdy-black">{classData.durationMonths} months</span>
+                  <span className="text-rdy-black">{classData.durationLevels} Module</span>
                 </div>
                 <div className="flex justify-between border-b border-rdy-gray-200 pb-2">
                   <span className="text-rdy-gray-400">Start Date</span>
@@ -197,7 +197,7 @@ export function ClassDetailContent({ classId }: ClassDetailContentProps) {
         </TabsContent>
 
         <TabsContent value="curriculum" className="mt-6">
-          <ClassCurriculumTab classId={classId} durationMonths={classData.durationMonths} />
+          <ClassCurriculumTab classId={classId} durationLevels={classData.durationLevels} />
         </TabsContent>
       </Tabs>
     </div>

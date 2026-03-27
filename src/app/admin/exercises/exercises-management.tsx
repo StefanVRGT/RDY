@@ -1,100 +1,187 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { ChevronDown, ChevronRight, FolderOpen, Folder } from 'lucide-react';
 import { CreateExerciseDialog } from './create-exercise-dialog';
 import { EditExerciseDialog } from './edit-exercise-dialog';
 import { DeleteExerciseDialog } from './delete-exercise-dialog';
 
-type TypeFilter = 'all' | 'video' | 'audio' | 'text';
-type SortBy = 'titleDe' | 'type' | 'durationMinutes' | 'createdAt';
-type SortOrder = 'asc' | 'desc';
-
 interface Exercise {
   id: string;
   type: 'video' | 'audio' | 'text';
+  groupName: string | null;
   titleDe: string;
   titleEn: string | null;
   descriptionDe: string | null;
   descriptionEn: string | null;
   durationMinutes: number | null;
   videoUrl: string | null;
+  videoUrlDe: string | null;
+  videoUrlEn: string | null;
   audioUrl: string | null;
   contentDe: string | null;
   contentEn: string | null;
+  imageUrl: string | null;
+}
+
+function formatDuration(minutes: number | null) {
+  if (!minutes) return null;
+  if (minutes < 60) return `${minutes}m`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
+
+interface ExerciseRowProps {
+  exercise: Exercise;
+  onEdit: (ex: Exercise) => void;
+  onDelete: (ex: { id: string; title: string }) => void;
+}
+
+function ExerciseRow({ exercise, onEdit, onDelete }: ExerciseRowProps) {
+  const duration = formatDuration(exercise.durationMinutes);
+  return (
+    <div className="flex items-center gap-3 px-4 py-2.5 border-b border-rdy-gray-100 last:border-0 hover:bg-rdy-gray-100/40 group">
+      <div className="flex-1 min-w-0">
+        <p className="font-medium text-rdy-black truncate">{exercise.titleDe}</p>
+        {exercise.titleEn && (
+          <p className="text-xs text-rdy-gray-400 truncate">{exercise.titleEn}</p>
+        )}
+      </div>
+      {duration && (
+        <span className="shrink-0 text-xs text-rdy-gray-400">{duration}</span>
+      )}
+      <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onEdit(exercise)}
+          className="h-7 px-2 text-rdy-gray-400 hover:text-rdy-black"
+        >
+          Edit
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDelete({ id: exercise.id, title: exercise.titleDe })}
+          className="h-7 px-2 text-red-400 hover:text-red-600"
+        >
+          Delete
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+interface GroupSectionProps {
+  name: string;
+  exercises: Exercise[];
+  isOpen: boolean;
+  onToggle: () => void;
+  onEdit: (ex: Exercise) => void;
+  onDelete: (ex: { id: string; title: string }) => void;
+}
+
+function GroupSection({ name, exercises, isOpen, onToggle, onEdit, onDelete }: GroupSectionProps) {
+  return (
+    <div className="rounded-lg border border-rdy-gray-200 overflow-hidden bg-background">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center gap-3 px-4 py-3 bg-rdy-gray-100 hover:bg-rdy-gray-200 transition-colors text-left"
+      >
+        {isOpen ? (
+          <FolderOpen className="h-4 w-4 text-rdy-orange-500 shrink-0" />
+        ) : (
+          <Folder className="h-4 w-4 text-rdy-gray-400 shrink-0" />
+        )}
+        <span className="flex-1 font-semibold text-rdy-black">{name}</span>
+        <span className="text-xs text-rdy-gray-400 mr-2">
+          {exercises.length} {exercises.length === 1 ? 'exercise' : 'exercises'}
+        </span>
+        {isOpen ? (
+          <ChevronDown className="h-4 w-4 text-rdy-gray-400 shrink-0" />
+        ) : (
+          <ChevronRight className="h-4 w-4 text-rdy-gray-400 shrink-0" />
+        )}
+      </button>
+
+      {isOpen && (
+        <div>
+          {exercises.map((ex) => (
+            <ExerciseRow key={ex.id} exercise={ex} onEdit={onEdit} onDelete={onDelete} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function ExercisesManagement() {
-  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
-  const [sortBy, setSortBy] = useState<SortBy>('createdAt');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-  const [page, setPage] = useState(1);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
-  const [deletingExercise, setDeletingExercise] = useState<{
-    id: string;
-    title: string;
-  } | null>(null);
+  const [deletingExercise, setDeletingExercise] = useState<{ id: string; title: string } | null>(null);
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(['__all__']));
 
   const utils = trpc.useUtils();
 
   const { data, isLoading, error } = trpc.exercises.list.useQuery({
-    type: typeFilter,
-    sortBy,
-    sortOrder,
-    page,
-    limit: 20,
+    type: 'all',
+    sortBy: 'titleDe',
+    sortOrder: 'asc',
+    page: 1,
+    limit: 200,
   });
 
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'video':
-        return 'Video';
-      case 'audio':
-        return 'Audio';
-      case 'text':
-        return 'Text';
-      default:
-        return type;
+  const { sortedGroupNames, grouped, ungrouped } = useMemo(() => {
+    const exercises: Exercise[] = data?.exercises ?? [];
+    const grouped: Record<string, Exercise[]> = {};
+    const ungrouped: Exercise[] = [];
+
+    for (const ex of exercises) {
+      if (ex.groupName?.trim()) {
+        const key = ex.groupName.trim();
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(ex);
+      } else {
+        ungrouped.push(ex);
+      }
     }
+
+    const sortedGroupNames = Object.keys(grouped).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+
+    return { sortedGroupNames, grouped, ungrouped };
+  }, [data?.exercises]);
+
+  // Initialise all groups as open once data loads
+  useMemo(() => {
+    if (sortedGroupNames.length > 0 || ungrouped.length > 0) {
+      setOpenGroups((prev) => {
+        if (prev.has('__all__')) {
+          const next = new Set([...sortedGroupNames, '__ungrouped__']);
+          return next;
+        }
+        return prev;
+      });
+    }
+  }, [sortedGroupNames, ungrouped.length]);
+
+  const toggleGroup = (name: string) => {
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
   };
 
-  const getTypeBadgeClass = (type: string) => {
-    switch (type) {
-      case 'video':
-        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
-      case 'audio':
-        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
-      case 'text':
-        return 'bg-rdy-orange-500/10 text-green-400';
-      default:
-        return 'bg-rdy-gray-100/30 text-rdy-gray-400';
-    }
-  };
-
-  const formatDuration = (minutes: number | null) => {
-    if (!minutes) return '-';
-    if (minutes < 60) return `${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
-  };
+  const collapseAll = () => setOpenGroups(new Set());
+  const expandAll = () =>
+    setOpenGroups(new Set([...sortedGroupNames, '__ungrouped__']));
 
   if (error) {
     return (
@@ -104,191 +191,74 @@ export function ExercisesManagement() {
     );
   }
 
+  const total = data?.pagination?.total ?? 0;
+
   return (
-    <div className="space-y-6">
-      {/* Header with Create button */}
-      <div className="flex items-center justify-between">
-        <div className="flex flex-wrap items-center gap-4">
-          <Select
-            value={typeFilter}
-            onValueChange={(value: TypeFilter) => {
-              setTypeFilter(value);
-              setPage(1);
-            }}
+    <div className="space-y-4">
+      {/* Toolbar */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-rdy-gray-400">{total} exercises</span>
+          <span className="text-rdy-gray-300">·</span>
+          <button
+            onClick={expandAll}
+            className="text-xs text-rdy-gray-400 hover:text-rdy-black transition-colors"
           >
-            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
-              <SelectItem value="all" className="text-rdy-black">
-                All Types
-              </SelectItem>
-              <SelectItem value="video" className="text-rdy-black">
-                Video
-              </SelectItem>
-              <SelectItem value="audio" className="text-rdy-black">
-                Audio
-              </SelectItem>
-              <SelectItem value="text" className="text-rdy-black">
-                Text
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-            <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
-              <SelectItem value="createdAt" className="text-rdy-black">
-                Created
-              </SelectItem>
-              <SelectItem value="titleDe" className="text-rdy-black">
-                Title
-              </SelectItem>
-              <SelectItem value="type" className="text-rdy-black">
-                Type
-              </SelectItem>
-              <SelectItem value="durationMinutes" className="text-rdy-black">
-                Duration
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={sortOrder} onValueChange={(value: SortOrder) => setSortOrder(value)}>
-            <SelectTrigger className="w-[100px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
-              <SelectValue placeholder="Order" />
-            </SelectTrigger>
-            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
-              <SelectItem value="asc" className="text-rdy-black">
-                Asc
-              </SelectItem>
-              <SelectItem value="desc" className="text-rdy-black">
-                Desc
-              </SelectItem>
-            </SelectContent>
-          </Select>
+            Expand all
+          </button>
+          <span className="text-rdy-gray-300">·</span>
+          <button
+            onClick={collapseAll}
+            className="text-xs text-rdy-gray-400 hover:text-rdy-black transition-colors"
+          >
+            Collapse all
+          </button>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)}>Add Exercise</Button>
+        <Button
+          onClick={() => setShowCreateDialog(true)}
+          className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
+        >
+          + Add Exercise
+        </Button>
       </div>
 
-      {/* Table */}
-      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-rdy-gray-200 hover:bg-transparent">
-              <TableHead className="text-rdy-gray-400">Type</TableHead>
-              <TableHead className="text-rdy-gray-400">Title (DE)</TableHead>
-              <TableHead className="text-rdy-gray-400">Title (EN)</TableHead>
-              <TableHead className="text-rdy-gray-400">Duration</TableHead>
-              <TableHead className="text-rdy-gray-400">Media</TableHead>
-              <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
-                  Loading...
-                </TableCell>
-              </TableRow>
-            ) : !data?.exercises?.length ? (
-              <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
-                  No exercises found
-                </TableCell>
-              </TableRow>
-            ) : (
-              data.exercises.map((exercise) => (
-                <TableRow key={exercise.id} className="border-rdy-gray-200">
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getTypeBadgeClass(exercise.type)}`}
-                    >
-                      {getTypeLabel(exercise.type)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="font-medium text-rdy-black">
-                    {exercise.titleDe}
-                  </TableCell>
-                  <TableCell className="text-rdy-gray-400">
-                    {exercise.titleEn || '-'}
-                  </TableCell>
-                  <TableCell className="text-rdy-gray-400">
-                    {formatDuration(exercise.durationMinutes)}
-                  </TableCell>
-                  <TableCell className="text-rdy-gray-400">
-                    {exercise.type === 'video' && exercise.videoUrl ? (
-                      <span className="text-rdy-orange-500">Video</span>
-                    ) : exercise.type === 'audio' && exercise.audioUrl ? (
-                      <span className="text-rdy-orange-500">Audio</span>
-                    ) : exercise.type === 'text' && exercise.contentDe ? (
-                      <span className="text-green-400">Text</span>
-                    ) : (
-                      <span className="text-rdy-gray-500">None</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setEditingExercise(exercise)}
-                        className="text-rdy-gray-400 hover:text-rdy-black"
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          setDeletingExercise({
-                            id: exercise.id,
-                            title: exercise.titleDe,
-                          })
-                        }
-                        className="text-red-400 hover:text-red-300"
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      {isLoading && (
+        <div className="py-12 text-center text-rdy-gray-400">Loading…</div>
+      )}
 
-      {/* Pagination */}
-      {data?.pagination && data.pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-rdy-gray-400">
-            Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
-            {data.pagination.total} exercises
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
-              disabled={page === data.pagination.totalPages}
-              className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
-            >
-              Next
-            </Button>
-          </div>
+      {!isLoading && total === 0 && (
+        <div className="rounded-lg border border-dashed border-rdy-gray-200 py-12 text-center text-rdy-gray-400">
+          No exercises yet. Click <strong>+ Add Exercise</strong> to get started.
         </div>
       )}
 
-      {/* Create Dialog */}
+      {/* Grouped sections */}
+      <div className="space-y-3">
+        {sortedGroupNames.map((name) => (
+          <GroupSection
+            key={name}
+            name={name}
+            exercises={grouped[name]}
+            isOpen={openGroups.has(name)}
+            onToggle={() => toggleGroup(name)}
+            onEdit={setEditingExercise}
+            onDelete={setDeletingExercise}
+          />
+        ))}
+
+        {ungrouped.length > 0 && (
+          <GroupSection
+            name="Ungrouped"
+            exercises={ungrouped}
+            isOpen={openGroups.has('__ungrouped__')}
+            onToggle={() => toggleGroup('__ungrouped__')}
+            onEdit={setEditingExercise}
+            onDelete={setDeletingExercise}
+          />
+        )}
+      </div>
+
+      {/* Dialogs */}
       <CreateExerciseDialog
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
@@ -297,26 +267,18 @@ export function ExercisesManagement() {
           setShowCreateDialog(false);
         }}
       />
-
-      {/* Edit Dialog */}
       <EditExerciseDialog
         open={!!editingExercise}
-        onOpenChange={(open) => {
-          if (!open) setEditingExercise(null);
-        }}
+        onOpenChange={(open) => { if (!open) setEditingExercise(null); }}
         exercise={editingExercise}
         onSuccess={() => {
           utils.exercises.list.invalidate();
           setEditingExercise(null);
         }}
       />
-
-      {/* Delete Dialog */}
       <DeleteExerciseDialog
         open={!!deletingExercise}
-        onOpenChange={(open) => {
-          if (!open) setDeletingExercise(null);
-        }}
+        onOpenChange={(open) => { if (!open) setDeletingExercise(null); }}
         exercise={deletingExercise}
         onSuccess={() => {
           utils.exercises.list.invalidate();

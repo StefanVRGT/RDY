@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,22 +20,34 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-interface CreateWeekDialogProps {
+interface Level {
+  id: string;
+  levelNumber: string;
+  titleDe: string;
+  titleEn: string | null;
+  descriptionDe: string | null;
+  descriptionEn: string | null;
+  herkunftDe: string | null;
+  herkunftEn: string | null;
+  zielDe: string | null;
+  zielEn: string | null;
+  imageUrl: string | null;
+}
+
+interface EditLevelDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  schwerpunktebeneId: string;
+  level: Level | null;
   onSuccess: () => void;
 }
 
-type MeasurementType = 'scale_1_10' | 'yes_no' | 'frequency' | 'percentage' | 'custom';
-
-export function CreateWeekDialog({
+export function EditLevelDialog({
   open,
   onOpenChange,
-  schwerpunktebeneId,
+  level,
   onSuccess,
-}: CreateWeekDialogProps) {
-  const [weekNumber, setWeekNumber] = useState('1');
+}: EditLevelDialogProps) {
+  const [levelNumber, setLevelNumber] = useState<'1' | '2' | '3' | '4' | '5'>('1');
   const [titleDe, setTitleDe] = useState('');
   const [titleEn, setTitleEn] = useState('');
   const [descriptionDe, setDescriptionDe] = useState('');
@@ -44,14 +56,28 @@ export function CreateWeekDialog({
   const [herkunftEn, setHerkunftEn] = useState('');
   const [zielDe, setZielDe] = useState('');
   const [zielEn, setZielEn] = useState('');
-  const [measurementType, setMeasurementType] = useState<MeasurementType>('scale_1_10');
-  const [measurementQuestionDe, setMeasurementQuestionDe] = useState('');
-  const [measurementQuestionEn, setMeasurementQuestionEn] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const createMutation = trpc.weeks.create.useMutation({
+  // Populate form when level changes
+  useEffect(() => {
+    if (level) {
+      setLevelNumber(level.levelNumber as '1' | '2' | '3' | '4' | '5');
+      setTitleDe(level.titleDe);
+      setTitleEn(level.titleEn || '');
+      setDescriptionDe(level.descriptionDe || '');
+      setDescriptionEn(level.descriptionEn || '');
+      setHerkunftDe(level.herkunftDe || '');
+      setHerkunftEn(level.herkunftEn || '');
+      setZielDe(level.zielDe || '');
+      setZielEn(level.zielEn || '');
+      setImageUrl(level.imageUrl || '');
+      setErrorMessage(null);
+    }
+  }, [level]);
+
+  const updateMutation = trpc.schwerpunktebenen.update.useMutation({
     onSuccess: () => {
-      resetForm();
       onSuccess();
     },
     onError: (error) => {
@@ -59,32 +85,18 @@ export function CreateWeekDialog({
     },
   });
 
-  const resetForm = () => {
-    setWeekNumber('1');
-    setTitleDe('');
-    setTitleEn('');
-    setDescriptionDe('');
-    setDescriptionEn('');
-    setHerkunftDe('');
-    setHerkunftEn('');
-    setZielDe('');
-    setZielEn('');
-    setMeasurementType('scale_1_10');
-    setMeasurementQuestionDe('');
-    setMeasurementQuestionEn('');
-    setErrorMessage(null);
-  };
-
   const handleSubmit = async () => {
+    if (!level) return;
+
     if (!titleDe.trim()) {
       setErrorMessage('German title is required');
       return;
     }
 
     setErrorMessage(null);
-    await createMutation.mutateAsync({
-      schwerpunktebeneId,
-      weekNumber: weekNumber,
+    await updateMutation.mutateAsync({
+      id: level.id,
+      levelNumber,
       titleDe: titleDe.trim(),
       titleEn: titleEn.trim() || null,
       descriptionDe: descriptionDe.trim() || null,
@@ -93,15 +105,13 @@ export function CreateWeekDialog({
       herkunftEn: herkunftEn.trim() || null,
       zielDe: zielDe.trim() || null,
       zielEn: zielEn.trim() || null,
-      measurementType,
-      measurementQuestionDe: measurementQuestionDe.trim() || null,
-      measurementQuestionEn: measurementQuestionEn.trim() || null,
+      imageUrl: imageUrl.trim() || null,
     });
   };
 
   const handleClose = (open: boolean) => {
     if (!open) {
-      resetForm();
+      setErrorMessage(null);
     }
     onOpenChange(open);
   };
@@ -110,32 +120,38 @@ export function CreateWeekDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Create Week</DialogTitle>
+          <DialogTitle>Modul bearbeiten</DialogTitle>
           <DialogDescription>
-            Add a new week to the Modul
+            Modul-Details aktualisieren
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Week Number */}
+          {/* Level Number */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Week Number</label>
-            <Select value={weekNumber} onValueChange={setWeekNumber}>
+            <label className="text-sm font-medium text-rdy-gray-600">Modul Number</label>
+            <Select
+              value={levelNumber}
+              onValueChange={(value: '1' | '2' | '3' | '4' | '5') => setLevelNumber(value)}
+            >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select week" />
+                <SelectValue placeholder="Select Modul" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="1">
-                  Week 1
+                  Modul 1
                 </SelectItem>
                 <SelectItem value="2">
-                  Week 2
+                  Modul 2
                 </SelectItem>
                 <SelectItem value="3">
-                  Week 3
+                  Modul 3
                 </SelectItem>
                 <SelectItem value="4">
-                  Week 4
+                  Modul 4
+                </SelectItem>
+                <SelectItem value="5">
+                  Modul 5
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -233,61 +249,14 @@ export function CreateWeekDialog({
             />
           </div>
 
-          {/* Measurement Type */}
+          {/* Image URL */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Measurement Type</label>
-            <Select
-              value={measurementType}
-              onValueChange={(value: MeasurementType) => setMeasurementType(value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select measurement type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="scale_1_10">
-                  Scale 1-10
-                </SelectItem>
-                <SelectItem value="yes_no">
-                  Yes/No
-                </SelectItem>
-                <SelectItem value="frequency">
-                  Frequency
-                </SelectItem>
-                <SelectItem value="percentage">
-                  Percentage
-                </SelectItem>
-                <SelectItem value="custom">
-                  Custom
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Measurement Question (DE) */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">
-              Measurement Question (German)
-            </label>
-            <textarea
-              placeholder="Wie bewerten Sie...?"
-              value={measurementQuestionDe}
-              onChange={(e) => setMeasurementQuestionDe(e.target.value)}
-              rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
-            />
-          </div>
-
-          {/* Measurement Question (EN) */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">
-              Measurement Question (English)
-            </label>
-            <textarea
-              placeholder="How would you rate...?"
-              value={measurementQuestionEn}
-              onChange={(e) => setMeasurementQuestionEn(e.target.value)}
-              rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+            <label className="text-sm font-medium text-rdy-gray-600">Image URL</label>
+            <Input
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
             />
           </div>
 
@@ -306,10 +275,10 @@ export function CreateWeekDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={!titleDe.trim() || createMutation.isPending}
+            disabled={!titleDe.trim() || updateMutation.isPending}
             className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
           >
-            {createMutation.isPending ? 'Creating...' : 'Create Week'}
+            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

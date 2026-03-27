@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { DAYS_PER_LEVEL } from '@/lib/constants';
 
 interface SessionConfig {
   monthlySessionCount: number;
@@ -30,7 +31,7 @@ interface ClassData {
   name: string;
   status: 'active' | 'disabled';
   mentorId: string;
-  durationMonths: number;
+  durationLevels: number;
   startDate: Date;
   endDate: Date;
   sessionConfig: unknown;
@@ -52,7 +53,7 @@ export function EditClassDialog({
   const [name, setName] = useState('');
   const [mentorId, setMentorId] = useState('');
   const [status, setStatus] = useState<'active' | 'disabled'>('active');
-  const [durationMonths, setDurationMonths] = useState('3');
+  const [durationLevels, setDurationLevels] = useState('5');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [monthlySessionCount, setMonthlySessionCount] = useState('2');
@@ -77,7 +78,7 @@ export function EditClassDialog({
       setName(classData.name);
       setMentorId(classData.mentorId);
       setStatus(classData.status);
-      setDurationMonths(String(classData.durationMonths));
+      setDurationLevels(String(classData.durationLevels));
       setStartDate(new Date(classData.startDate).toISOString().split('T')[0]);
       setEndDate(new Date(classData.endDate).toISOString().split('T')[0]);
 
@@ -89,6 +90,36 @@ export function EditClassDialog({
       setErrorMessage(null);
     }
   }, [classData]);
+
+  // Check if a date is a Sunday
+  const isSunday = (dateStr: string) => {
+    if (!dateStr) return true;
+    return new Date(dateStr + 'T12:00:00').getDay() === 0;
+  };
+
+  // Auto-calculate end date: startDate + durationLevels * 21 days
+  const calculateEndDate = (start: string, levels: string) => {
+    if (!start || !levels) return;
+    const startDt = new Date(start + 'T12:00:00');
+    const totalDays = parseInt(levels, 10) * DAYS_PER_LEVEL;
+    startDt.setDate(startDt.getDate() + totalDays);
+    setEndDate(startDt.toISOString().split('T')[0]);
+  };
+
+  const handleStartDateChange = (value: string) => {
+    setStartDate(value);
+    if (value && !isSunday(value)) {
+      setErrorMessage('Class must start on a Sunday');
+    } else {
+      setErrorMessage(null);
+    }
+    calculateEndDate(value, durationLevels);
+  };
+
+  const handleDurationLevelsChange = (value: string) => {
+    setDurationLevels(value);
+    calculateEndDate(startDate, value);
+  };
 
   const handleSubmit = async () => {
     if (!classData) return;
@@ -116,7 +147,7 @@ export function EditClassDialog({
       name: name.trim(),
       mentorId,
       status,
-      durationMonths: parseInt(durationMonths, 10),
+      durationLevels: parseInt(durationLevels, 10),
       startDate,
       endDate,
       sessionConfig: {
@@ -194,34 +225,41 @@ export function EditClassDialog({
 
           {/* Duration */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Duration (months) *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Number of Module *</label>
             <Input
               type="number"
               min="1"
-              placeholder="3"
-              value={durationMonths}
-              onChange={(e) => setDurationMonths(e.target.value)}
+              placeholder="5"
+              value={durationLevels}
+              onChange={(e) => handleDurationLevelsChange(e.target.value)}
             />
           </div>
 
           {/* Start Date */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Start Date *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Start Date * (must be a Sunday)</label>
             <Input
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => handleStartDateChange(e.target.value)}
             />
+            {startDate && !isSunday(startDate) && (
+              <p className="text-xs text-red-500">Selected date is not a Sunday</p>
+            )}
           </div>
 
           {/* End Date */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">End Date *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">End Date (auto-calculated)</label>
             <Input
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              readOnly
+              className="bg-rdy-gray-100"
             />
+            <p className="text-xs text-rdy-gray-400">
+              Each level = 3 weeks (20 active days + 1 rest day)
+            </p>
           </div>
 
           {/* Session Configuration */}
@@ -268,7 +306,7 @@ export function EditClassDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={!name.trim() || !mentorId || !startDate || !endDate || updateMutation.isPending}
+            disabled={!name.trim() || !mentorId || !startDate || !endDate || !isSunday(startDate) || updateMutation.isPending}
             className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
           >
             {updateMutation.isPending ? 'Saving...' : 'Save Changes'}

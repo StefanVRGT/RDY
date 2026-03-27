@@ -134,14 +134,14 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
             onClick={() => router.push('/admin/schwerpunktebenen')}
             className="text-rdy-gray-400 hover:text-rdy-black"
           >
-            &larr; Back to Focus Areas
+            &larr; Zurück zu Module
           </Button>
           {data?.schwerpunktebene && (
             <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 px-4 py-2">
-              <span className="text-sm text-rdy-gray-400">Focus Area: </span>
+              <span className="text-sm text-rdy-gray-400">Modul: </span>
               <span className="font-medium text-rdy-black">{data.schwerpunktebene.titleDe}</span>
               <span className="ml-2 text-sm text-rdy-gray-500">
-                (Month {data.schwerpunktebene.monthNumber})
+                (Modul {data.schwerpunktebene.levelNumber})
               </span>
             </div>
           )}
@@ -151,7 +151,7 @@ export function WeeksManagement({ schwerpunktebeneId }: WeeksManagementProps) {
 
       {/* Reorder hint */}
       <div className="text-sm text-rdy-gray-500">
-        Drag and drop rows to reorder weeks within the focus area.
+        Drag and drop rows to reorder weeks within the Modul.
       </div>
 
       {/* Table */}

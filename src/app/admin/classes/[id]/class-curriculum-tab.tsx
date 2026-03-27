@@ -5,17 +5,18 @@ import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AssignCurriculumDialog } from './assign-curriculum-dialog';
+import { Loader2 } from 'lucide-react';
 
 interface ClassCurriculumTabProps {
   classId: string;
-  durationMonths: number;
+  durationLevels: number;
 }
 
 interface CurriculumEntry {
   id: string;
   classId: string;
   schwerpunktebeneId: string;
-  monthNumber: number;
+  levelNumber: number;
   customTitleDe: string | null;
   customTitleEn: string | null;
   customDescriptionDe: string | null;
@@ -30,9 +31,10 @@ interface CurriculumEntry {
   };
 }
 
-export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumTabProps) {
+export function ClassCurriculumTab({ classId, durationLevels }: ClassCurriculumTabProps) {
   const [assigningMonth, setAssigningMonth] = useState<number | null>(null);
   const [editingCurriculum, setEditingCurriculum] = useState<CurriculumEntry | null>(null);
+  const [scheduleResult, setScheduleResult] = useState<{ count: number } | null>(null);
 
   const utils = trpc.useUtils();
 
@@ -44,28 +46,39 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
     },
   });
 
+  const scheduleMutation = trpc.classes.scheduleClassExercises.useMutation({
+    onSuccess: (result) => {
+      setScheduleResult(result);
+    },
+  });
+
+  const handleGenerateSchedule = () => {
+    setScheduleResult(null);
+    scheduleMutation.mutate({ classId });
+  };
+
   if (error) {
     return (
       <div className="rounded-lg bg-red-50 p-4 text-red-500">
-        Error loading curriculum: {error.message}
+        Error loading Programm: {error.message}
       </div>
     );
   }
 
-  // Create a map of month number to curriculum entry
-  const curriculumByMonth: Record<number, CurriculumEntry> = {};
+  // Create a map of level number to curriculum entry
+  const curriculumByLevel: Record<number, CurriculumEntry> = {};
   if (data?.curriculum) {
     for (const entry of data.curriculum) {
-      curriculumByMonth[entry.monthNumber] = entry;
+      curriculumByLevel[entry.levelNumber] = entry;
     }
   }
 
-  // Generate month cards based on class duration
-  const months = Array.from({ length: durationMonths }, (_, i) => i + 1);
+  // Generate level cards based on class duration
+  const months = Array.from({ length: durationLevels }, (_, i) => i + 1);
 
-  const handleRemove = async (monthNumber: number) => {
-    if (confirm('Are you sure you want to remove this curriculum assignment?')) {
-      await removeCurriculumMutation.mutateAsync({ classId, monthNumber });
+  const handleRemove = async (levelNumber: number) => {
+    if (confirm('Are you sure you want to remove this Modul assignment?')) {
+      await removeCurriculumMutation.mutateAsync({ classId, levelNumber });
     }
   };
 
@@ -73,27 +86,27 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium text-rdy-black">Curriculum Plan</h3>
+          <h3 className="text-lg font-medium text-rdy-black">Programm Module</h3>
           <p className="text-sm text-rdy-gray-400">
-            Assign focus areas (Schwerpunktebenen) to each month of the class
+            Assign a Modul to each slot in the class
           </p>
         </div>
       </div>
 
       {isLoading ? (
         <div className="flex h-32 items-center justify-center">
-          <p className="text-rdy-gray-400">Loading curriculum...</p>
+          <p className="text-rdy-gray-400">Loading Programm...</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {months.map((monthNumber) => {
-            const curriculum = curriculumByMonth[monthNumber];
+          {months.map((levelNumber) => {
+            const curriculum = curriculumByLevel[levelNumber];
 
             return (
-              <Card key={monthNumber} className="border-rdy-gray-200 bg-rdy-gray-100">
+              <Card key={levelNumber} className="border-rdy-gray-200 bg-rdy-gray-100">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center justify-between text-rdy-black">
-                    <span>Month {monthNumber}</span>
+                    <span>Modul {levelNumber}</span>
                     {curriculum && (
                       <span className="rounded-full bg-green-50 px-2 py-1 text-xs text-green-600">
                         Assigned
@@ -103,7 +116,7 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
                   <CardDescription className="text-rdy-gray-400">
                     {curriculum
                       ? curriculum.customTitleDe || curriculum.schwerpunktebene.titleDe
-                      : 'No focus area assigned'}
+                      : 'No Modul assigned'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -134,7 +147,7 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleRemove(monthNumber)}
+                          onClick={() => handleRemove(levelNumber)}
                           disabled={removeCurriculumMutation.isPending}
                           className="flex-1 border-rdy-gray-200 text-red-400 hover:bg-red-50 hover:text-red-300"
                         >
@@ -146,9 +159,9 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
                     <Button
                       variant="outline"
                       className="w-full border-dashed border-rdy-gray-200 text-rdy-gray-400 hover:border-rdy-gray-400 hover:bg-rdy-gray-100 hover:text-rdy-black"
-                      onClick={() => setAssigningMonth(monthNumber)}
+                      onClick={() => setAssigningMonth(levelNumber)}
                     >
-                      + Assign Focus Area
+                      + Modul zuweisen
                     </Button>
                   )}
                 </CardContent>
@@ -157,6 +170,44 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
           })}
         </div>
       )}
+
+      {/* Generate Schedule Section */}
+      <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 p-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-rdy-black">Exercise Schedule</p>
+            <p className="text-xs text-rdy-gray-400">
+              Generate concrete exercise dates for all class members based on the curriculum and day-picker settings.
+              Re-running will replace any existing scheduled exercises for this class.
+            </p>
+            {scheduleMutation.error && (
+              <p className="mt-1 text-xs text-red-500">{scheduleMutation.error.message}</p>
+            )}
+            {scheduleResult && (
+              <p className="mt-1 text-xs text-green-600">
+                ✓ {scheduleResult.count} exercise{scheduleResult.count !== 1 ? 's' : ''} scheduled for class members
+              </p>
+            )}
+            {!isLoading && data && data.curriculum.length === 0 && (
+              <p className="mt-1 text-xs text-amber-600">⚠ Kein Programm zugewiesen — zuerst Module zuweisen.</p>
+            )}
+          </div>
+          <Button
+            onClick={handleGenerateSchedule}
+            disabled={scheduleMutation.isPending || isLoading || (data?.curriculum.length ?? 0) === 0}
+            className="shrink-0 bg-rdy-orange-500 text-white hover:bg-rdy-orange-600 disabled:opacity-50"
+          >
+            {scheduleMutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating…
+              </>
+            ) : (
+              'Generate Schedule'
+            )}
+          </Button>
+        </div>
+      </div>
 
       {/* Assign Curriculum Dialog */}
       <AssignCurriculumDialog
@@ -168,7 +219,7 @@ export function ClassCurriculumTab({ classId, durationMonths }: ClassCurriculumT
           }
         }}
         classId={classId}
-        monthNumber={editingCurriculum?.monthNumber ?? assigningMonth ?? 1}
+        levelNumber={editingCurriculum?.levelNumber ?? assigningMonth ?? 1}
         existingCurriculum={editingCurriculum}
         onSuccess={() => {
           utils.classes.getCurriculum.invalidate({ id: classId });

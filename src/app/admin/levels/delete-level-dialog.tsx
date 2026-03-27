@@ -12,19 +12,19 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-interface DeleteSchwerpunktebeneDialogProps {
+interface DeleteLevelDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  schwerpunktebene: { id: string; title: string } | null;
+  level: { id: string; title: string } | null;
   onSuccess: () => void;
 }
 
-export function DeleteSchwerpunktebeneDialog({
+export function DeleteLevelDialog({
   open,
   onOpenChange,
-  schwerpunktebene,
+  level,
   onSuccess,
-}: DeleteSchwerpunktebeneDialogProps) {
+}: DeleteLevelDialogProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const deleteMutation = trpc.schwerpunktebenen.delete.useMutation({
@@ -38,10 +38,10 @@ export function DeleteSchwerpunktebeneDialog({
   });
 
   const handleDelete = async () => {
-    if (!schwerpunktebene) return;
+    if (!level) return;
 
     setErrorMessage(null);
-    await deleteMutation.mutateAsync({ id: schwerpunktebene.id });
+    await deleteMutation.mutateAsync({ id: level.id });
   };
 
   const handleClose = (open: boolean) => {
@@ -62,9 +62,9 @@ export function DeleteSchwerpunktebeneDialog({
         </DialogHeader>
 
         <div className="py-4">
-          {schwerpunktebene && (
+          {level && (
             <div className="rounded-lg bg-rdy-gray-100 p-4">
-              <p className="font-medium">{schwerpunktebene.title}</p>
+              <p className="font-medium">{level.title}</p>
             </div>
           )}
 

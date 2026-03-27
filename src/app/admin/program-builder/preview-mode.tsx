@@ -50,7 +50,7 @@ interface Week {
 interface Schwerpunktebene {
   id: string;
   tenantId: string;
-  monthNumber: string;
+  levelNumber: string;
   titleDe: string;
   titleEn: string | null;
   descriptionDe: string | null;
@@ -96,11 +96,8 @@ export function PreviewMode({ curriculum }: PreviewModeProps) {
     }
   };
 
-  const getMonthName = (monthNumber: string) => {
-    const monthNames = language === 'de'
-      ? ['Monat 1', 'Monat 2', 'Monat 3']
-      : ['Month 1', 'Month 2', 'Month 3'];
-    return monthNames[parseInt(monthNumber) - 1] || monthNumber;
+  const getLevelName = (levelNumber: string) => {
+    return `Modul ${levelNumber}`;
   };
 
   const getTotalStats = () => {
@@ -137,8 +134,8 @@ export function PreviewMode({ curriculum }: PreviewModeProps) {
       <div className="rounded-lg border border-rdy-gray-200 bg-rdy-gray-100 p-8 text-center">
         <p className="text-rdy-gray-400">
           {language === 'de'
-            ? 'Keine Curriculumdaten zum Anzeigen vorhanden.'
-            : 'No curriculum data available to preview.'}
+            ? 'Keine Programmdaten zum Anzeigen vorhanden.'
+            : 'No program data available to preview.'}
         </p>
       </div>
     );
@@ -223,7 +220,7 @@ export function PreviewMode({ curriculum }: PreviewModeProps) {
           <CardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-rdy-black">{curriculum.length}</div>
             <div className="text-sm text-rdy-gray-400">
-              {language === 'de' ? 'Schwerpunktebenen' : 'Focus Areas'}
+              {language === 'de' ? 'Module' : 'Modules'}
             </div>
           </CardContent>
         </Card>
@@ -272,13 +269,13 @@ export function PreviewMode({ curriculum }: PreviewModeProps) {
           <div className="space-y-8">
             {curriculum.map((schwerpunktebene) => (
               <div key={schwerpunktebene.id} className="relative">
-                {/* Month marker */}
+                {/* Level marker */}
                 <div className="absolute left-0 flex h-16 w-16 items-center justify-center rounded-full bg-rdy-gray-100 text-center">
                   <div>
                     <div className="text-xs text-rdy-gray-400">
-                      {language === 'de' ? 'Monat' : 'Month'}
+                      Modul
                     </div>
-                    <div className="text-xl font-bold text-rdy-black">{schwerpunktebene.monthNumber}</div>
+                    <div className="text-xl font-bold text-rdy-black">{schwerpunktebene.levelNumber}</div>
                   </div>
                 </div>
 
@@ -375,8 +372,8 @@ export function PreviewMode({ curriculum }: PreviewModeProps) {
                       {schwerpunktebene.weeks.length === 0 && (
                         <p className="text-center text-sm text-rdy-gray-500">
                           {language === 'de'
-                            ? 'Keine Wochen in diesem Schwerpunkt.'
-                            : 'No weeks in this focus area.'}
+                            ? 'Keine Wochen in diesem Modul.'
+                            : 'No weeks in this module.'}
                         </p>
                       )}
                     </CardContent>
@@ -393,7 +390,7 @@ export function PreviewMode({ curriculum }: PreviewModeProps) {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-rdy-gray-200 text-left text-sm text-rdy-gray-400">
-                <th className="p-3">{language === 'de' ? 'Monat' : 'Month'}</th>
+                <th className="p-3">Modul</th>
                 <th className="p-3">{language === 'de' ? 'Woche' : 'Week'}</th>
                 <th className="p-3">{language === 'de' ? 'Übung' : 'Exercise'}</th>
                 <th className="p-3">{language === 'de' ? 'Typ' : 'Type'}</th>
@@ -410,7 +407,7 @@ export function PreviewMode({ curriculum }: PreviewModeProps) {
                     .map((e) => (
                       <tr key={e.id} className="border-b border-rdy-gray-200 hover:bg-rdy-gray-200/50">
                         <td className="p-3 text-rdy-black">
-                          {getMonthName(s.monthNumber)}: {getTitle(s.titleDe, s.titleEn)}
+                          {getLevelName(s.levelNumber)}: {getTitle(s.titleDe, s.titleEn)}
                         </td>
                         <td className="p-3 text-rdy-black">
                           W{w.weekNumber}: {getTitle(w.titleDe, w.titleEn)}
@@ -455,7 +452,7 @@ export function PreviewMode({ curriculum }: PreviewModeProps) {
           {curriculum.map((s) => (
             <Card key={s.id} className="border-rdy-gray-200 bg-rdy-gray-100">
               <CardHeader className="pb-2">
-                <div className="text-sm text-rdy-gray-500">{getMonthName(s.monthNumber)}</div>
+                <div className="text-sm text-rdy-gray-500">{getLevelName(s.levelNumber)}</div>
                 <CardTitle className="text-lg text-rdy-black">
                   {getTitle(s.titleDe, s.titleEn)}
                 </CardTitle>

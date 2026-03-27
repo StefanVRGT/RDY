@@ -23,7 +23,7 @@ import {
 interface ExistingCurriculum {
   id: string;
   schwerpunktebeneId: string;
-  monthNumber: number;
+  levelNumber: number;
   customTitleDe: string | null;
   customTitleEn: string | null;
   customDescriptionDe: string | null;
@@ -42,7 +42,7 @@ interface AssignCurriculumDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   classId: string;
-  monthNumber: number;
+  levelNumber: number;
   existingCurriculum?: ExistingCurriculum | null;
   onSuccess: () => void;
 }
@@ -51,7 +51,7 @@ export function AssignCurriculumDialog({
   open,
   onOpenChange,
   classId,
-  monthNumber,
+  levelNumber,
   existingCurriculum,
   onSuccess,
 }: AssignCurriculumDialogProps) {
@@ -103,7 +103,7 @@ export function AssignCurriculumDialog({
 
   const handleSubmit = async () => {
     if (!schwerpunktebeneId) {
-      setErrorMessage('Please select a focus area');
+      setErrorMessage('Please select a Modul');
       return;
     }
 
@@ -111,7 +111,7 @@ export function AssignCurriculumDialog({
     await assignMutation.mutateAsync({
       classId,
       schwerpunktebeneId,
-      monthNumber,
+      levelNumber,
       customTitleDe: customTitleDe.trim() || null,
       customTitleEn: customTitleEn.trim() || null,
       customDescriptionDe: customDescriptionDe.trim() || null,
@@ -136,25 +136,25 @@ export function AssignCurriculumDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
-            {existingCurriculum ? 'Edit' : 'Assign'} Curriculum - Month {monthNumber}
+            {existingCurriculum ? 'Edit' : 'Assign'} Modul {levelNumber}
           </DialogTitle>
           <DialogDescription>
-            Select a focus area and optionally customize it for this class
+            Select a Modul and optionally customize it for this class
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* Focus Area Selection */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Focus Area *</label>
+            <label className="text-sm font-medium text-rdy-gray-600">Modul *</label>
             <Select value={schwerpunktebeneId} onValueChange={setSchwerpunktebeneId}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a focus area" />
+                <SelectValue placeholder="Select a Modul" />
               </SelectTrigger>
               <SelectContent>
                 {schwerpunktebenen?.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
-                    {s.titleDe} {s.monthNumber ? `(Month ${s.monthNumber})` : ''}
+                    {s.titleDe} {s.levelNumber ? `(Modul ${s.levelNumber})` : ''}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -205,7 +205,7 @@ export function AssignCurriculumDialog({
                 value={customDescriptionDe}
                 onChange={(e) => setCustomDescriptionDe(e.target.value)}
                 rows={2}
-                className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+                className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
               />
             </div>
 
@@ -217,7 +217,7 @@ export function AssignCurriculumDialog({
                 value={customDescriptionEn}
                 onChange={(e) => setCustomDescriptionEn(e.target.value)}
                 rows={2}
-                className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+                className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
               />
             </div>
           </div>
@@ -230,7 +230,7 @@ export function AssignCurriculumDialog({
               value={mentorNotes}
               onChange={(e) => setMentorNotes(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -256,7 +256,7 @@ export function AssignCurriculumDialog({
               ? 'Saving...'
               : existingCurriculum
                 ? 'Update Assignment'
-                : 'Assign Focus Area'}
+                : 'Modul zuweisen'}
           </Button>
         </DialogFooter>
       </DialogContent>

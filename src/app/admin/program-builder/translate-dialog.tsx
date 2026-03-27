@@ -105,7 +105,7 @@ export function TranslateDialog({
             <textarea
               value={sourceText}
               onChange={(e) => setSourceText(e.target.value)}
-              className="min-h-24 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
+              className="min-h-24 w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-rdy-orange-500 focus:outline-none focus:ring-1 focus:ring-rdy-orange-500"
               placeholder={`Enter ${getLanguageName(sourceLang)} text...`}
             />
           </div>
@@ -153,7 +153,7 @@ export function TranslateDialog({
               <li>Click &quot;Translate&quot; to get the AI translation</li>
               <li>Copy the translated text and paste it into the appropriate field</li>
             </ol>
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-2 text-xs text-rdy-gray-500">
               Powered by AI. Translation quality depends on your tenant&apos;s AI configuration.
             </p>
           </div>

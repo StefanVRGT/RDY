@@ -10,17 +10,17 @@ export default function AdminPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Link href="/admin/curriculum-builder">
+        <Link href="/admin/program-builder">
           <Card className="border-rdy-gray-200 bg-rdy-gray-100 transition-colors hover:bg-rdy-gray-200">
             <CardHeader>
-              <CardTitle className="text-rdy-black">Curriculum Builder</CardTitle>
+              <CardTitle className="text-rdy-black">Programm Builder</CardTitle>
               <CardDescription className="text-rdy-gray-400">
-                Visual builder for structuring the 3-month program curriculum
+                Visual builder for structuring the RDY Programm
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-rdy-gray-500">
-                Organize Schwerpunktebenen, Weeks, and Exercises with drag-and-drop
+                Organize Module, Weeks, and Exercises with drag-and-drop
               </p>
             </CardContent>
           </Card>

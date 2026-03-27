@@ -12,26 +12,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Video, Mic, FileText } from 'lucide-react';
+import { FileDropZone } from '@/components/ui/file-dropzone';
 
 interface Exercise {
   id: string;
   type: 'video' | 'audio' | 'text';
+  groupName: string | null;
   titleDe: string;
   titleEn: string | null;
   descriptionDe: string | null;
   descriptionEn: string | null;
   durationMinutes: number | null;
-  videoUrl: string | null;
+  videoUrlDe: string | null;
+  videoUrlEn: string | null;
   audioUrl: string | null;
   contentDe: string | null;
   contentEn: string | null;
+  imageUrl: string | null;
 }
 
 interface EditExerciseDialogProps {
@@ -41,223 +39,215 @@ interface EditExerciseDialogProps {
   onSuccess: () => void;
 }
 
-export function EditExerciseDialog({
-  open,
-  onOpenChange,
-  exercise,
-  onSuccess,
-}: EditExerciseDialogProps) {
-  const [type, setType] = useState<'video' | 'audio' | 'text'>('text');
-  const [titleDe, setTitleDe] = useState('');
-  const [titleEn, setTitleEn] = useState('');
+export function EditExerciseDialog({ open, onOpenChange, exercise, onSuccess }: EditExerciseDialogProps) {
+  const [groupName, setGroupName]     = useState('');
+  const [titleDe, setTitleDe]         = useState('');
+  const [titleEn, setTitleEn]         = useState('');
+  const [durationMinutes, setDurationMinutes] = useState('');
+  const [videoUrlDe, setVideoUrlDe]   = useState('');
+  const [videoUrlEn, setVideoUrlEn]   = useState('');
+  const [audioUrl, setAudioUrl]       = useState('');
   const [descriptionDe, setDescriptionDe] = useState('');
   const [descriptionEn, setDescriptionEn] = useState('');
-  const [durationMinutes, setDurationMinutes] = useState('');
-  const [videoUrl, setVideoUrl] = useState('');
-  const [audioUrl, setAudioUrl] = useState('');
-  const [contentDe, setContentDe] = useState('');
-  const [contentEn, setContentEn] = useState('');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [contentDe, setContentDe]     = useState('');
+  const [contentEn, setContentEn]     = useState('');
+  const [imageUrl, setImageUrl]       = useState('');
+  const [errorMessage, setErrorMessage]     = useState<string | null>(null);
 
-  // Populate form when exercise changes
   useEffect(() => {
     if (exercise) {
-      setType(exercise.type);
+      setGroupName(exercise.groupName || '');
       setTitleDe(exercise.titleDe);
       setTitleEn(exercise.titleEn || '');
+      setDurationMinutes(exercise.durationMinutes?.toString() || '');
+      setVideoUrlDe(exercise.videoUrlDe || '');
+      setVideoUrlEn(exercise.videoUrlEn || '');
+      setAudioUrl(exercise.audioUrl || '');
       setDescriptionDe(exercise.descriptionDe || '');
       setDescriptionEn(exercise.descriptionEn || '');
-      setDurationMinutes(exercise.durationMinutes?.toString() || '');
-      setVideoUrl(exercise.videoUrl || '');
-      setAudioUrl(exercise.audioUrl || '');
       setContentDe(exercise.contentDe || '');
       setContentEn(exercise.contentEn || '');
+      setImageUrl(exercise.imageUrl || '');
       setErrorMessage(null);
     }
   }, [exercise]);
 
   const updateMutation = trpc.exercises.update.useMutation({
-    onSuccess: () => {
-      onSuccess();
-    },
-    onError: (error) => {
-      setErrorMessage(error.message);
-    },
+    onSuccess: () => onSuccess(),
+    onError: (error) => setErrorMessage(error.message),
   });
+
+  // Auto-detect primary type from content
+  const detectType = (): 'video' | 'audio' | 'text' => {
+    if (videoUrlDe.trim() || videoUrlEn.trim()) return 'video';
+    if (audioUrl.trim()) return 'audio';
+    if (contentDe.trim()) return 'text';
+    return exercise?.type ?? 'video';
+  };
 
   const handleSubmit = async () => {
     if (!exercise) return;
-
-    if (!titleDe.trim()) {
-      setErrorMessage('German title is required');
-      return;
-    }
-
+    if (!titleDe.trim()) { setErrorMessage('German title is required'); return; }
     setErrorMessage(null);
     await updateMutation.mutateAsync({
-      id: exercise.id,
-      type,
-      titleDe: titleDe.trim(),
-      titleEn: titleEn.trim() || null,
-      descriptionDe: descriptionDe.trim() || null,
-      descriptionEn: descriptionEn.trim() || null,
+      id:              exercise.id,
+      type:            detectType(),
+      groupName:       groupName.trim() || null,
+      titleDe:         titleDe.trim(),
+      titleEn:         titleEn.trim() || null,
       durationMinutes: durationMinutes ? parseInt(durationMinutes, 10) : null,
-      videoUrl: videoUrl.trim() || null,
-      audioUrl: audioUrl.trim() || null,
-      contentDe: contentDe.trim() || null,
-      contentEn: contentEn.trim() || null,
+      videoUrlDe:      videoUrlDe.trim() || null,
+      videoUrlEn:      videoUrlEn.trim() || null,
+      audioUrl:        audioUrl.trim() || null,
+      descriptionDe:   descriptionDe.trim() || null,
+      descriptionEn:   descriptionEn.trim() || null,
+      contentDe:       contentDe.trim() || null,
+      contentEn:       contentEn.trim() || null,
+      imageUrl:        imageUrl.trim() || null,
     });
   };
 
-  const handleClose = (open: boolean) => {
-    if (!open) {
-      setErrorMessage(null);
-    }
-    onOpenChange(open);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+    <Dialog open={open} onOpenChange={(o) => { if (!o) setErrorMessage(null); onOpenChange(o); }}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[640px]">
         <DialogHeader>
           <DialogTitle>Edit Exercise</DialogTitle>
           <DialogDescription>
-            Update the exercise details
+            Add content in any or all formats — mentees choose their preferred one.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* Type */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Type *</label>
-            <Select
-              value={type}
-              onValueChange={(value: 'video' | 'audio' | 'text') => setType(value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="video">
-                  Video
-                </SelectItem>
-                <SelectItem value="audio">
-                  Audio
-                </SelectItem>
-                <SelectItem value="text">
-                  Text
-                </SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="space-y-5 py-4">
+          {/* Group */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-rdy-gray-600">Group</label>
+            <Input placeholder="e.g. Atemübungen, Meditation, Bewegung"
+              value={groupName} onChange={(e) => setGroupName(e.target.value)} />
           </div>
 
-          {/* Title (DE) */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Title (German) *</label>
-            <Input
-              placeholder="Titel auf Deutsch"
-              value={titleDe}
-              onChange={(e) => setTitleDe(e.target.value)}
-            />
+          {/* Title */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-rdy-gray-600">Title (DE) *</label>
+              <Input placeholder="Titel auf Deutsch" value={titleDe} onChange={(e) => setTitleDe(e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-rdy-gray-600">Title (EN)</label>
+              <Input placeholder="Title in English" value={titleEn} onChange={(e) => setTitleEn(e.target.value)} />
+            </div>
           </div>
 
-          {/* Title (EN) */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Title (English)</label>
-            <Input
-              placeholder="Title in English"
-              value={titleEn}
-              onChange={(e) => setTitleEn(e.target.value)}
-            />
-          </div>
-
-          {/* Description (DE) */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Description (German)</label>
-            <textarea
-              placeholder="Beschreibung auf Deutsch"
-              value={descriptionDe}
-              onChange={(e) => setDescriptionDe(e.target.value)}
-              rows={3}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
-            />
-          </div>
-
-          {/* Description (EN) */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-rdy-gray-600">Description (English)</label>
-            <textarea
-              placeholder="Description in English"
-              value={descriptionEn}
-              onChange={(e) => setDescriptionEn(e.target.value)}
-              rows={3}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
-            />
-          </div>
-
-          {/* Duration */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             <label className="text-sm font-medium text-rdy-gray-600">Duration (minutes)</label>
-            <Input
-              type="number"
-              placeholder="e.g., 15"
-              min="1"
-              value={durationMinutes}
-              onChange={(e) => setDurationMinutes(e.target.value)}
-            />
+            <Input type="number" placeholder="e.g. 15" min="1" value={durationMinutes}
+              onChange={(e) => setDurationMinutes(e.target.value)} className="w-40" />
           </div>
 
-          {/* Video URL - shown for video type */}
-          {type === 'video' && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-rdy-gray-600">Video URL</label>
-              <Input
-                type="url"
-                placeholder="https://example.com/video.mp4"
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-              />
+          {/* Description */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-rdy-gray-600">Description (DE)</label>
+              <textarea rows={4} placeholder="Kurze Beschreibung…" value={descriptionDe}
+                onChange={(e) => setDescriptionDe(e.target.value)}
+                className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 text-sm placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500" />
             </div>
-          )}
-
-          {/* Audio URL - shown for audio type */}
-          {type === 'audio' && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-rdy-gray-600">Audio URL</label>
-              <Input
-                type="url"
-                placeholder="https://example.com/audio.mp3"
-                value={audioUrl}
-                onChange={(e) => setAudioUrl(e.target.value)}
-              />
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-rdy-gray-600">Description (EN)</label>
+              <textarea rows={4} placeholder="Short description…" value={descriptionEn}
+                onChange={(e) => setDescriptionEn(e.target.value)}
+                className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 text-sm placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500" />
             </div>
-          )}
+          </div>
 
-          {/* Text Content - shown for text type */}
-          {type === 'text' && (
-            <>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-rdy-gray-600">Content (German)</label>
-                <textarea
-                  placeholder="Inhalt auf Deutsch"
-                  value={contentDe}
+          {/* VIDEO */}
+          <div className="space-y-3 rounded-lg border border-rdy-gray-200 bg-rdy-gray-100/40 p-4">
+            <div className="flex items-center gap-2">
+              <Video className="h-4 w-4 text-blue-500" />
+              <p className="text-sm font-semibold text-rdy-black">Video</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-rdy-gray-500">German (DE)</label>
+                <FileDropZone
+                  accept="video/*"
+                  endpoint="/api/upload/video"
+                  label="Upload video"
+                  hint="MP4, WebM, MOV — max 500 MB"
+                  value={videoUrlDe}
+                  onChange={setVideoUrlDe}
+                  onError={setErrorMessage}
+                />
+                <Input type="url" placeholder="or paste URL" value={videoUrlDe} onChange={(e) => setVideoUrlDe(e.target.value)} className="h-8 text-xs" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-rdy-gray-500">English (EN)</label>
+                <FileDropZone
+                  accept="video/*"
+                  endpoint="/api/upload/video"
+                  label="Upload video"
+                  hint="MP4, WebM, MOV — max 500 MB"
+                  value={videoUrlEn}
+                  onChange={setVideoUrlEn}
+                  onError={setErrorMessage}
+                />
+                <Input type="url" placeholder="or paste URL" value={videoUrlEn} onChange={(e) => setVideoUrlEn(e.target.value)} className="h-8 text-xs" />
+              </div>
+            </div>
+          </div>
+
+          {/* AUDIO */}
+          <div className="space-y-3 rounded-lg border border-rdy-gray-200 bg-rdy-gray-100/40 p-4">
+            <div className="flex items-center gap-2">
+              <Mic className="h-4 w-4 text-purple-500" />
+              <p className="text-sm font-semibold text-rdy-black">Audio</p>
+            </div>
+            <FileDropZone
+              accept="audio/*"
+              endpoint="/api/upload/audio"
+              label="Upload audio"
+              hint="MP3, WAV, OGG, WebM — max 50 MB"
+              value={audioUrl}
+              onChange={setAudioUrl}
+              onError={setErrorMessage}
+            />
+            <Input type="url" placeholder="or paste URL" value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)} className="h-8 text-xs" />
+          </div>
+
+          {/* TEXT */}
+          <div className="space-y-3 rounded-lg border border-rdy-gray-200 bg-rdy-gray-100/40 p-4">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-green-600" />
+              <p className="text-sm font-semibold text-rdy-black">Text content</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-rdy-gray-500">German (DE)</label>
+                <textarea rows={5} placeholder="Inhalt auf Deutsch…" value={contentDe}
                   onChange={(e) => setContentDe(e.target.value)}
-                  rows={5}
-                  className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
-                />
+                  className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 text-sm placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500" />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-rdy-gray-600">Content (English)</label>
-                <textarea
-                  placeholder="Content in English"
-                  value={contentEn}
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-rdy-gray-500">English (EN)</label>
+                <textarea rows={5} placeholder="Content in English…" value={contentEn}
                   onChange={(e) => setContentEn(e.target.value)}
-                  rows={5}
-                  className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
-                />
+                  className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 text-sm placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500" />
               </div>
-            </>
-          )}
+            </div>
+          </div>
+
+          {/* ── IMAGE ──────────────────────────────────────── */}
+          <div className="space-y-3 rounded-lg border border-rdy-gray-200 bg-rdy-gray-100/40 p-4">
+            <p className="text-sm font-semibold text-rdy-black">Image</p>
+            <FileDropZone
+              accept="image/*"
+              endpoint="/api/upload/image"
+              label="Upload image"
+              hint="JPG, PNG, WebP, SVG — max 10 MB"
+              value={imageUrl}
+              onChange={setImageUrl}
+              onError={setErrorMessage}
+            />
+          </div>
 
           {errorMessage && (
             <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500">{errorMessage}</div>
@@ -265,19 +255,11 @@ export function EditExerciseDialog({
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => handleClose(false)}
-            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!titleDe.trim() || updateMutation.isPending}
-            className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600"
-          >
-            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+          <Button variant="outline" onClick={() => onOpenChange(false)}
+            className="border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200">Cancel</Button>
+          <Button onClick={handleSubmit} disabled={!titleDe.trim() || updateMutation.isPending}
+            className="bg-rdy-orange-500 text-white hover:bg-rdy-orange-600">
+            {updateMutation.isPending ? 'Saving…' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

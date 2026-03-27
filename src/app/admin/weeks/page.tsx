@@ -11,7 +11,7 @@ function WeeksContent() {
   if (!schwerpunktebeneId) {
     return (
       <div className="rounded-lg bg-yellow-500/10 p-4 text-yellow-600">
-        Please select a focus area from the Focus Areas page to manage its weeks.
+        Bitte wählen Sie ein Modul auf der Module-Seite aus, um dessen Wochen zu verwalten.
       </div>
     );
   }
@@ -24,7 +24,7 @@ export default function WeeksPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-rdy-black">Weeks Management</h1>
-        <p className="text-rdy-gray-400">Manage weekly themes within a focus area</p>
+        <p className="text-rdy-gray-400">Manage weekly themes within a Modul</p>
       </div>
 
       <Suspense

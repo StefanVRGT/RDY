@@ -175,7 +175,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={descriptionDe}
               onChange={(e) => setDescriptionDe(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -187,7 +187,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={descriptionEn}
               onChange={(e) => setDescriptionEn(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -199,7 +199,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={herkunftDe}
               onChange={(e) => setHerkunftDe(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -211,7 +211,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={herkunftEn}
               onChange={(e) => setHerkunftEn(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -223,7 +223,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={zielDe}
               onChange={(e) => setZielDe(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -235,7 +235,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={zielEn}
               onChange={(e) => setZielEn(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -279,7 +279,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={measurementQuestionDe}
               onChange={(e) => setMeasurementQuestionDe(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 
@@ -293,7 +293,7 @@ export function EditWeekDialog({ open, onOpenChange, week, onSuccess }: EditWeek
               value={measurementQuestionEn}
               onChange={(e) => setMeasurementQuestionEn(e.target.value)}
               rows={2}
-              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
+              className="w-full rounded-md border border-rdy-gray-200 bg-white px-3 py-2 placeholder:text-rdy-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-rdy-orange-500"
             />
           </div>
 

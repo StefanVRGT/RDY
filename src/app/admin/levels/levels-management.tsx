@@ -19,77 +19,94 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { CreateClassDialog } from './create-class-dialog';
-import { EditClassDialog } from './edit-class-dialog';
-import { DeleteClassDialog } from './delete-class-dialog';
+import { CreateLevelDialog } from './create-level-dialog';
+import { EditLevelDialog } from './edit-level-dialog';
+import { DeleteLevelDialog } from './delete-level-dialog';
 
-type StatusFilter = 'all' | 'active' | 'disabled';
-type SortBy = 'name' | 'startDate' | 'endDate' | 'createdAt';
+type LevelFilter = 'all' | '1' | '2' | '3' | '4' | '5';
+type SortBy = 'levelNumber' | 'titleDe' | 'createdAt';
 type SortOrder = 'asc' | 'desc';
 
-interface ClassItem {
+interface Level {
   id: string;
-  name: string;
-  status: 'active' | 'disabled';
-  mentorId: string;
-  durationLevels: number;
-  startDate: Date;
-  endDate: Date;
-  sessionConfig: unknown;
-  mentor: { id: string; name: string | null; email: string } | null;
-  memberCount: number;
+  levelNumber: string;
+  titleDe: string;
+  titleEn: string | null;
+  descriptionDe: string | null;
+  descriptionEn: string | null;
+  herkunftDe: string | null;
+  herkunftEn: string | null;
+  zielDe: string | null;
+  zielEn: string | null;
+  imageUrl: string | null;
 }
 
-export function ClassesManagement() {
+export function LevelsManagement() {
   const router = useRouter();
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
-  const [mentorFilter, setMentorFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<SortBy>('createdAt');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [levelFilter, setLevelFilter] = useState<LevelFilter>('all');
+  const [sortBy, setSortBy] = useState<SortBy>('levelNumber');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [page, setPage] = useState(1);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [editingClass, setEditingClass] = useState<ClassItem | null>(null);
-  const [deletingClass, setDeletingClass] = useState<{
+  const [editingLevel, setEditingLevel] = useState<Level | null>(null);
+  const [deletingLevel, setDeletingLevel] = useState<{
     id: string;
-    name: string;
+    title: string;
   } | null>(null);
 
   const utils = trpc.useUtils();
 
-  const { data, isLoading, error } = trpc.classes.list.useQuery({
-    status: statusFilter,
-    mentorId: mentorFilter === 'all' ? undefined : mentorFilter,
+  const { data, isLoading, error } = trpc.schwerpunktebenen.list.useQuery({
+    levelNumber: levelFilter,
     sortBy,
     sortOrder,
     page,
     limit: 20,
   });
 
-  const { data: mentors } = trpc.classes.getMentors.useQuery();
+  const getLevelLabel = (levelNumber: string) => {
+    switch (levelNumber) {
+      case '1':
+        return 'Modul 1';
+      case '2':
+        return 'Modul 2';
+      case '3':
+        return 'Modul 3';
+      case '4':
+        return 'Modul 4';
+      case '5':
+        return 'Modul 5';
+      default:
+        return levelNumber;
+    }
+  };
 
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'active':
+  const getLevelBadgeClass = (levelNumber: string) => {
+    switch (levelNumber) {
+      case '1':
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
+      case '2':
+        return 'bg-rdy-orange-500/10 text-rdy-orange-500';
+      case '3':
         return 'bg-rdy-orange-500/10 text-green-400';
-      case 'disabled':
-        return 'bg-rdy-gray-100/30 text-rdy-gray-400';
+      case '4':
+        return 'bg-rdy-orange-500/10 text-blue-400';
+      case '5':
+        return 'bg-rdy-orange-500/10 text-purple-400';
       default:
         return 'bg-rdy-gray-100/30 text-rdy-gray-400';
     }
   };
 
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('de-DE', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+  const truncateText = (text: string | null, maxLength: number = 50) => {
+    if (!text) return '-';
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
 
   if (error) {
     return (
       <div className="rounded-lg bg-red-50 p-4 text-red-500">
-        Error loading classes: {error.message}
+        Error loading Module: {error.message}
       </div>
     );
   }
@@ -100,46 +117,34 @@ export function ClassesManagement() {
       <div className="flex items-center justify-between">
         <div className="flex flex-wrap items-center gap-4">
           <Select
-            value={statusFilter}
-            onValueChange={(value: StatusFilter) => {
-              setStatusFilter(value);
+            value={levelFilter}
+            onValueChange={(value: LevelFilter) => {
+              setLevelFilter(value);
               setPage(1);
             }}
           >
             <SelectTrigger className="w-[140px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder="Level" />
             </SelectTrigger>
             <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
               <SelectItem value="all" className="text-rdy-black">
-                All Status
+                Alle Module
               </SelectItem>
-              <SelectItem value="active" className="text-rdy-black">
-                Active
+              <SelectItem value="1" className="text-rdy-black">
+                Modul 1
               </SelectItem>
-              <SelectItem value="disabled" className="text-rdy-black">
-                Disabled
+              <SelectItem value="2" className="text-rdy-black">
+                Modul 2
               </SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={mentorFilter}
-            onValueChange={(value: string) => {
-              setMentorFilter(value);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-[180px] border-rdy-gray-200 bg-rdy-gray-100 text-rdy-black">
-              <SelectValue placeholder="Mentor" />
-            </SelectTrigger>
-            <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
-              <SelectItem value="all" className="text-rdy-black">
-                All Mentors
+              <SelectItem value="3" className="text-rdy-black">
+                Modul 3
               </SelectItem>
-              {mentors?.map((mentor) => (
-                <SelectItem key={mentor.id} value={mentor.id} className="text-rdy-black">
-                  {mentor.name || mentor.email}
-                </SelectItem>
-              ))}
+              <SelectItem value="4" className="text-rdy-black">
+                Modul 4
+              </SelectItem>
+              <SelectItem value="5" className="text-rdy-black">
+                Modul 5
+              </SelectItem>
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
@@ -147,17 +152,14 @@ export function ClassesManagement() {
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent className="border-rdy-gray-200 bg-rdy-gray-100">
+              <SelectItem value="levelNumber" className="text-rdy-black">
+                Modul
+              </SelectItem>
+              <SelectItem value="titleDe" className="text-rdy-black">
+                Title
+              </SelectItem>
               <SelectItem value="createdAt" className="text-rdy-black">
                 Created
-              </SelectItem>
-              <SelectItem value="name" className="text-rdy-black">
-                Name
-              </SelectItem>
-              <SelectItem value="startDate" className="text-rdy-black">
-                Start Date
-              </SelectItem>
-              <SelectItem value="endDate" className="text-rdy-black">
-                End Date
               </SelectItem>
             </SelectContent>
           </Select>
@@ -175,7 +177,7 @@ export function ClassesManagement() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)}>Add Class</Button>
+        <Button onClick={() => setShowCreateDialog(true)}>Modul hinzufügen</Button>
       </div>
 
       {/* Table */}
@@ -183,66 +185,71 @@ export function ClassesManagement() {
         <Table>
           <TableHeader>
             <TableRow className="border-rdy-gray-200 hover:bg-transparent">
-              <TableHead className="text-rdy-gray-400">Name</TableHead>
-              <TableHead className="text-rdy-gray-400">Status</TableHead>
-              <TableHead className="text-rdy-gray-400">Mentor</TableHead>
-              <TableHead className="text-rdy-gray-400">Members</TableHead>
-              <TableHead className="text-rdy-gray-400">Duration</TableHead>
-              <TableHead className="text-rdy-gray-400">Period</TableHead>
+              <TableHead className="text-rdy-gray-400">Modul</TableHead>
+              <TableHead className="text-rdy-gray-400">Title (DE)</TableHead>
+              <TableHead className="text-rdy-gray-400">Title (EN)</TableHead>
+              <TableHead className="text-rdy-gray-400">Goal (DE)</TableHead>
+              <TableHead className="text-rdy-gray-400">Image</TableHead>
               <TableHead className="text-right text-rdy-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
+                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
                   Loading...
                 </TableCell>
               </TableRow>
-            ) : !data?.classes?.length ? (
+            ) : !data?.schwerpunktebenen?.length ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-rdy-gray-400">
-                  No classes found
+                <TableCell colSpan={6} className="py-8 text-center text-rdy-gray-400">
+                  Keine Module gefunden
                 </TableCell>
               </TableRow>
             ) : (
-              data.classes.map((cls) => (
-                <TableRow key={cls.id} className="border-rdy-gray-200">
-                  <TableCell className="font-medium text-rdy-black">
-                    {'classNumber' in cls && cls.classNumber && (
-                      <span className="text-xs text-rdy-gray-400 mr-2">{String(cls.classNumber)}</span>
-                    )}
-                    {cls.name}
-                  </TableCell>
+              data.schwerpunktebenen.map((level) => (
+                <TableRow key={level.id} className="border-rdy-gray-200">
                   <TableCell>
                     <span
-                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getStatusBadgeClass(cls.status)}`}
+                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getLevelBadgeClass(level.levelNumber)}`}
                     >
-                      {cls.status === 'active' ? 'Active' : 'Disabled'}
+                      {getLevelLabel(level.levelNumber)}
                     </span>
                   </TableCell>
-                  <TableCell className="text-rdy-gray-400">
-                    {cls.mentor?.name || cls.mentor?.email || '-'}
+                  <TableCell className="font-medium text-rdy-black">
+                    {level.titleDe}
                   </TableCell>
-                  <TableCell className="text-rdy-gray-400">{cls.memberCount}</TableCell>
-                  <TableCell className="text-rdy-gray-400">{cls.durationLevels} levels</TableCell>
                   <TableCell className="text-rdy-gray-400">
-                    {formatDate(cls.startDate)} - {formatDate(cls.endDate)}
+                    {level.titleEn || '-'}
+                  </TableCell>
+                  <TableCell className="text-rdy-gray-400">
+                    {truncateText(level.zielDe)}
+                  </TableCell>
+                  <TableCell className="text-rdy-gray-400">
+                    {level.imageUrl ? (
+                      <span className="text-green-400">Yes</span>
+                    ) : (
+                      <span className="text-rdy-gray-500">No</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => router.push(`/admin/classes/${cls.id}`)}
+                        onClick={() =>
+                          router.push(
+                            `/admin/weeks?schwerpunktebeneId=${level.id}`
+                          )
+                        }
                         className="text-rdy-orange-500 hover:text-rdy-orange-500"
                       >
-                        View
+                        Weeks
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setEditingClass(cls as ClassItem)}
+                        onClick={() => setEditingLevel(level as unknown as Level)}
                         className="text-rdy-gray-400 hover:text-rdy-black"
                       >
                         Edit
@@ -251,9 +258,9 @@ export function ClassesManagement() {
                         variant="ghost"
                         size="sm"
                         onClick={() =>
-                          setDeletingClass({
-                            id: cls.id,
-                            name: cls.name,
+                          setDeletingLevel({
+                            id: level.id,
+                            title: level.titleDe,
                           })
                         }
                         className="text-red-400 hover:text-red-300"
@@ -274,7 +281,7 @@ export function ClassesManagement() {
         <div className="flex items-center justify-between">
           <p className="text-sm text-rdy-gray-400">
             Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.pagination.total)} of{' '}
-            {data.pagination.total} classes
+            {data.pagination.total} Module
           </p>
           <div className="flex gap-2">
             <Button
@@ -300,38 +307,38 @@ export function ClassesManagement() {
       )}
 
       {/* Create Dialog */}
-      <CreateClassDialog
+      <CreateLevelDialog
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         onSuccess={() => {
-          utils.classes.list.invalidate();
+          utils.schwerpunktebenen.list.invalidate();
           setShowCreateDialog(false);
         }}
       />
 
       {/* Edit Dialog */}
-      <EditClassDialog
-        open={!!editingClass}
+      <EditLevelDialog
+        open={!!editingLevel}
         onOpenChange={(open) => {
-          if (!open) setEditingClass(null);
+          if (!open) setEditingLevel(null);
         }}
-        classData={editingClass}
+        level={editingLevel}
         onSuccess={() => {
-          utils.classes.list.invalidate();
-          setEditingClass(null);
+          utils.schwerpunktebenen.list.invalidate();
+          setEditingLevel(null);
         }}
       />
 
       {/* Delete Dialog */}
-      <DeleteClassDialog
-        open={!!deletingClass}
+      <DeleteLevelDialog
+        open={!!deletingLevel}
         onOpenChange={(open) => {
-          if (!open) setDeletingClass(null);
+          if (!open) setDeletingLevel(null);
         }}
-        classData={deletingClass}
+        level={deletingLevel}
         onSuccess={() => {
-          utils.classes.list.invalidate();
-          setDeletingClass(null);
+          utils.schwerpunktebenen.list.invalidate();
+          setDeletingLevel(null);
         }}
       />
     </div>
