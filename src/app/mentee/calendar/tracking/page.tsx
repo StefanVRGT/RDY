@@ -1,113 +1,255 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useSession } from 'next-auth/react';
+import { useState, useCallback, useEffect } from 'react';
 import { trpc } from '@/lib/trpc/client';
-import { Menu } from 'lucide-react';
 import { format, startOfDay } from 'date-fns';
-import { RdyHeader } from '@/components/ui/rdy-header';
-import { TrackingCircle, TrackingStatus } from '@/components/ui/tracking-circle';
+import { MobileLayout } from '@/components/mobile';
+import { RdyFooter } from '@/components/rdy-footer';
+import { VoiceRecorder } from '@/components/voice-recorder/voice-recorder';
+import { cn } from '@/lib/utils';
+import { Mic, Flame, Wind, Activity, Brain } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-// Time slots from 6 AM to 9 PM
-const TIME_SLOTS = [
-  '6:00 AM',
-  '9:00 AM',
-  '12:00 PM',
-  '3:00 PM',
-  '6:00 PM',
-  '9:00 PM',
+const ICON_MAP: Record<string, LucideIcon> = {
+  stress: Flame,
+  breathing: Wind,
+  body: Activity,
+  thoughts: Brain,
+};
+
+const DEFAULT_CATEGORIES = [
+  { key: 'stress', label: 'Stresslevel', emoji: '' },
+  { key: 'breathing', label: 'Atmung', emoji: '' },
+  { key: 'body', label: 'Körper', emoji: '' },
+  { key: 'thoughts', label: 'Gedanken', emoji: '' },
 ];
 
-// Grid columns (7 columns for a week view, or just multiple times in a day)
-const GRID_COLS = 5;
+export default function ReflectPage() {
+  const today = startOfDay(new Date());
+  const dateStr = format(today, 'yyyy-MM-dd') + 'T00:00:00.000Z';
+  const dayEnd = format(today, 'yyyy-MM-dd') + 'T23:59:59.999Z';
 
-export default function TrackingPage() {
-  const { data: session } = useSession();
-  const [currentDate] = useState(new Date());
+  // ── Tracking categories (from mentor or defaults) ──
+  const { data: categories } = trpc.mentee.getTrackingCategories.useQuery();
+  const TRACKING_CATEGORIES = categories || DEFAULT_CATEGORIES;
 
-  // Fetch exercises for the day
-  const { data: exercisesData } = trpc.mentee.getExercisesForDate.useQuery({
-    date: startOfDay(currentDate).toISOString(),
+  // ── Tracking ──
+  const { data: trackingEntries, isLoading: loadingTracking } =
+    trpc.mentee.getTrackingForDate.useQuery({ date: dateStr });
+
+  const utils = trpc.useUtils();
+
+  const saveMutation = trpc.mentee.saveTracking.useMutation({
+    onSuccess: () => utils.mentee.getTrackingForDate.invalidate({ date: dateStr }),
   });
 
-  // Generate tracking grid data
-  const trackingGrid = useMemo(() => {
-    const grid: { time: string; slots: TrackingStatus[] }[] = [];
-    const currentHour = new Date().getHours();
+  const [tappedKey, setTappedKey] = useState<string | null>(null);
 
-    TIME_SLOTS.forEach((time) => {
-      const hour = parseInt(time.split(':')[0]);
-      const isPM = time.includes('PM');
-      const hour24 = isPM && hour !== 12 ? hour + 12 : !isPM && hour === 12 ? 0 : hour;
+  const handleTap = useCallback(
+    (category: string) => {
+      setTappedKey(category);
+      saveMutation.mutate({ category });
+      setTimeout(() => setTappedKey(null), 600);
+    },
+    [saveMutation]
+  );
 
-      const slots: TrackingStatus[] = [];
-      for (let i = 0; i < GRID_COLS; i++) {
-        if (hour24 < currentHour) {
-          // Past time - could be completed
-          slots.push(Math.random() > 0.3 ? 'completed' : 'incomplete');
-        } else if (hour24 === currentHour && i === 0) {
-          // Current time - active
-          slots.push('active');
+  // ── Diary ──
+  const { data: diaryEntries, isLoading: loadingDiary } = trpc.diary.getEntries.useQuery({
+    startDate: dateStr,
+    endDate: dayEnd,
+    limit: 1,
+    sortOrder: 'desc',
+  });
+
+  const [diaryText, setDiaryText] = useState('');
+  const [entryId, setEntryId] = useState<string | null>(null);
+  const [showRecorder, setShowRecorder] = useState(false);
+
+  useEffect(() => {
+    const entry = diaryEntries?.[0];
+    if (entry) {
+      setEntryId(entry.id);
+      setDiaryText(entry.content ?? '');
+    } else {
+      setEntryId(null);
+      setDiaryText('');
+    }
+  }, [diaryEntries]);
+
+  const createEntry = trpc.diary.createEntry.useMutation({
+    onSuccess: (data) => {
+      setEntryId(data.id);
+      utils.diary.getEntries.invalidate();
+    },
+  });
+
+  const updateEntry = trpc.diary.updateEntry.useMutation({
+    onSuccess: () => utils.diary.getEntries.invalidate(),
+  });
+
+
+  const handleSaveDiary = useCallback(() => {
+    if (!diaryText.trim()) return;
+    if (entryId) {
+      updateEntry.mutate({ id: entryId, content: diaryText });
+    } else {
+      createEntry.mutate({ content: diaryText, entryDate: dateStr });
+    }
+  }, [diaryText, entryId, dateStr, updateEntry, createEntry]);
+
+  const [transcribing, setTranscribing] = useState(false);
+
+  const handleVoiceComplete = useCallback(async (blob: Blob) => {
+    // Transcribe directly via Whisper API
+    setTranscribing(true);
+    setShowRecorder(false);
+    try {
+      const formData = new FormData();
+      formData.append('file', blob, 'recording.webm');
+      const res = await fetch('/api/transcribe', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const err = await res.json();
+        console.error('Transcription failed:', err.error);
+        return;
+      }
+      const { text } = (await res.json()) as { text: string };
+      if (text) {
+        // Append transcription to diary text
+        const newText = diaryText ? `${diaryText}\n\n${text}` : text;
+        setDiaryText(newText);
+        // Auto-save
+        if (entryId) {
+          updateEntry.mutate({ id: entryId, content: newText });
         } else {
-          // Future time
-          slots.push('incomplete');
+          createEntry.mutate({ content: newText, entryDate: dateStr });
         }
       }
+    } finally {
+      setTranscribing(false);
+    }
+  }, [diaryText, entryId, dateStr, updateEntry, createEntry]);
 
-      grid.push({ time, slots });
-    });
-
-    return grid;
-  }, []);
+  const isLoading = loadingTracking || loadingDiary;
 
   return (
-    <div className="min-h-screen bg-rdy-white">
-      {/* Hamburger Menu */}
-      <div className="fixed top-4 left-4 z-50">
-        <button className="p-2 active:opacity-60 transition-opacity" aria-label="Menu">
-          <Menu className="h-6 w-6 text-rdy-black" />
-        </button>
-      </div>
+    <MobileLayout title="TODAY" showMenu>
+      <div className="px-5 py-5">
+        <p className="text-center text-xs uppercase tracking-widest text-rdy-gray-400 mb-6">
+          {format(today, 'd. MMMM yyyy')}
+        </p>
 
-      {/* Main Content */}
-      <div className="rdy-content-width px-rdy-lg pt-16 pb-20">
-        {/* Header */}
-        <div className="mb-rdy-xl">
-          <RdyHeader
-            title="TODAY"
-            subtitle={format(currentDate, 'd MMM').toUpperCase()}
-          />
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center py-16">
+            <div className="h-6 w-6 rounded-full border-2 border-rdy-orange-500 border-t-transparent animate-spin" />
+          </div>
+        ) : (
+          <>
+            {/* ── TRACKING ─────────────────────────────── */}
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-rdy-black mb-3">
+              Tracking
+            </h2>
 
-        {/* Section Title */}
-        <div className="mb-rdy-lg">
-          <h2 className="rdy-heading-lg text-center">TRACKING</h2>
-        </div>
-
-        {/* Tracking Grid */}
-        <div className="space-y-rdy-sm">
-          {trackingGrid.map((row) => (
-            <div key={row.time} className="flex items-center gap-rdy-sm">
-              {/* Time Label */}
-              <div className="w-20 flex-shrink-0">
-                <p className="text-rdy-sm text-rdy-gray-500">{row.time}</p>
-              </div>
-
-              {/* Circle Grid */}
-              <div className="flex gap-2 flex-1 justify-center">
-                {row.slots.map((status, idx) => (
-                  <TrackingCircle key={idx} status={status} size="md" />
-                ))}
-              </div>
+            <div className="grid grid-cols-2 gap-2 mb-5">
+              {TRACKING_CATEGORIES.map((cat) => {
+                const isActive = tappedKey === cat.key;
+                return (
+                  <button
+                    key={cat.key}
+                    onClick={() => handleTap(cat.key)}
+                    disabled={saveMutation.isPending}
+                    className={cn(
+                      'flex items-center gap-2.5 px-4 py-3.5 rounded-xl border transition-all active:scale-95',
+                      isActive
+                        ? 'bg-rdy-orange-500 border-rdy-orange-500 text-white scale-95'
+                        : 'bg-rdy-gray-100 border-rdy-gray-200 text-rdy-black'
+                    )}
+                  >
+                    {(() => {
+                      const Icon = ICON_MAP[cat.key];
+                      return Icon ? <Icon className="h-5 w-5" /> : <Flame className="h-5 w-5" />;
+                    })()}
+                    <span className="text-sm font-medium">{cat.label}</span>
+                  </button>
+                );
+              })}
             </div>
-          ))}
-        </div>
 
-        {/* RDY Branding */}
-        <div className="mt-rdy-2xl text-center">
-          <p className="text-rdy-lg font-bold text-rdy-black tracking-wide">RDY</p>
-        </div>
+            {/* Timeline */}
+            {trackingEntries && trackingEntries.length > 0 && (
+              <div className="mb-6">
+                <p className="text-xs uppercase tracking-wider text-rdy-gray-400 mb-2">
+                  Heute geloggt
+                </p>
+                <div className="space-y-1">
+                  {trackingEntries.map((entry) => {
+                    const cat = TRACKING_CATEGORIES.find((c) => c.key === entry.category);
+                    return (
+                      <div
+                        key={entry.id}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-rdy-gray-100 text-xs"
+                      >
+                        <span className="text-rdy-gray-400 tabular-nums w-10 shrink-0">
+                          {format(new Date(entry.recordedAt), 'HH:mm')}
+                        </span>
+                        {(() => {
+                          const Icon = cat ? ICON_MAP[cat.key] : null;
+                          return Icon ? <Icon className="h-3 w-3 text-rdy-gray-500" /> : null;
+                        })()}
+                        <span className="text-rdy-gray-600">{cat?.label || entry.category}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* ── DIARY ────────────────────────────────── */}
+            <div className="border-t border-rdy-gray-200 pt-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-rdy-black mb-3">
+                Diary
+              </h2>
+
+              <div className="flex items-end gap-2">
+                <textarea
+                  value={diaryText}
+                  onChange={(e) => setDiaryText(e.target.value)}
+                  onBlur={handleSaveDiary}
+                  placeholder="Notizen..."
+                  rows={2}
+                  className="flex-1 p-3 rounded-xl bg-rdy-gray-100 border-none text-sm text-rdy-gray-600 placeholder:text-rdy-gray-300 focus:outline-none focus:ring-2 focus:ring-rdy-orange-500/30 resize-none"
+                />
+
+                <button
+                  onClick={() => setShowRecorder(!showRecorder)}
+                  className={cn(
+                    'flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90',
+                    showRecorder
+                      ? 'bg-rdy-orange-500 text-white'
+                      : 'bg-rdy-gray-100 text-rdy-gray-500'
+                  )}
+                >
+                  <Mic className="h-5 w-5" />
+                </button>
+              </div>
+
+              {showRecorder && (
+                <div className="mt-3">
+                  <VoiceRecorder onRecordingComplete={handleVoiceComplete} />
+                </div>
+              )}
+
+              {transcribing && (
+                <p className="mt-2 text-xs text-rdy-orange-500 animate-pulse">
+                  Transkribiere...
+                </p>
+              )}
+            </div>
+          </>
+        )}
+
+        <RdyFooter />
       </div>
-    </div>
+    </MobileLayout>
   );
 }
