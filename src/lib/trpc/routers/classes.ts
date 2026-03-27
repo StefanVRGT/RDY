@@ -9,6 +9,7 @@ import {
   weeks,
   weekExercises,
   scheduledExercises,
+  programEvents,
 } from '@/lib/db/schema';
 import { eq, and, count, desc, asc, sql, inArray } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
@@ -332,6 +333,27 @@ export const classesRouter = router({
         },
       })
       .returning();
+
+    // Auto-generate program events based on RDY Masterclass timing
+    const MS_PER_DAY_LOCAL = 24 * 60 * 60 * 1000;
+    const eventOffsets: Array<{ type: 'basics' | 'module' | 'endtalk'; label: string; dayOffset: number }> = [
+      { type: 'basics', label: 'BASICS', dayOffset: 0 },
+      { type: 'module', label: 'MODUL 1', dayOffset: 7 },
+      { type: 'module', label: 'MODUL 2', dayOffset: 28 },
+      { type: 'module', label: 'MODUL 3', dayOffset: 49 },
+      { type: 'module', label: 'MODUL 4', dayOffset: 70 },
+      { type: 'module', label: 'MODUL 5', dayOffset: 91 },
+      { type: 'endtalk', label: 'END TALK', dayOffset: 112 },
+    ];
+
+    await ctx.db.insert(programEvents).values(
+      eventOffsets.map((o) => ({
+        classId: newClass.id,
+        type: o.type,
+        label: o.label,
+        scheduledDate: new Date(startDate.getTime() + o.dayOffset * MS_PER_DAY_LOCAL),
+      }))
+    );
 
     return newClass;
   }),

@@ -14,6 +14,9 @@ import {
   experienceEntries,
   trackingEntries,
   reflectionEntries,
+  programEvents,
+  checkInEntries,
+  mentoringSessions,
 } from '@/lib/db/schema';
 import { eq, and, gte, lte, inArray, asc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
@@ -1504,8 +1507,9 @@ export const menteeRouter = router({
   // ── Program Timeline ─────────────────────────────────────────────
 
   /**
-   * Get the full RDY Masterclass program timeline from class start date
-   * BASICS(day 0) → MODULE 1(+7) → MODULE 2(+28) → ... → END TALK(+112)
+   * Get the full RDY Masterclass program timeline from class start date.
+   * Reads from the program_events table (auto-generated when admin creates a class).
+   * Falls back to on-the-fly calculation for classes created before this feature.
    */
   getProgramTimeline: menteeProcedure.query(async ({ ctx }) => {
     const memberships = await ctx.db
@@ -1521,9 +1525,30 @@ export const menteeRouter = router({
 
     if (memberships.length === 0) return null;
 
-    const { startDate, className } = memberships[0];
+    const { classId, startDate, className } = memberships[0];
     const start = new Date(startDate);
 
+    // Try to read from program_events table
+    const dbEvents = await ctx.db
+      .select({
+        type: programEvents.type,
+        label: programEvents.label,
+        scheduledDate: programEvents.scheduledDate,
+      })
+      .from(programEvents)
+      .where(eq(programEvents.classId, classId))
+      .orderBy(asc(programEvents.scheduledDate));
+
+    if (dbEvents.length > 0) {
+      const events = dbEvents.map((e) => ({
+        type: e.type,
+        label: e.label,
+        date: new Date(e.scheduledDate).toISOString(),
+      }));
+      return { className, startDate: start.toISOString(), events };
+    }
+
+    // Fallback: calculate on-the-fly for classes created before programEvents existed
     const offsets = [
       { type: 'basics', label: 'BASICS', dayOffset: 0 },
       { type: 'module', label: 'MODUL 1', dayOffset: 7 },
@@ -1768,4 +1793,261 @@ export const menteeRouter = router({
 
       return { success: true };
     }),
+
+  // ── Booking Reminder ──────────────────────────────────────────────
+
+  /**
+   * Check if the mentee needs to book a 1:1 session for the current module period
+   */
+  getBookingReminder: menteeProcedure.query(async ({ ctx }) => {
+    // Get user's class membership
+    const memberships = await ctx.db
+      .select({
+        classId: classMembers.classId,
+        startDate: classes.startDate,
+      })
+      .from(classMembers)
+      .innerJoin(classes, eq(classMembers.classId, classes.id))
+      .where(eq(classMembers.userId, ctx.userId))
+      .limit(1);
+
+    if (memberships.length === 0) {
+      return { needsBooking: false };
+    }
+
+    const { classId, startDate } = memberships[0];
+    const classStart = new Date(startDate);
+    const now = new Date();
+
+    // Use the same timeline offsets as getProgramTimeline
+    const moduleOffsets = [
+      { label: 'MODUL 1', dayOffset: 7, endOffset: 28 },
+      { label: 'MODUL 2', dayOffset: 28, endOffset: 49 },
+      { label: 'MODUL 3', dayOffset: 49, endOffset: 70 },
+      { label: 'MODUL 4', dayOffset: 70, endOffset: 91 },
+      { label: 'MODUL 5', dayOffset: 91, endOffset: 112 },
+    ];
+
+    const daysSinceStart = Math.floor(
+      (now.getTime() - classStart.getTime()) / MS_PER_DAY
+    );
+
+    // Find current module
+    const currentModule = moduleOffsets.find(
+      (m) => daysSinceStart >= m.dayOffset && daysSinceStart < m.endOffset
+    );
+
+    if (!currentModule) {
+      return { needsBooking: false };
+    }
+
+    // Calculate current module period dates
+    const moduleStart = new Date(classStart.getTime() + currentModule.dayOffset * MS_PER_DAY);
+    const moduleEnd = new Date(classStart.getTime() + currentModule.endOffset * MS_PER_DAY);
+
+    // Check if user has a booked/scheduled 1:1 session in this module period
+    const bookedSessions = await ctx.db
+      .select({ id: mentoringSessions.id })
+      .from(mentoringSessions)
+      .where(
+        and(
+          eq(mentoringSessions.menteeId, ctx.userId),
+          eq(mentoringSessions.sessionType, '1:1'),
+          gte(mentoringSessions.scheduledAt, moduleStart),
+          lte(mentoringSessions.scheduledAt, moduleEnd)
+        )
+      )
+      .limit(1);
+
+    if (bookedSessions.length > 0) {
+      return { needsBooking: false };
+    }
+
+    return { needsBooking: true, moduleName: currentModule.label };
+  }),
+
+  // ── Check-In Questionnaire ────────────────────────────────────────
+
+  /**
+   * Get check-in entry for the user's current class
+   */
+  getCheckIn: menteeProcedure.query(async ({ ctx }) => {
+    // Get user's class membership
+    const [membership] = await ctx.db
+      .select({ classId: classMembers.classId })
+      .from(classMembers)
+      .where(eq(classMembers.userId, ctx.userId))
+      .limit(1);
+
+    if (!membership) return null;
+
+    const [entry] = await ctx.db
+      .select()
+      .from(checkInEntries)
+      .where(
+        and(
+          eq(checkInEntries.userId, ctx.userId),
+          eq(checkInEntries.classId, membership.classId)
+        )
+      )
+      .limit(1);
+
+    return entry || null;
+  }),
+
+  /**
+   * Save check-in responses (upsert)
+   */
+  saveCheckIn: menteeProcedure
+    .input(
+      z.object({
+        responses: z.array(z.object({
+          question: z.string(),
+          answer: z.string(),
+        })),
+        submit: z.boolean().default(false),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Get user's class membership
+      const [membership] = await ctx.db
+        .select({ classId: classMembers.classId })
+        .from(classMembers)
+        .where(eq(classMembers.userId, ctx.userId))
+        .limit(1);
+
+      if (!membership) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'No class membership found' });
+      }
+
+      const [existing] = await ctx.db
+        .select({ id: checkInEntries.id })
+        .from(checkInEntries)
+        .where(
+          and(
+            eq(checkInEntries.userId, ctx.userId),
+            eq(checkInEntries.classId, membership.classId)
+          )
+        )
+        .limit(1);
+
+      if (existing) {
+        await ctx.db
+          .update(checkInEntries)
+          .set({
+            responses: input.responses,
+            submittedAt: input.submit ? new Date() : undefined,
+          })
+          .where(eq(checkInEntries.id, existing.id));
+      } else {
+        await ctx.db.insert(checkInEntries).values({
+          userId: ctx.userId,
+          classId: membership.classId,
+          responses: input.responses,
+          submittedAt: input.submit ? new Date() : undefined,
+        });
+      }
+
+      return { success: true };
+    }),
+
+  /**
+   * Check if mentee should see the check-in banner
+   * Returns true if in BASICS/pre-Module-1 period and check-in not submitted
+   */
+  getCheckInStatus: menteeProcedure.query(async ({ ctx }) => {
+    // Get user's class membership
+    const memberships = await ctx.db
+      .select({
+        classId: classMembers.classId,
+        startDate: classes.startDate,
+      })
+      .from(classMembers)
+      .innerJoin(classes, eq(classMembers.classId, classes.id))
+      .where(eq(classMembers.userId, ctx.userId))
+      .limit(1);
+
+    if (memberships.length === 0) {
+      return { showBanner: false };
+    }
+
+    const { classId, startDate } = memberships[0];
+    const classStart = new Date(startDate);
+    const now = new Date();
+
+    // BASICS period is day 0-6 (before Module 1 starts at day 7)
+    const daysSinceStart = Math.floor(
+      (now.getTime() - classStart.getTime()) / MS_PER_DAY
+    );
+
+    if (daysSinceStart < 0 || daysSinceStart >= 7) {
+      return { showBanner: false };
+    }
+
+    // Check if check-in already submitted
+    const [entry] = await ctx.db
+      .select({ submittedAt: checkInEntries.submittedAt })
+      .from(checkInEntries)
+      .where(
+        and(
+          eq(checkInEntries.userId, ctx.userId),
+          eq(checkInEntries.classId, classId)
+        )
+      )
+      .limit(1);
+
+    if (entry?.submittedAt) {
+      return { showBanner: false };
+    }
+
+    return { showBanner: true };
+  }),
+
+  // ── Upcoming Exercise Reminders ───────────────────────────────────
+
+  /**
+   * Get exercises scheduled in the next 15 minutes for the current user
+   */
+  getUpcomingExerciseReminders: menteeProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const fifteenMinutesFromNow = new Date(now.getTime() + 15 * 60 * 1000);
+
+    const upcoming = await ctx.db
+      .select({
+        id: scheduledExercises.id,
+        scheduledAt: scheduledExercises.scheduledAt,
+        exerciseId: scheduledExercises.exerciseId,
+      })
+      .from(scheduledExercises)
+      .where(
+        and(
+          eq(scheduledExercises.userId, ctx.userId),
+          eq(scheduledExercises.completed, false),
+          gte(scheduledExercises.scheduledAt, now),
+          lte(scheduledExercises.scheduledAt, fifteenMinutesFromNow)
+        )
+      )
+      .orderBy(asc(scheduledExercises.scheduledAt));
+
+    if (upcoming.length === 0) return [];
+
+    const exerciseIds = upcoming.map((u) => u.exerciseId);
+    const exercisesData = await ctx.db
+      .select({
+        id: exercises.id,
+        titleDe: exercises.titleDe,
+        titleEn: exercises.titleEn,
+        type: exercises.type,
+        durationMinutes: exercises.durationMinutes,
+      })
+      .from(exercises)
+      .where(inArray(exercises.id, exerciseIds));
+
+    const exercisesMap = Object.fromEntries(exercisesData.map((e) => [e.id, e]));
+
+    return upcoming.map((u) => ({
+      ...u,
+      exercise: exercisesMap[u.exerciseId] || null,
+    }));
+  }),
 });

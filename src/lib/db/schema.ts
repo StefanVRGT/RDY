@@ -1298,3 +1298,62 @@ export const reflectionEntries = pgTable(
 
 export type ReflectionEntry = typeof reflectionEntries.$inferSelect;
 export type NewReflectionEntry = typeof reflectionEntries.$inferInsert;
+
+// Enum for program event types (basics intro, module sessions, end talk)
+export const programEventTypeEnum = pgEnum('program_event_type', ['basics', 'module', 'endtalk']);
+
+// ProgramEvents table - auto-generated calendar events for each class based on the RDY Masterclass timing
+export const programEvents = pgTable(
+  'program_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    // Foreign key to class
+    classId: uuid('class_id')
+      .references(() => classes.id, { onDelete: 'cascade' })
+      .notNull(),
+    // Event type (basics, module, endtalk)
+    type: programEventTypeEnum('type').notNull(),
+    // Human-readable label (e.g. "BASICS", "MODUL 1", "END TALK")
+    label: varchar('label', { length: 100 }).notNull(),
+    // Scheduled date for this program event
+    scheduledDate: timestamp('scheduled_date').notNull(),
+    // Timestamps
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('program_events_class_idx').on(table.classId),
+    index('program_events_date_idx').on(table.scheduledDate),
+  ]
+);
+
+export type ProgramEvent = typeof programEvents.$inferSelect;
+export type NewProgramEvent = typeof programEvents.$inferInsert;
+
+// CheckInEntries table - stores mentee check-in questionnaire responses (pre-Module 1)
+export const checkInEntries = pgTable(
+  'check_in_entries',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    // Foreign key to user (mentee)
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    // Foreign key to class
+    classId: uuid('class_id')
+      .references(() => classes.id, { onDelete: 'cascade' })
+      .notNull(),
+    // The questions + answers stored as JSON array
+    responses: jsonb('responses').notNull().default([]),
+    // When the mentee submitted it
+    submittedAt: timestamp('submitted_at'),
+    // Timestamps
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('check_in_entries_user_idx').on(table.userId),
+    unique('check_in_entries_user_class_unique').on(table.userId, table.classId),
+  ]
+);
+
+export type CheckInEntry = typeof checkInEntries.$inferSelect;
+export type NewCheckInEntry = typeof checkInEntries.$inferInsert;
