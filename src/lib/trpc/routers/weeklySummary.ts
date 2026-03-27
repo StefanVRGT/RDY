@@ -9,6 +9,7 @@ import {
 } from '@/lib/db/schema';
 import { eq, and, gte, lte, desc, sql, count } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { MOOD_NEUTRAL_SCORE } from '@/lib/constants';
 
 /**
  * Mentee middleware - ensures user has mentee role and extracts mentee user info
@@ -305,7 +306,7 @@ export const weeklySummaryRouter = router({
       const maxNegative = totalPatternEntries * 2 * 0.33;
       const moodBarometer = totalPatternEntries > 0
         ? Math.round(Math.max(0, Math.min(100, ((positiveScore - negativeScore + maxNegative) / (maxPositive + maxNegative || 1)) * 100)))
-        : 50;
+        : MOOD_NEUTRAL_SCORE;
 
       // === DIARY HIGHLIGHTS ===
       // Get diary entries for the week
@@ -409,7 +410,7 @@ export const weeklySummaryRouter = router({
           score: moodBarometer,
           positiveScore,
           negativeScore,
-          trend: (moodBarometer > 50 ? 'positive' : moodBarometer < 50 ? 'negative' : 'neutral') as 'positive' | 'negative' | 'neutral',
+          trend: (moodBarometer > MOOD_NEUTRAL_SCORE ? 'positive' : moodBarometer < MOOD_NEUTRAL_SCORE ? 'negative' : 'neutral') as 'positive' | 'negative' | 'neutral',
         },
 
         // Diary highlights
@@ -509,7 +510,7 @@ export const weeklySummaryRouter = router({
         const maxScore = weekPatterns.length * 2;
         const moodScore = maxScore > 0
           ? Math.round(((positiveScore - negativeScore + maxScore) / (maxScore * 2)) * 100)
-          : 50;
+          : MOOD_NEUTRAL_SCORE;
 
         // Get diary entries count
         const [diaryCount] = await ctx.db

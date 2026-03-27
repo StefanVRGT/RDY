@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
+import { AppShell } from '@/components/app-shell';
 
 export default async function MentorLayout({
   children,
@@ -21,5 +22,9 @@ export default async function MentorLayout({
     redirect('/auth/error?error=AccessDenied');
   }
 
-  return <>{children}</>;
+  return (
+    <AppShell role="mentor" userEmail={session.user.email ?? ''}>
+      {children}
+    </AppShell>
+  );
 }

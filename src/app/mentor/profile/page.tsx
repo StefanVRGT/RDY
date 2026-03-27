@@ -3,13 +3,13 @@
 import { MobileLayout } from '@/components/mobile';
 import { useUser } from '@/components/providers';
 import { User, Mail, Shield } from 'lucide-react';
-import Link from 'next/link';
+import { signOutAction } from '@/app/actions/sign-out';
 
 export default function MentorProfilePage() {
   const { user } = useUser();
 
   return (
-    <MobileLayout title="Profile">
+    <MobileLayout title="Profile" showBack>
       <div className="px-4 py-6">
         {/* Profile header */}
         <div className="mb-6 flex flex-col items-center">
@@ -41,12 +41,14 @@ export default function MentorProfilePage() {
         </div>
 
         {/* Sign out */}
-        <Link
-          href="/api/auth/signout"
-          className="block w-full rounded-xl bg-red-500/10 p-4 text-center font-medium text-red-400 transition-colors hover:bg-red-500/20"
-        >
-          Sign Out
-        </Link>
+        <form action={signOutAction}>
+          <button
+            type="submit"
+            className="block w-full rounded-xl bg-red-500/10 p-4 text-center font-medium text-red-400 transition-colors hover:bg-red-500/20"
+          >
+            Sign Out
+          </button>
+        </form>
       </div>
     </MobileLayout>
   );

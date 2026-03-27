@@ -136,13 +136,11 @@ export default function MenteeBookingPage() {
     );
   }, [selectedDate, bookingsData]);
 
-  // Get dates that have available slots
+  // Get dates that have available slots (use format() for local-timezone-safe date strings)
   const datesWithSlots = useMemo(() => {
     if (!slotsData?.slots) return new Set<string>();
     return new Set(
-      slotsData.slots.map(slot =>
-        new Date(slot.startTime).toISOString().split('T')[0]
-      )
+      slotsData.slots.map(slot => format(new Date(slot.startTime), 'yyyy-MM-dd'))
     );
   }, [slotsData?.slots]);
 
@@ -150,9 +148,7 @@ export default function MenteeBookingPage() {
   const datesWithBookings = useMemo(() => {
     if (!bookingsData) return new Set<string>();
     return new Set(
-      bookingsData.map(booking =>
-        new Date(booking.scheduledAt).toISOString().split('T')[0]
-      )
+      bookingsData.map(booking => format(new Date(booking.scheduledAt), 'yyyy-MM-dd'))
     );
   }, [bookingsData]);
 
@@ -224,7 +220,7 @@ export default function MenteeBookingPage() {
     currentMonth.getFullYear() === new Date().getFullYear();
 
   return (
-    <MobileLayout title="Book Session" showNotifications>
+    <MobileLayout title="Book Session" showBack showNotifications>
       <div className="flex flex-col px-4 py-4" data-testid="mentee-booking-page">
         {/* Monthly Usage Card */}
         <div
@@ -322,10 +318,11 @@ export default function MenteeBookingPage() {
               className="w-full"
               classNames={{
                 day: 'relative',
+                today: 'rounded-md bg-rdy-black/[0.07] font-semibold',
               }}
               modifiers={{
-                hasSlots: (date) => datesWithSlots.has(date.toISOString().split('T')[0]),
-                hasBooking: (date) => datesWithBookings.has(date.toISOString().split('T')[0]),
+                hasSlots: (date) => datesWithSlots.has(format(date, 'yyyy-MM-dd')),
+                hasBooking: (date) => datesWithBookings.has(format(date, 'yyyy-MM-dd')),
               }}
               modifiersClassNames={{
                 hasSlots: 'ring-2 ring-rdy-orange-500 ring-inset',
@@ -338,6 +335,10 @@ export default function MenteeBookingPage() {
 
         {/* Legend */}
         <div className="mb-4 flex items-center justify-center gap-4 text-xs text-rdy-gray-400">
+          <div className="flex items-center gap-1">
+            <div className="h-3 w-3 rounded-sm bg-rdy-black/[0.07] font-semibold" />
+            <span>Today</span>
+          </div>
           <div className="flex items-center gap-1">
             <div className="h-3 w-3 rounded-sm ring-2 ring-rdy-orange-500 ring-inset" />
             <span>Available</span>
@@ -467,7 +468,7 @@ export default function MenteeBookingPage() {
 
       {/* Booking Confirmation Dialog */}
       <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md mx-4 w-[calc(100%-2rem)]">
           <DialogHeader>
             <DialogTitle>Confirm Booking</DialogTitle>
             <DialogDescription className="text-rdy-gray-400">
@@ -550,7 +551,7 @@ export default function MenteeBookingPage() {
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md mx-4 w-[calc(100%-2rem)]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-400">
               <XCircle className="h-5 w-5" />

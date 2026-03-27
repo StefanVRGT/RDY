@@ -4,6 +4,13 @@ import { decryptApiKey } from '@/lib/crypto/encryption';
 import { eq } from 'drizzle-orm';
 import * as fs from 'fs';
 import * as path from 'path';
+import {
+  ANTHROPIC_API_URL,
+  ANTHROPIC_API_VERSION,
+  AI_MAX_TOKENS_DEFAULT,
+  GEMINI_API_BASE_URL,
+  AI_PRICING,
+} from '@/lib/ai/config';
 
 // Supported languages for transcription
 export type TranscriptionLanguage = 'de' | 'en';
@@ -71,11 +78,15 @@ async function logAIUsage(
   // Estimate cost based on provider and tokens (rough estimates)
   let estimatedCostCents = 0;
   if (provider === 'anthropic') {
-    // Claude pricing: ~$3/1M input tokens, ~$15/1M output tokens (Sonnet)
-    estimatedCostCents = Math.round((inputTokens * 0.3 + outputTokens * 1.5) / 1000);
+    const p = AI_PRICING[provider];
+    estimatedCostCents = Math.round(
+      (inputTokens * p.inputCentsPerMToken + outputTokens * p.outputCentsPerMToken) / 1000
+    );
   } else if (provider === 'gemini') {
-    // Gemini pricing: ~$0.35/1M input tokens, ~$1.05/1M output tokens (Pro)
-    estimatedCostCents = Math.round((inputTokens * 0.035 + outputTokens * 0.105) / 1000);
+    const p = AI_PRICING[provider];
+    estimatedCostCents = Math.round(
+      (inputTokens * p.inputCentsPerMToken + outputTokens * p.outputCentsPerMToken) / 1000
+    );
   }
 
   await db.insert(aiUsageLogs).values({
@@ -146,16 +157,16 @@ async function transcribeWithAnthropic(
     : 'Detect the language (German or English) and transcribe the audio in that language.';
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(ANTHROPIC_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'anthropic-version': ANTHROPIC_API_VERSION,
       },
       body: JSON.stringify({
         model,
-        max_tokens: 4096,
+        max_tokens: AI_MAX_TOKENS_DEFAULT,
         messages: [
           {
             role: 'user',
@@ -250,7 +261,7 @@ async function transcribeWithGemini(
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      GEMINI_API_BASE_URL(model, apiKey),
       {
         method: 'POST',
         headers: {
@@ -280,7 +291,7 @@ Output only the transcription text, without any additional commentary or labels.
             },
           ],
           generationConfig: {
-            maxOutputTokens: 4096,
+            maxOutputTokens: AI_MAX_TOKENS_DEFAULT,
           },
         }),
       }

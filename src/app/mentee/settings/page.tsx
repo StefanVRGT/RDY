@@ -28,15 +28,17 @@ import {
   Users,
   Sun,
   Moon,
+  BookOpen,
+  BarChart2,
 } from 'lucide-react';
 
 type NotificationTone = 'default' | 'gentle' | 'chime' | 'alert' | 'silent';
 
 const TONE_OPTIONS: { value: NotificationTone; label: string; description: string }[] = [
-  { value: 'default', label: 'Default', description: 'Standard notification sound' },
-  { value: 'gentle', label: 'Gentle', description: 'Soft, calming tone' },
-  { value: 'chime', label: 'Chime', description: 'Pleasant chime sound' },
-  { value: 'alert', label: 'Alert', description: 'Attention-grabbing alert' },
+  { value: 'default', label: 'Tingsha Bell', description: 'Tibetan meditation bell' },
+  { value: 'gentle', label: 'Tingsha Bell (soft)', description: 'Same bell, quieter' },
+  { value: 'chime', label: 'Tingsha Bell (chime)', description: 'Same bell, chime style' },
+  { value: 'alert', label: 'Tingsha Bell (alert)', description: 'Same bell, alert style' },
   { value: 'silent', label: 'Silent', description: 'No sound, visual only' },
 ];
 
@@ -53,6 +55,14 @@ export default function NotificationSettingsPage() {
   // Fetch current settings
   const { data: settings, isLoading: settingsLoading } =
     trpc.notificationSettings.getSettings.useQuery();
+
+  // Privacy settings
+  const { data: privacySettings } = trpc.mentee.getPrivacySettings.useQuery();
+  const updatePrivacyMutation = trpc.mentee.updatePrivacySettings.useMutation({
+    onSuccess: () => {
+      utils.mentee.getPrivacySettings.invalidate();
+    },
+  });
 
   // Mutations
   const updateSettingsMutation = trpc.notificationSettings.updateSettings.useMutation({
@@ -560,6 +570,65 @@ export default function NotificationSettingsPage() {
                 </p>
               </div>
             )}
+          </div>
+        </section>
+
+        {/* Privacy Settings */}
+        <section className="space-y-4" data-testid="privacy-settings-section">
+          <h2 className="text-lg font-semibold text-rdy-black">Privacy</h2>
+          <p className="text-sm text-rdy-gray-400 -mt-2">
+            Control what your mentor can see
+          </p>
+          <div className="space-y-3">
+            {/* Share Diary */}
+            <div className="rounded-xl bg-rdy-gray-100 p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                    <BookOpen className="h-5 w-5 text-rdy-orange-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-rdy-black">Share Diary</h3>
+                    <p className="text-sm text-rdy-gray-400">
+                      Allow your mentor to read your diary entries
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={privacySettings?.shareDiaryWithMentor ?? false}
+                  onCheckedChange={(checked) =>
+                    updatePrivacyMutation.mutate({ shareDiaryWithMentor: checked })
+                  }
+                  disabled={updatePrivacyMutation.isPending}
+                  data-testid="share-diary-toggle"
+                />
+              </div>
+            </div>
+
+            {/* Share Weekly Summary */}
+            <div className="rounded-xl bg-rdy-gray-100 p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                    <BarChart2 className="h-5 w-5 text-rdy-orange-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-rdy-black">Share Weekly Summary</h3>
+                    <p className="text-sm text-rdy-gray-400">
+                      Allow your mentor to view your weekly progress report
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={privacySettings?.shareWeeklySummaryWithMentor ?? false}
+                  onCheckedChange={(checked) =>
+                    updatePrivacyMutation.mutate({ shareWeeklySummaryWithMentor: checked })
+                  }
+                  disabled={updatePrivacyMutation.isPending}
+                  data-testid="share-weekly-summary-toggle"
+                />
+              </div>
+            </div>
           </div>
         </section>
 

@@ -8,7 +8,7 @@ import { TRPCError } from '@trpc/server';
 const createClassCurriculumSchema = z.object({
   classId: z.string().uuid(),
   schwerpunktebeneId: z.string().uuid(),
-  monthNumber: z.number().int().positive().max(12, 'Month number must be between 1 and 12'),
+  levelNumber: z.number().int().positive().max(12, 'Level number must be between 1 and 12'),
   customTitleDe: z.string().max(255).optional().nullable(),
   customTitleEn: z.string().max(255).optional().nullable(),
   customDescriptionDe: z.string().optional().nullable(),
@@ -19,7 +19,7 @@ const createClassCurriculumSchema = z.object({
 const updateClassCurriculumSchema = z.object({
   id: z.string().uuid(),
   schwerpunktebeneId: z.string().uuid().optional(),
-  monthNumber: z.number().int().positive().max(12).optional(),
+  levelNumber: z.number().int().positive().max(12).optional(),
   customTitleDe: z.string().max(255).optional().nullable(),
   customTitleEn: z.string().max(255).optional().nullable(),
   customDescriptionDe: z.string().optional().nullable(),
@@ -29,7 +29,7 @@ const updateClassCurriculumSchema = z.object({
 
 const listClassCurriculumSchema = z.object({
   classId: z.string().uuid(),
-  sortBy: z.enum(['monthNumber', 'createdAt']).optional().default('monthNumber'),
+  sortBy: z.enum(['levelNumber', 'createdAt']).optional().default('levelNumber'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
   page: z.number().int().positive().optional().default(1),
   limit: z.number().int().positive().max(100).optional().default(20),
@@ -126,7 +126,7 @@ export const classCurriculumRouter = router({
 
     // Build sort order
     const orderColumn =
-      sortBy === 'createdAt' ? classCurriculum.createdAt : classCurriculum.monthNumber;
+      sortBy === 'createdAt' ? classCurriculum.createdAt : classCurriculum.levelNumber;
     const orderDirection = sortOrder === 'asc' ? asc : desc;
 
     const whereClause = eq(classCurriculum.classId, classId);
@@ -210,7 +210,7 @@ export const classCurriculumRouter = router({
       .values({
         classId: input.classId,
         schwerpunktebeneId: input.schwerpunktebeneId,
-        monthNumber: input.monthNumber,
+        levelNumber: input.levelNumber,
         customTitleDe: input.customTitleDe,
         customTitleEn: input.customTitleEn,
         customDescriptionDe: input.customDescriptionDe,
@@ -307,7 +307,7 @@ export const classCurriculumRouter = router({
         assignments: z.array(
           z.object({
             schwerpunktebeneId: z.string().uuid(),
-            monthNumber: z.number().int().positive().max(12),
+            levelNumber: z.number().int().positive().max(12),
           })
         ),
       })
@@ -335,12 +335,12 @@ export const classCurriculumRouter = router({
         });
       }
 
-      // Validate month numbers don't exceed class duration
-      const maxMonth = Math.max(...assignments.map((a) => a.monthNumber));
-      if (maxMonth > targetClass.durationMonths) {
+      // Validate level numbers don't exceed class levels
+      const maxLevel = Math.max(...assignments.map((a) => a.levelNumber));
+      if (maxLevel > targetClass.durationLevels) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Month number ${maxMonth} exceeds class duration of ${targetClass.durationMonths} months`,
+          message: `Level number ${maxLevel} exceeds class levels of ${targetClass.durationLevels} levels`,
         });
       }
 
@@ -354,7 +354,7 @@ export const classCurriculumRouter = router({
           assignments.map((a) => ({
             classId,
             schwerpunktebeneId: a.schwerpunktebeneId,
-            monthNumber: a.monthNumber,
+            levelNumber: a.levelNumber,
           }))
         )
         .returning();

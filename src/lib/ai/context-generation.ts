@@ -2,6 +2,13 @@ import { db } from '@/lib/db';
 import { aiSettings, aiUsageLogs, contextGenerationPrompts } from '@/lib/db/schema';
 import { decryptApiKey } from '@/lib/crypto/encryption';
 import { eq, and } from 'drizzle-orm';
+import {
+  ANTHROPIC_API_URL,
+  ANTHROPIC_API_VERSION,
+  AI_MAX_TOKENS_SHORT,
+  GEMINI_API_BASE_URL,
+  AI_PRICING,
+} from '@/lib/ai/config';
 
 // Context generation types
 export type ContextType = 'herkunft' | 'ziel';
@@ -40,10 +47,7 @@ export interface ContextGenerationPromptConfig {
 
 // Default context generation prompts
 export const DEFAULT_CONTEXT_GENERATION_PROMPTS = {
-  'herkunft-de': `Du bist ein Experte für Curriculum-Entwicklung im Bereich Wellness und persönliche Entwicklung.
-
-Basierend auf der folgenden Beschreibung, generiere einen kurzen, prägnanten "Herkunft" (Hintergrund/Ursprung) Text.
-Der Text sollte erklären, woher diese Übung oder dieses Konzept stammt und welchen wissenschaftlichen oder traditionellen Hintergrund es hat.
+  'herkunft-de': `Analysiere die folgende Beschreibung eines Schwerpunktfelds und liefere umfassende Informationen über seine Herkunft (Ursprung, historische Entwicklung und theoretische Grundlage). Woher kommt diese Praxis oder dieses Konzept? Verwende eine MECE-Logik und Worte, die 95% der erwachsenen Bevölkerung im Alltag verwenden würden. Nutze nur Fachbegriffe, wenn diese allgemein bekannt sind. Schreibe auf Deutsch, sei konkret und praxisnah.
 
 {{#if title}}
 Titel: {{title}}
@@ -56,12 +60,9 @@ Beschreibung:
 Zusätzlicher Kontext: {{additionalContext}}
 {{/if}}
 
-Generiere einen Herkunft-Text (2-4 Sätze) auf Deutsch. Antworte nur mit dem generierten Text, ohne zusätzliche Erklärungen oder Labels.`,
+Antworte nur mit dem generierten Herkunft-Text (2–4 Sätze), ohne zusätzliche Erklärungen oder Labels.`,
 
-  'herkunft-en': `You are an expert in curriculum development for wellness and personal development.
-
-Based on the following description, generate a concise "Herkunft" (background/origin) text.
-The text should explain where this exercise or concept comes from and what scientific or traditional background it has.
+  'herkunft-en': `Analyze the following focus area description and provide comprehensive information about its origin (Herkunft) including historical origins, historical development, and theoretical foundations. Where does this practice or concept come from? Use a MECE logic and use words that 95% of the adult population would use in everyday life. Only use specific terms if they are well known and used in general population. Be specific and practical.
 
 {{#if title}}
 Title: {{title}}
@@ -74,12 +75,9 @@ Description:
 Additional context: {{additionalContext}}
 {{/if}}
 
-Generate a Herkunft (background) text (2-4 sentences) in English. Respond only with the generated text, without any additional explanations or labels.`,
+Respond only with the generated background text (2–4 sentences), without any additional explanations or labels.`,
 
-  'ziel-de': `Du bist ein Experte für Curriculum-Entwicklung im Bereich Wellness und persönliche Entwicklung.
-
-Basierend auf der folgenden Beschreibung, generiere einen kurzen, prägnanten "Ziel" (Ziel/Absicht) Text.
-Der Text sollte klar beschreiben, was der Teilnehmer durch diese Übung oder dieses Konzept erreichen wird.
+  'ziel-de': `Analysiere die folgende Beschreibung eines Schwerpunktfelds und beschreibe die gewünschten Ziele einschließlich der Wirkung (Effekte), des Zwecks und der konkreten Ergebnisse, die die Teilnehmer erreichen sollen. Verwende eine MECE-Logik und Worte, die 95% der erwachsenen Bevölkerung im Alltag verwenden würden. Nutze nur Fachbegriffe, wenn diese allgemein bekannt sind. Schreibe auf Deutsch, sei konkret und praxisnah.
 
 {{#if title}}
 Titel: {{title}}
@@ -92,12 +90,9 @@ Beschreibung:
 Zusätzlicher Kontext: {{additionalContext}}
 {{/if}}
 
-Generiere einen Ziel-Text (2-4 Sätze) auf Deutsch. Antworte nur mit dem generierten Text, ohne zusätzliche Erklärungen oder Labels.`,
+Antworte nur mit dem generierten Ziel-Text (2–4 Sätze), ohne zusätzliche Erklärungen oder Labels.`,
 
-  'ziel-en': `You are an expert in curriculum development for wellness and personal development.
-
-Based on the following description, generate a concise "Ziel" (goal/purpose) text.
-The text should clearly describe what the participant will achieve through this exercise or concept.
+  'ziel-en': `Analyze the following focus area description and describe the desired goals including the effects (Wirkung), purpose (Zweck), and concrete results (Ergebnisse) that participants should achieve. Use a MECE logic and use words that 95% of the adult population would use in everyday life. Only use specific terms if they are well known and used in general population. Be specific and practical.
 
 {{#if title}}
 Title: {{title}}
@@ -110,7 +105,7 @@ Description:
 Additional context: {{additionalContext}}
 {{/if}}
 
-Generate a Ziel (goal) text (2-4 sentences) in English. Respond only with the generated text, without any additional explanations or labels.`,
+Respond only with the generated goal text (2–4 sentences), without any additional explanations or labels.`,
 };
 
 /**
@@ -224,11 +219,15 @@ async function logAIUsage(
   // Estimate cost based on provider and tokens
   let estimatedCostCents = 0;
   if (provider === 'anthropic') {
-    // Claude pricing: ~$3/1M input tokens, ~$15/1M output tokens (Sonnet)
-    estimatedCostCents = Math.round((inputTokens * 0.3 + outputTokens * 1.5) / 1000);
+    const p = AI_PRICING[provider];
+    estimatedCostCents = Math.round(
+      (inputTokens * p.inputCentsPerMToken + outputTokens * p.outputCentsPerMToken) / 1000
+    );
   } else if (provider === 'gemini') {
-    // Gemini pricing: ~$0.35/1M input tokens, ~$1.05/1M output tokens (Pro)
-    estimatedCostCents = Math.round((inputTokens * 0.035 + outputTokens * 0.105) / 1000);
+    const p = AI_PRICING[provider];
+    estimatedCostCents = Math.round(
+      (inputTokens * p.inputCentsPerMToken + outputTokens * p.outputCentsPerMToken) / 1000
+    );
   }
 
   await db.insert(aiUsageLogs).values({
@@ -258,16 +257,16 @@ async function generateWithAnthropic(
   const startTime = Date.now();
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(ANTHROPIC_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'anthropic-version': ANTHROPIC_API_VERSION,
       },
       body: JSON.stringify({
         model,
-        max_tokens: 1024,
+        max_tokens: AI_MAX_TOKENS_SHORT,
         messages: [
           {
             role: 'user',
@@ -332,7 +331,7 @@ async function generateWithGemini(
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      GEMINI_API_BASE_URL(model, apiKey),
       {
         method: 'POST',
         headers: {
@@ -349,7 +348,7 @@ async function generateWithGemini(
             },
           ],
           generationConfig: {
-            maxOutputTokens: 1024,
+            maxOutputTokens: AI_MAX_TOKENS_SHORT,
           },
         }),
       }

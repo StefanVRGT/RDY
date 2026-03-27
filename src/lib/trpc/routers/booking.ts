@@ -9,6 +9,7 @@ import {
 } from '@/lib/db/schema';
 import { eq, and, gte, lte, inArray, count, sql } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { SESSION_MIN_DURATION_MINUTES, SESSION_MAX_DURATION_MINUTES, SESSION_DEFAULT_DURATION_MINUTES } from '@/lib/constants';
 
 // Session status enum matching the schema
 const sessionStatusEnum = z.enum(['scheduled', 'available', 'booked', 'completed', 'cancelled']);
@@ -255,7 +256,7 @@ export const bookingRouter = router({
       z.object({
         mentorId: z.string().uuid(),
         scheduledAt: z.string().datetime(),
-        durationMinutes: z.number().int().min(15).max(120).optional().default(60),
+        durationMinutes: z.number().int().min(SESSION_MIN_DURATION_MINUTES).max(SESSION_MAX_DURATION_MINUTES).optional().default(SESSION_DEFAULT_DURATION_MINUTES),
         notes: z.string().optional(),
       })
     )

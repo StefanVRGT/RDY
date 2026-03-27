@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import Keycloak from 'next-auth/providers/keycloak';
 import type { JWT } from 'next-auth/jwt';
 import type { Session } from 'next-auth';
+import { ALL_ROLES, SESSION_MAX_AGE_SECONDS } from '@/lib/constants';
 
 // Define the user roles
 export type UserRole = 'superadmin' | 'admin' | 'mentor' | 'mentee';
@@ -40,7 +41,7 @@ declare module 'next-auth/jwt' {
 
 // Helper to extract roles from Keycloak token
 function extractRolesFromToken(token: Record<string, unknown>): UserRole[] {
-  const validRoles: UserRole[] = ['superadmin', 'admin', 'mentor', 'mentee'];
+  const validRoles = ALL_ROLES as UserRole[];
 
   // Try realm_access first (where Keycloak typically stores realm roles)
   const realmAccess = token.realm_access as { roles?: string[] } | undefined;
@@ -52,8 +53,8 @@ function extractRolesFromToken(token: Record<string, unknown>): UserRole[] {
 
   // Try resource_access for client-specific roles
   const resourceAccess = token.resource_access as Record<string, { roles?: string[] }> | undefined;
-  const clientId = process.env.AUTH_KEYCLOAK_ID || 'rdy-app';
-  if (resourceAccess?.[clientId]?.roles) {
+  const clientId = process.env.AUTH_KEYCLOAK_ID;
+  if (clientId && resourceAccess?.[clientId]?.roles) {
     return resourceAccess[clientId].roles.filter((role): role is UserRole =>
       validRoles.includes(role as UserRole)
     );
@@ -121,7 +122,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: SESSION_MAX_AGE_SECONDS, // 30 days
   },
   debug: process.env.NODE_ENV === 'development',
 });

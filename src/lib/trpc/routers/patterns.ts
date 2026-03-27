@@ -3,6 +3,7 @@ import { router, protectedProcedure } from '../trpc';
 import { patternEntries, users } from '@/lib/db/schema';
 import { eq, and, gte, lte, desc, asc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { PATTERN_TYPES, INTENSITY_LEVELS } from '@/lib/constants';
 
 /**
  * Mentee middleware - ensures user has mentee role and extracts mentee user info
@@ -42,9 +43,6 @@ const menteeProcedure = protectedProcedure.use(async ({ ctx, next }) => {
   });
 });
 
-// Pattern types available for tracking
-const patternTypes = ['stress', 'energy', 'mood', 'focus', 'anxiety', 'motivation'] as const;
-const intensityLevels = ['strong', 'weak', 'none'] as const;
 
 export const patternsRouter = router({
   /**
@@ -110,7 +108,7 @@ export const patternsRouter = router({
       z.object({
         startDate: z.string().datetime(),
         endDate: z.string().datetime(),
-        patternType: z.enum(patternTypes).optional(),
+        patternType: z.enum(PATTERN_TYPES).optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -154,8 +152,8 @@ export const patternsRouter = router({
       z.object({
         date: z.string().datetime(),
         hour: z.number().int().min(0).max(23),
-        patternType: z.enum(patternTypes),
-        intensity: z.enum(intensityLevels),
+        patternType: z.enum(PATTERN_TYPES),
+        intensity: z.enum(INTENSITY_LEVELS),
         notes: z.string().optional(),
       })
     )
@@ -221,11 +219,11 @@ export const patternsRouter = router({
     .input(
       z.object({
         date: z.string().datetime(),
-        patternType: z.enum(patternTypes),
+        patternType: z.enum(PATTERN_TYPES),
         entries: z.array(
           z.object({
             hour: z.number().int().min(0).max(23),
-            intensity: z.enum(intensityLevels),
+            intensity: z.enum(INTENSITY_LEVELS),
             notes: z.string().optional(),
           })
         ),
@@ -370,7 +368,7 @@ export const patternsRouter = router({
         { total: number; strong: number; weak: number; none: number; hours: number[] }
       > = {};
 
-      for (const type of patternTypes) {
+      for (const type of PATTERN_TYPES) {
         summary[type] = { total: 0, strong: 0, weak: 0, none: 0, hours: [] };
       }
 
@@ -394,7 +392,7 @@ export const patternsRouter = router({
    * Get available pattern types
    */
   getPatternTypes: menteeProcedure.query(() => {
-    return patternTypes.map(type => ({
+    return PATTERN_TYPES.map(type => ({
       value: type,
       label: type.charAt(0).toUpperCase() + type.slice(1),
     }));
@@ -404,7 +402,7 @@ export const patternsRouter = router({
    * Get intensity levels
    */
   getIntensityLevels: menteeProcedure.query(() => {
-    return intensityLevels.map(level => ({
+    return INTENSITY_LEVELS.map(level => ({
       value: level,
       label: level.charAt(0).toUpperCase() + level.slice(1),
     }));

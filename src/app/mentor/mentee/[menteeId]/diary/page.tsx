@@ -75,10 +75,12 @@ export default function MentorMenteeDiaryPage() {
     sortOrder: 'desc' as const,
   };
 
-  const { data: entries = [], isLoading: entriesLoading } = trpc.mentor.getMenteeDiaryEntries.useQuery(
+  const { data: diaryData, isLoading: entriesLoading } = trpc.mentor.getMenteeDiaryEntries.useQuery(
     queryParams,
     { enabled: !!menteeId }
   );
+  const entries = diaryData?.entries ?? [];
+  const diaryNotShared = diaryData?.diaryNotShared ?? false;
 
   // Get entry counts for calendar highlighting
   const currentMonth = new Date();
@@ -216,6 +218,19 @@ export default function MentorMenteeDiaryPage() {
           {entriesLoading ? (
             <div className="flex items-center justify-center py-8">
               <div className="h-6 w-6 animate-spin rounded-full border-2 border-rdy-orange-500 border-t-transparent" />
+            </div>
+          ) : diaryNotShared ? (
+            <div
+              className="flex flex-col items-center justify-center py-12 text-center"
+              data-testid="diary-not-shared-state"
+            >
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rdy-gray-100">
+                <BookOpen className="h-8 w-8 text-rdy-gray-400" />
+              </div>
+              <p className="text-lg font-medium text-rdy-black">Diary not shared</p>
+              <p className="mt-1 text-sm text-rdy-gray-400">
+                This mentee has not enabled diary sharing with their mentor yet.
+              </p>
             </div>
           ) : entries.length === 0 ? (
             <div

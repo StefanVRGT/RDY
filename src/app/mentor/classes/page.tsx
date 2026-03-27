@@ -175,7 +175,7 @@ export default function MentorClassesPage() {
           <div className="mb-6" data-testid="disabled-classes-section">
             <h3 className="mb-4 text-lg font-semibold text-rdy-black">
               Past Classes
-              <span className="ml-2 rounded-full bg-gray-600 px-2 py-0.5 text-sm text-white">
+              <span className="ml-2 rounded-full bg-rdy-gray-400 px-2 py-0.5 text-sm text-white">
                 {disabledClasses.length}
               </span>
             </h3>
@@ -201,7 +201,7 @@ export default function MentorClassesPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-gray-500" />
+                    <div className="h-2 w-2 rounded-full bg-rdy-gray-400" />
                     <ChevronRight className="h-5 w-5 text-rdy-gray-500" />
                   </div>
                 </Link>

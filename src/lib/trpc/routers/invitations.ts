@@ -4,12 +4,13 @@ import { invitations, users } from '@/lib/db/schema';
 import { eq, and, count, desc, asc, or, ilike, lt } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import crypto from 'crypto';
+import { INVITATION_DEFAULT_EXPIRY_DAYS, INVITATION_MAX_EXPIRY_DAYS } from '@/lib/constants';
 
 // Input validation schemas
 const createInvitationSchema = z.object({
   email: z.string().email(),
   role: z.enum(['mentor', 'mentee']),
-  expiresInDays: z.number().int().min(1).max(30).optional().default(7),
+  expiresInDays: z.number().int().min(1).max(INVITATION_MAX_EXPIRY_DAYS).optional().default(INVITATION_DEFAULT_EXPIRY_DAYS),
 });
 
 const listInvitationsSchema = z.object({

@@ -1,6 +1,6 @@
 import { router, superadminProcedure, protectedProcedure } from '../trpc';
 import { tenants, users, classes, invitations } from '@/lib/db/schema';
-import { eq, count, desc, sql, and, or } from 'drizzle-orm';
+import { eq, count, desc, and, or, gte } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 /**
@@ -78,14 +78,14 @@ export const dashboardRouter = router({
     const newUsersCount = await ctx.db
       .select({ count: count() })
       .from(users)
-      .where(sql`${users.createdAt} >= ${thirtyDaysAgo}`)
+      .where(gte(users.createdAt, thirtyDaysAgo))
       .then((result) => Number(result[0]?.count ?? 0));
 
     // Get new tenants in last 30 days
     const newTenantsCount = await ctx.db
       .select({ count: count() })
       .from(tenants)
-      .where(sql`${tenants.createdAt} >= ${thirtyDaysAgo}`)
+      .where(gte(tenants.createdAt, thirtyDaysAgo))
       .then((result) => Number(result[0]?.count ?? 0));
 
     return {
@@ -226,7 +226,7 @@ export const dashboardRouter = router({
       .where(
         and(
           eq(users.tenantId, tenantId),
-          sql`${users.createdAt} >= ${sevenDaysAgo}`
+          gte(users.createdAt, sevenDaysAgo)
         )
       );
     const newUsersCount = Number(newUsersResult[0]?.count ?? 0);

@@ -32,7 +32,12 @@ export function getVapidKeys(): VapidKeys | null {
  * Get the VAPID subject (contact email/URL)
  */
 export function getVapidSubject(): string {
-  return process.env.VAPID_SUBJECT || 'mailto:admin@rdy.app';
+  const subject = process.env.VAPID_SUBJECT;
+  if (!subject) {
+    console.warn('VAPID_SUBJECT not set, push notification sender identity is missing. Set VAPID_SUBJECT=mailto:your@email.com');
+    return 'mailto:noreply@example.com';
+  }
+  return subject;
 }
 
 /**

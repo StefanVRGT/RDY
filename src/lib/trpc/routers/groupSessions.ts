@@ -9,6 +9,7 @@ import {
 } from '@/lib/db/schema';
 import { eq, and, count, asc, gte, lte, inArray } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { GROUP_SESSION_MAX_DURATION_MINUTES, SESSION_DEFAULT_DURATION_MINUTES } from '@/lib/constants';
 
 /**
  * Mentor middleware - ensures user has mentor role and extracts mentor user info
@@ -95,7 +96,7 @@ const createGroupSessionSchema = z.object({
   agenda: z.string().optional(),
   classId: z.string().uuid().optional(),
   scheduledAt: z.string().datetime(),
-  durationMinutes: z.number().int().positive().max(480).optional().default(60),
+  durationMinutes: z.number().int().positive().max(GROUP_SESSION_MAX_DURATION_MINUTES).optional().default(SESSION_DEFAULT_DURATION_MINUTES),
   maxParticipants: z.number().int().positive().optional(),
   location: z.string().optional(),
 });
@@ -106,7 +107,7 @@ const updateGroupSessionSchema = z.object({
   description: z.string().optional().nullable(),
   agenda: z.string().optional().nullable(),
   scheduledAt: z.string().datetime().optional(),
-  durationMinutes: z.number().int().positive().max(480).optional(),
+  durationMinutes: z.number().int().positive().max(GROUP_SESSION_MAX_DURATION_MINUTES).optional(),
   maxParticipants: z.number().int().positive().optional().nullable(),
   location: z.string().optional().nullable(),
   status: z.enum(['scheduled', 'available', 'booked', 'completed', 'cancelled']).optional(),

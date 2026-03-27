@@ -64,33 +64,33 @@
 
 @layer base {
   :root {
-    /* RDY Design System - Light Theme (Default) */
-    --background: 0 0% 100%; /* Pure white #FFFFFF */
+    /* RDY Design System - Warm Beige Theme */
+    --background: 35 29% 91%; /* Warm cream #F0EAE0 */
     --foreground: 0 0% 10%; /* Almost black #1A1A1A */
-    --card: 0 0% 100%;
+    --card: 35 29% 91%;
     --card-foreground: 0 0% 10%;
-    --popover: 0 0% 100%;
+    --popover: 35 35% 96%; /* Slightly lighter for popovers/modals */
     --popover-foreground: 0 0% 10%;
     /* Primary: Orange accent */
     --primary: 20 100% 63%; /* #FF8C42 */
     --primary-foreground: 0 0% 100%;
-    /* Secondary: Subtle gray */
-    --secondary: 0 0% 96%; /* #F5F5F5 */
+    /* Secondary: Warm light beige */
+    --secondary: 35 22% 87%; /* #E6E0D5 */
     --secondary-foreground: 0 0% 40%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 35 22% 87%;
+    --muted-foreground: 35 8% 40%;
     /* Accent: Orange */
     --accent: 20 100% 63%;
     --accent-foreground: 0 0% 100%;
     --destructive: 4 90% 58%; /* #F44336 */
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 88%; /* #E0E0E0 */
-    --input: 0 0% 88%;
+    --border: 35 18% 82%; /* Warm border #D5CEC2 */
+    --input: 35 18% 82%;
     --ring: 20 100% 63%;
     /* Chart colors using RDY palette */
     --chart-1: 20 100% 63%; /* Orange */
     --chart-2: 0 0% 10%; /* Black */
-    --chart-3: 0 0% 40%; /* Gray */
+    --chart-3: 35 8% 40%; /* Warm gray */
     --chart-4: 123 43% 53%; /* Success green */
     --chart-5: 4 90% 58%; /* Error red */
     --radius: 0.5rem;

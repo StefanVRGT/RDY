@@ -10,6 +10,7 @@ import {
 } from '@/lib/db/schema';
 import { eq, and, count, gte, lte, inArray, sql, desc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { ANALYTICS_LOW_COMPLETION_RATE, ANALYTICS_LOW_MOOD_SCORE, ANALYTICS_HIGH_PRIORITY_FLAGS, ANALYTICS_DEFAULT_INACTIVE_DAYS, ANALYTICS_MOOD_ANALYSIS_DAYS, ANALYTICS_DEFAULT_RANGE_DAYS } from '@/lib/constants';
 
 /**
  * Mentor middleware - ensures user has mentor role and extracts mentor user info
@@ -118,7 +119,7 @@ export const mentorAnalyticsRouter = router({
           status: classes.status,
           startDate: classes.startDate,
           endDate: classes.endDate,
-          durationMonths: classes.durationMonths,
+          durationLevels: classes.durationLevels,
         })
         .from(classes)
         .where(and(...classConditions));
@@ -196,7 +197,7 @@ export const mentorAnalyticsRouter = router({
           status: cls.status,
           startDate: cls.startDate,
           endDate: cls.endDate,
-          durationMonths: cls.durationMonths,
+          durationLevels: cls.durationLevels,
           memberCount: memberCountMap[cls.id] || 0,
           totalExercises: stats.total,
           completedExercises: stats.completed,
@@ -548,24 +549,24 @@ export const mentorAnalyticsRouter = router({
         classId: z.string().uuid().optional(),
         // Thresholds for determining who needs attention
         thresholds: z.object({
-          lowCompletionRate: z.number().min(0).max(100).default(50), // Below this % completion
-          inactiveDays: z.number().min(1).default(7), // No activity for this many days
-          lowMoodScore: z.number().min(0).max(100).default(40), // Below this mood score
+          lowCompletionRate: z.number().min(0).max(100).default(ANALYTICS_LOW_COMPLETION_RATE), // Below this % completion
+          inactiveDays: z.number().min(1).default(ANALYTICS_DEFAULT_INACTIVE_DAYS), // No activity for this many days
+          lowMoodScore: z.number().min(0).max(100).default(ANALYTICS_LOW_MOOD_SCORE), // Below this mood score
         }).optional(),
       }).optional()
     )
     .query(async ({ ctx, input }) => {
       const thresholds = input?.thresholds || {
-        lowCompletionRate: 50,
-        inactiveDays: 7,
-        lowMoodScore: 40,
+        lowCompletionRate: ANALYTICS_LOW_COMPLETION_RATE,
+        inactiveDays: ANALYTICS_DEFAULT_INACTIVE_DAYS,
+        lowMoodScore: ANALYTICS_LOW_MOOD_SCORE,
       };
 
       const now = new Date();
       const inactiveThresholdDate = new Date(now.getTime() - thresholds.inactiveDays * 24 * 60 * 60 * 1000);
 
       // Date range for mood analysis (last 14 days)
-      const moodStartDate = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+      const moodStartDate = new Date(now.getTime() - ANALYTICS_MOOD_ANALYSIS_DAYS * 24 * 60 * 60 * 1000);
 
       // Get mentor's classes
       const classConditions = [
@@ -743,7 +744,7 @@ export const mentorAnalyticsRouter = router({
 
         // Calculate priority (more flags = higher priority)
         const flagCount = (flags.lowCompletion ? 1 : 0) + (flags.inactive ? 1 : 0) + (flags.lowMood ? 1 : 0);
-        const priority = flagCount >= 3 ? 'high' : flagCount === 2 ? 'medium' : 'low';
+        const priority = flagCount >= ANALYTICS_HIGH_PRIORITY_FLAGS ? 'high' : flagCount === 2 ? 'medium' : 'low';
 
         return {
           id: member.id,
@@ -811,7 +812,7 @@ export const mentorAnalyticsRouter = router({
       const now = new Date();
       const startDate = input?.dateRange?.startDate
         ? new Date(input.dateRange.startDate)
-        : new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Default to last 30 days
+        : new Date(now.getTime() - ANALYTICS_DEFAULT_RANGE_DAYS * 24 * 60 * 60 * 1000); // Default to last 30 days
       const endDate = input?.dateRange?.endDate
         ? new Date(input.dateRange.endDate)
         : now;
@@ -912,7 +913,7 @@ export const mentorAnalyticsRouter = router({
       }
 
       // Count mentees needing attention (simplified check)
-      const inactiveThreshold = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const inactiveThreshold = new Date(now.getTime() - ANALYTICS_DEFAULT_INACTIVE_DAYS * 24 * 60 * 60 * 1000);
       let menteesNeedingAttentionCount = 0;
 
       for (const memberId of menteeIds) {

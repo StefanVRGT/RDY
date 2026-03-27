@@ -96,7 +96,7 @@ export const curriculumBuilderRouter = router({
       .select()
       .from(schwerpunktebenen)
       .where(eq(schwerpunktebenen.tenantId, ctx.tenantId))
-      .orderBy(asc(schwerpunktebenen.monthNumber));
+      .orderBy(asc(schwerpunktebenen.levelNumber));
 
     if (schwerpunktebenenList.length === 0) {
       return { curriculum: [] };
@@ -143,6 +143,7 @@ export const curriculumBuilderRouter = router({
               isObligatory: we.weekExercise.isObligatory,
               frequency: we.weekExercise.frequency,
               customFrequency: we.weekExercise.customFrequency,
+              applicableDays: we.weekExercise.applicableDays,
               exercise: we.exercise,
             }));
 
@@ -187,13 +188,13 @@ export const curriculumBuilderRouter = router({
         });
       }
 
-      // Update month numbers based on new order (1, 2, 3)
+      // Update level numbers based on new order (1-5)
       await Promise.all(
         schwerpunktebeneIds.map((id, index) =>
           ctx.db
             .update(schwerpunktebenen)
             .set({
-              monthNumber: String(index + 1) as '1' | '2' | '3',
+              levelNumber: String(index + 1) as '1' | '2' | '3' | '4' | '5',
               updatedAt: new Date(),
             })
             .where(eq(schwerpunktebenen.id, id))
@@ -328,6 +329,162 @@ export const curriculumBuilderRouter = router({
         .update(weekExercises)
         .set({ isObligatory, updatedAt: new Date() })
         .where(eq(weekExercises.id, weekExerciseId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Add a single exercise to a week (from the exercise library)
+   */
+  addExerciseToWeek: adminProcedure
+    .input(z.object({ weekId: z.string().uuid(), exerciseId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const { weekId, exerciseId } = input;
+
+      // Verify week belongs to tenant
+      const [weekWithParent] = await ctx.db
+        .select({ schwerpunktebene: schwerpunktebenen })
+        .from(weeks)
+        .innerJoin(schwerpunktebenen, eq(weeks.schwerpunktebeneId, schwerpunktebenen.id))
+        .where(and(eq(weeks.id, weekId), eq(schwerpunktebenen.tenantId, ctx.tenantId)))
+        .limit(1);
+      if (!weekWithParent) throw new TRPCError({ code: 'NOT_FOUND', message: 'Week not found' });
+
+      // Verify exercise belongs to tenant
+      const [exercise] = await ctx.db
+        .select({ id: exercises.id })
+        .from(exercises)
+        .where(and(eq(exercises.id, exerciseId), eq(exercises.tenantId, ctx.tenantId)))
+        .limit(1);
+      if (!exercise) throw new TRPCError({ code: 'NOT_FOUND', message: 'Exercise not found' });
+
+      // Idempotent: skip if already added
+      const [existing] = await ctx.db
+        .select({ id: weekExercises.id })
+        .from(weekExercises)
+        .where(and(eq(weekExercises.weekId, weekId), eq(weekExercises.exerciseId, exerciseId)))
+        .limit(1);
+      if (existing) return { success: true, skipped: true };
+
+      // Get max orderIndex in this week
+      const allInWeek = await ctx.db
+        .select({ orderIndex: weekExercises.orderIndex })
+        .from(weekExercises)
+        .where(eq(weekExercises.weekId, weekId));
+      const maxOrder = allInWeek.length > 0 ? Math.max(...allInWeek.map((e) => e.orderIndex)) : -1;
+
+      await ctx.db.insert(weekExercises).values({
+        weekId,
+        exerciseId,
+        orderIndex: maxOrder + 1,
+        isObligatory: true,
+        frequency: 'daily',
+      });
+
+      return { success: true, skipped: false };
+    }),
+
+  /**
+   * Add all exercises from a named group to a week (from the exercise library)
+   */
+  addGroupToWeek: adminProcedure
+    .input(z.object({ weekId: z.string().uuid(), groupName: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const { weekId, groupName } = input;
+
+      // Verify week belongs to tenant
+      const [weekWithParent] = await ctx.db
+        .select({ schwerpunktebene: schwerpunktebenen })
+        .from(weeks)
+        .innerJoin(schwerpunktebenen, eq(weeks.schwerpunktebeneId, schwerpunktebenen.id))
+        .where(and(eq(weeks.id, weekId), eq(schwerpunktebenen.tenantId, ctx.tenantId)))
+        .limit(1);
+      if (!weekWithParent) throw new TRPCError({ code: 'NOT_FOUND', message: 'Week not found' });
+
+      // Get all exercises in this group for this tenant
+      const groupExercises = await ctx.db
+        .select()
+        .from(exercises)
+        .where(and(eq(exercises.tenantId, ctx.tenantId), eq(exercises.groupName, groupName)));
+      if (groupExercises.length === 0) return { added: 0 };
+
+      // Get existing to avoid duplicates
+      const existing = await ctx.db
+        .select({ exerciseId: weekExercises.exerciseId, orderIndex: weekExercises.orderIndex })
+        .from(weekExercises)
+        .where(eq(weekExercises.weekId, weekId));
+      const existingIds = new Set(existing.map((e) => e.exerciseId));
+      const maxOrder = existing.length > 0 ? Math.max(...existing.map((e) => e.orderIndex)) : -1;
+
+      const toAdd = groupExercises.filter((e) => !existingIds.has(e.id));
+      if (toAdd.length === 0) return { added: 0 };
+
+      await ctx.db.insert(weekExercises).values(
+        toAdd.map((ex, i) => ({
+          weekId,
+          exerciseId: ex.id,
+          orderIndex: maxOrder + i + 1,
+          isObligatory: true,
+          frequency: 'daily' as const,
+        }))
+      );
+
+      return { added: toAdd.length };
+    }),
+
+  /**
+   * Remove an exercise from a week
+   */
+  removeExerciseFromWeek: adminProcedure
+    .input(z.object({ weekExerciseId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      // Verify belongs to tenant
+      const [we] = await ctx.db
+        .select({ id: weekExercises.id })
+        .from(weekExercises)
+        .innerJoin(weeks, eq(weekExercises.weekId, weeks.id))
+        .innerJoin(schwerpunktebenen, eq(weeks.schwerpunktebeneId, schwerpunktebenen.id))
+        .where(
+          and(eq(weekExercises.id, input.weekExerciseId), eq(schwerpunktebenen.tenantId, ctx.tenantId))
+        )
+        .limit(1);
+      if (!we) throw new TRPCError({ code: 'NOT_FOUND', message: 'Week exercise not found' });
+
+      await ctx.db.delete(weekExercises).where(eq(weekExercises.id, input.weekExerciseId));
+      return { success: true };
+    }),
+
+  /**
+   * Update applicable days for a week exercise
+   */
+  updateExerciseDays: adminProcedure
+    .input(
+      z.object({
+        weekExerciseId: z.string().uuid(),
+        applicableDays: z.array(z.number().int().min(1).max(7)).nullable(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Verify weekExercise belongs to tenant via week → schwerpunktebene → tenantId
+      const [we] = await ctx.db
+        .select({ id: weekExercises.id })
+        .from(weekExercises)
+        .innerJoin(weeks, eq(weekExercises.weekId, weeks.id))
+        .innerJoin(schwerpunktebenen, eq(weeks.schwerpunktebeneId, schwerpunktebenen.id))
+        .where(
+          and(
+            eq(weekExercises.id, input.weekExerciseId),
+            eq(schwerpunktebenen.tenantId, ctx.tenantId)
+          )
+        )
+        .limit(1);
+
+      if (!we) throw new TRPCError({ code: 'NOT_FOUND', message: 'Week exercise not found' });
+
+      await ctx.db
+        .update(weekExercises)
+        .set({ applicableDays: input.applicableDays, updatedAt: new Date() })
+        .where(eq(weekExercises.id, input.weekExerciseId));
 
       return { success: true };
     }),

@@ -4,6 +4,7 @@ import { aiSettings, aiUsageLogs, users } from '@/lib/db/schema';
 import { eq, and, gte, desc, sql, count } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import { encryptApiKey, decryptApiKey, maskApiKey } from '@/lib/crypto/encryption';
+import { ANTHROPIC_API_URL, ANTHROPIC_API_VERSION, ANTHROPIC_TEST_MODEL, GEMINI_API_BASE_URL, GEMINI_TEST_MODEL, AI_MAX_TOKENS_PING } from '@/lib/ai/config';
 
 // Valid AI providers
 const aiProviderValues = ['anthropic', 'gemini'] as const;
@@ -447,16 +448,16 @@ export const aiSettingsRouter = router({
 
         // Test actual API connection to Anthropic
         try {
-          const response = await fetch('https://api.anthropic.com/v1/messages', {
+          const response = await fetch(ANTHROPIC_API_URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'x-api-key': apiKey,
-              'anthropic-version': '2023-06-01',
+              'anthropic-version': ANTHROPIC_API_VERSION,
             },
             body: JSON.stringify({
-              model: 'claude-3-5-haiku-20241022',
-              max_tokens: 10,
+              model: ANTHROPIC_TEST_MODEL,
+              max_tokens: AI_MAX_TOKENS_PING,
               messages: [{ role: 'user', content: 'Hi' }],
             }),
           });
@@ -499,7 +500,7 @@ export const aiSettingsRouter = router({
         // Test actual API connection to Gemini
         try {
           const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+            GEMINI_API_BASE_URL(GEMINI_TEST_MODEL, apiKey),
             {
               method: 'POST',
               headers: {
@@ -507,7 +508,7 @@ export const aiSettingsRouter = router({
               },
               body: JSON.stringify({
                 contents: [{ parts: [{ text: 'Hi' }] }],
-                generationConfig: { maxOutputTokens: 10 },
+                generationConfig: { maxOutputTokens: AI_MAX_TOKENS_PING },
               }),
             }
           );
@@ -593,16 +594,16 @@ export const aiSettingsRouter = router({
       // Test the API key using the existing testApiKey logic
       if (provider === 'anthropic') {
         try {
-          const response = await fetch('https://api.anthropic.com/v1/messages', {
+          const response = await fetch(ANTHROPIC_API_URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'x-api-key': apiKey,
-              'anthropic-version': '2023-06-01',
+              'anthropic-version': ANTHROPIC_API_VERSION,
             },
             body: JSON.stringify({
-              model: 'claude-3-5-haiku-20241022',
-              max_tokens: 10,
+              model: ANTHROPIC_TEST_MODEL,
+              max_tokens: AI_MAX_TOKENS_PING,
               messages: [{ role: 'user', content: 'Hi' }],
             }),
           });
@@ -623,13 +624,13 @@ export const aiSettingsRouter = router({
       } else {
         try {
           const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+            GEMINI_API_BASE_URL(GEMINI_TEST_MODEL, apiKey),
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 contents: [{ parts: [{ text: 'Hi' }] }],
-                generationConfig: { maxOutputTokens: 10 },
+                generationConfig: { maxOutputTokens: AI_MAX_TOKENS_PING },
               }),
             }
           );

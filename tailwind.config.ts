@@ -11,18 +11,18 @@ const config: Config = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-  			// RDY Design System - Light theme with orange accent
+  			// RDY Design System - Warm beige theme with orange accent
   			rdy: {
-  				white: '#FFFFFF',
+  				white: '#F0EAE0', // warm cream background
   				black: '#1A1A1A',
   				gray: {
-  					'100': '#F5F5F5',
-  					'200': '#E0E0E0',
-  					'300': '#CCCCCC',
-  					'400': '#999999',
-  					'500': '#666666',
-  					'600': '#4D4D4D',
-  					'900': '#2A2A2A'
+  					'100': '#E6E0D5', // warm light beige (cards, secondary surfaces)
+  					'200': '#D5CEC2', // warm border color
+  					'300': '#BDB5A8', // warm medium gray
+  					'400': '#9C9085', // warm muted text
+  					'500': '#6E6560', // warm body text
+  					'600': '#4D4540', // warm dark text
+  					'900': '#2A2520'  // warm near-black
   				},
   				orange: {
   					'400': '#FFA766',

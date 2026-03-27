@@ -280,7 +280,7 @@ export default function MentorHomePage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div
-                      className={`h-2 w-2 rounded-full ${cls.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}`}
+                      className={`h-2 w-2 rounded-full ${cls.status === 'active' ? 'bg-green-500' : 'bg-rdy-gray-400'}`}
                     />
                     <ChevronRight className="h-5 w-5 text-rdy-gray-400" />
                   </div>

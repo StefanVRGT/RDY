@@ -176,7 +176,7 @@ export default function ClassDetailPage() {
               <div className="flex items-center gap-2">
                 <h2 className="text-2xl font-bold text-rdy-black">{classDetail.name}</h2>
                 <div
-                  className={`h-2 w-2 rounded-full ${classDetail.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}`}
+                  className={`h-2 w-2 rounded-full ${classDetail.status === 'active' ? 'bg-green-500' : 'bg-rdy-gray-400'}`}
                 />
               </div>
               <div className="mt-2 flex items-center gap-4 text-sm text-rdy-gray-400">
@@ -260,7 +260,7 @@ export default function ClassDetailPage() {
                             {mentee.user.name || mentee.user.email}
                           </p>
                           <p className="text-sm text-rdy-gray-400">
-                            Month {mentee.currentMonth} of {mentee.totalMonths}
+                            Modul {mentee.currentMonth} von {mentee.totalLevels}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">

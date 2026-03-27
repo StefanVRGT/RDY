@@ -27,7 +27,7 @@ function ErrorContent() {
     : errorMessages.Default;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="w-full max-w-md space-y-6 rounded-lg bg-rdy-gray-100 p-8 shadow-xl">
         <div className="text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
@@ -77,7 +77,7 @@ export default function ErrorPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="flex min-h-screen items-center justify-center bg-background">
           <div className="text-rdy-black">Loading...</div>
         </div>
       }

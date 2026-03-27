@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { MobileLayout } from '@/components/mobile';
 import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import {
   ChevronRight,
   Calendar as CalendarIcon,
   RefreshCw,
+  Users,
 } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, addWeeks, subWeeks } from 'date-fns';
 import {
@@ -50,6 +52,13 @@ export default function WeeklySummaryPage() {
     refetch: refetchSummary,
   } = trpc.weeklySummary.getWeeklySummary.useQuery({
     weekStartDate: weekStartISO,
+  });
+
+  // Privacy settings
+  const utils = trpc.useUtils();
+  const { data: privacySettings } = trpc.mentee.getPrivacySettings.useQuery();
+  const updatePrivacyMutation = trpc.mentee.updatePrivacySettings.useMutation({
+    onSuccess: () => utils.mentee.getPrivacySettings.invalidate(),
   });
 
   // Fetch weekly trends (for week-over-week comparison)
@@ -96,7 +105,7 @@ export default function WeeklySummaryPage() {
   }, [selectedDate]);
 
   return (
-    <MobileLayout title="Weekly Summary" showNotifications>
+    <MobileLayout title="Weekly Summary" showBack showNotifications>
       <div className="flex flex-col px-4 py-4" data-testid="weekly-summary-page">
         {/* Week Navigation */}
         <div
@@ -168,6 +177,33 @@ export default function WeeklySummaryPage() {
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-rdy-orange-500 border-t-transparent" />
           </div>
         )}
+
+        {/* Share with Mentor card */}
+        <div className="mb-4 rounded-xl bg-rdy-gray-100 p-4" data-testid="share-with-mentor-card">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rdy-orange-500/10">
+                <Users className="h-5 w-5 text-rdy-orange-500" />
+              </div>
+              <div>
+                <h3 className="font-medium text-rdy-black">Share with Mentor</h3>
+                <p className="text-sm text-rdy-gray-400">
+                  {privacySettings?.shareWeeklySummaryWithMentor
+                    ? 'Your mentor can view your weekly summary'
+                    : 'Enable to let your mentor see your progress'}
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={privacySettings?.shareWeeklySummaryWithMentor ?? false}
+              onCheckedChange={(checked) =>
+                updatePrivacyMutation.mutate({ shareWeeklySummaryWithMentor: checked })
+              }
+              disabled={updatePrivacyMutation.isPending}
+              data-testid="share-summary-toggle"
+            />
+          </div>
+        </div>
 
         {/* Dashboard content */}
         {!isLoading && summaryData && (

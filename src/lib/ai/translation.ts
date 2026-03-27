@@ -2,6 +2,13 @@ import { db } from '@/lib/db';
 import { aiSettings, aiUsageLogs, translationPrompts } from '@/lib/db/schema';
 import { decryptApiKey } from '@/lib/crypto/encryption';
 import { eq, and } from 'drizzle-orm';
+import {
+  ANTHROPIC_API_URL,
+  ANTHROPIC_API_VERSION,
+  AI_MAX_TOKENS_DEFAULT,
+  GEMINI_API_BASE_URL,
+  AI_PRICING,
+} from '@/lib/ai/config';
 
 // Supported languages for translation
 export type TranslationLanguage = 'de' | 'en';
@@ -38,39 +45,25 @@ export interface TranslationPromptConfig {
 
 // Default translation prompt templates
 export const DEFAULT_TRANSLATION_PROMPTS = {
-  'de-en': `You are a professional German to English translator specializing in educational and wellness content.
-
-Translate the following German text to English. Maintain:
-- The exact meaning and nuance of the original text
-- Professional but accessible tone suitable for educational materials
-- Any specific terminology related to wellness, meditation, or personal development
-- Paragraph structure and formatting
+  'de-en': `Translate the following German text to English. Don't translate word by word, but rewrite with the proper meaning. Use a MECE logic and use words that 95% of the adult population would use in everyday life. Only use specific terms if they are well known and used in general population.
 
 {{#if context}}
-Context: This is {{context}}
+Context: {{context}}
 {{/if}}
 
-German text to translate:
 {{text}}
 
 Provide only the English translation, without any additional commentary or labels.`,
 
-  'en-de': `You are a professional English to German translator specializing in educational and wellness content.
-
-Translate the following English text to German. Maintain:
-- The exact meaning and nuance of the original text
-- Professional but accessible tone suitable for educational materials (use formal "Sie" form)
-- Any specific terminology related to wellness, meditation, or personal development
-- Paragraph structure and formatting
+  'en-de': `Übersetze den folgenden englischen Text ins Deutsche. Übersetze nicht wort-für-wort, sondern schreibe mit der richtigen Bedeutung um. Verwende eine MECE-Logik und Worte, die 95% der erwachsenen Bevölkerung im Alltag verwenden würden. Nutze nur Fachbegriffe, wenn diese allgemein bekannt sind.
 
 {{#if context}}
-Context: This is {{context}}
+Kontext: {{context}}
 {{/if}}
 
-English text to translate:
 {{text}}
 
-Provide only the German translation, without any additional commentary or labels.`,
+Gib nur die deutsche Übersetzung an, ohne zusätzliche Erklärungen oder Kommentare.`,
 };
 
 /**
@@ -168,12 +161,11 @@ async function logAIUsage(
 ) {
   // Estimate cost based on provider and tokens
   let estimatedCostCents = 0;
-  if (provider === 'anthropic') {
-    // Claude pricing: ~$3/1M input tokens, ~$15/1M output tokens (Sonnet)
-    estimatedCostCents = Math.round((inputTokens * 0.3 + outputTokens * 1.5) / 1000);
-  } else if (provider === 'gemini') {
-    // Gemini pricing: ~$0.35/1M input tokens, ~$1.05/1M output tokens (Pro)
-    estimatedCostCents = Math.round((inputTokens * 0.035 + outputTokens * 0.105) / 1000);
+  const pricing = AI_PRICING[provider];
+  if (pricing) {
+    estimatedCostCents = Math.round(
+      (inputTokens * pricing.inputCentsPerMToken + outputTokens * pricing.outputCentsPerMToken) / 1000
+    );
   }
 
   await db.insert(aiUsageLogs).values({
@@ -203,16 +195,16 @@ async function translateWithAnthropic(
   const startTime = Date.now();
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(ANTHROPIC_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'anthropic-version': ANTHROPIC_API_VERSION,
       },
       body: JSON.stringify({
         model,
-        max_tokens: 4096,
+        max_tokens: AI_MAX_TOKENS_DEFAULT,
         messages: [
           {
             role: 'user',
@@ -283,7 +275,7 @@ async function translateWithGemini(
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      GEMINI_API_BASE_URL(model, apiKey),
       {
         method: 'POST',
         headers: {
@@ -300,7 +292,7 @@ async function translateWithGemini(
             },
           ],
           generationConfig: {
-            maxOutputTokens: 4096,
+            maxOutputTokens: AI_MAX_TOKENS_DEFAULT,
           },
         }),
       }

@@ -81,7 +81,7 @@ export const analyticsRouter = router({
       .select({
         schwerpunktebeneId: schwerpunktebenen.id,
         title: schwerpunktebenen.titleDe,
-        monthNumber: schwerpunktebenen.monthNumber,
+        levelNumber: schwerpunktebenen.levelNumber,
         exerciseCount: sql<number>`count(distinct ${weekExercises.exerciseId})`,
         obligatoryCount: sql<number>`count(case when ${weekExercises.isObligatory} = true then 1 end)`,
         optionalCount: sql<number>`count(case when ${weekExercises.isObligatory} = false then 1 end)`,
@@ -90,8 +90,8 @@ export const analyticsRouter = router({
       .leftJoin(weeks, eq(weeks.schwerpunktebeneId, schwerpunktebenen.id))
       .leftJoin(weekExercises, eq(weekExercises.weekId, weeks.id))
       .where(eq(schwerpunktebenen.tenantId, tenantId))
-      .groupBy(schwerpunktebenen.id, schwerpunktebenen.titleDe, schwerpunktebenen.monthNumber)
-      .orderBy(schwerpunktebenen.monthNumber);
+      .groupBy(schwerpunktebenen.id, schwerpunktebenen.titleDe, schwerpunktebenen.levelNumber)
+      .orderBy(schwerpunktebenen.levelNumber);
 
     // Get total mentees enrolled in classes (for potential completion rate calculations)
     const [enrolledMenteesResult] = await ctx.db
@@ -117,7 +117,7 @@ export const analyticsRouter = router({
       exercisesPerSchwerpunktebene: exercisesPerSchwerpunktebene.map((s) => ({
         id: s.schwerpunktebeneId,
         title: s.title,
-        monthNumber: s.monthNumber,
+        levelNumber: s.levelNumber,
         exerciseCount: Number(s.exerciseCount),
         obligatoryCount: Number(s.obligatoryCount),
         optionalCount: Number(s.optionalCount),
@@ -140,7 +140,7 @@ export const analyticsRouter = router({
         id: classes.id,
         name: classes.name,
         status: classes.status,
-        durationMonths: classes.durationMonths,
+        durationLevels: classes.durationLevels,
         startDate: classes.startDate,
         endDate: classes.endDate,
         sessionConfig: classes.sessionConfig,
@@ -184,7 +184,7 @@ export const analyticsRouter = router({
       const monthlySessionCount = config?.monthlySessionCount ?? 2;
       const sessionDurationMinutes = config?.sessionDurationMinutes ?? 60;
 
-      const plannedSessions = monthlySessionCount * cls.durationMonths;
+      const plannedSessions = monthlySessionCount * cls.durationLevels;
       const plannedMinutes = plannedSessions * sessionDurationMinutes;
 
       totalPlannedSessions += plannedSessions;
@@ -207,7 +207,7 @@ export const analyticsRouter = router({
         isActive,
         isCompleted,
         isUpcoming,
-        durationMonths: cls.durationMonths,
+        durationLevels: cls.durationLevels,
         startDate: cls.startDate,
         endDate: cls.endDate,
         monthlySessionCount,

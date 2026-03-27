@@ -4,6 +4,7 @@ import { aiPrompts, aiSettings, users } from '@/lib/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import { decryptApiKey } from '@/lib/crypto/encryption';
+import { ANTHROPIC_API_URL, ANTHROPIC_API_VERSION, ANTHROPIC_TEST_MODEL, GEMINI_API_BASE_URL, GEMINI_TEST_MODEL, AI_MAX_TOKENS_SHORT } from '@/lib/ai/config';
 
 // Valid AI prompt categories
 const aiPromptCategoryValues = [
@@ -685,16 +686,16 @@ export const aiPromptsRouter = router({
             { role: 'user', content: processedPrompt },
           ];
 
-          const response = await fetch('https://api.anthropic.com/v1/messages', {
+          const response = await fetch(ANTHROPIC_API_URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'x-api-key': apiKey,
-              'anthropic-version': '2023-06-01',
+              'anthropic-version': ANTHROPIC_API_VERSION,
             },
             body: JSON.stringify({
-              model: 'claude-3-5-haiku-20241022', // Use fast model for testing
-              max_tokens: 1024,
+              model: ANTHROPIC_TEST_MODEL, // Use fast model for testing
+              max_tokens: AI_MAX_TOKENS_SHORT,
               system: systemMessage || undefined,
               messages,
             }),
@@ -739,7 +740,7 @@ export const aiPromptsRouter = router({
             : processedPrompt;
 
           const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+            GEMINI_API_BASE_URL(GEMINI_TEST_MODEL, apiKey),
             {
               method: 'POST',
               headers: {
@@ -747,7 +748,7 @@ export const aiPromptsRouter = router({
               },
               body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { maxOutputTokens: 1024 },
+                generationConfig: { maxOutputTokens: AI_MAX_TOKENS_SHORT },
               }),
             }
           );

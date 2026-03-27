@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
+import { AppShell } from '@/components/app-shell';
 
 export default async function MenteeLayout({
   children,
@@ -13,5 +14,9 @@ export default async function MenteeLayout({
   }
 
   // All authenticated users can access mentee views
-  return <>{children}</>;
+  return (
+    <AppShell role="mentee" userEmail={session.user.email ?? ''}>
+      {children}
+    </AppShell>
+  );
 }
