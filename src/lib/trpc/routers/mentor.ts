@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc';
-import { classes, classMembers, users, scheduledExercises, exercises, mentorAvailability, diaryEntries } from '@/lib/db/schema';
+import { classes, classMembers, users, scheduledExercises, exercises, mentorAvailability, diaryEntries, trackingEntries, reflectionEntries, schwerpunktebenen } from '@/lib/db/schema';
 import { eq, and, count, desc, asc, gte, lte, inArray } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
@@ -830,13 +830,13 @@ export const mentorRouter = router({
             ? Math.round((completedSessions / totalSessions) * 100)
             : 0;
 
-          // Calculate current month/phase based on enrollment date
+          // Calculate current level based on enrollment date (21 days per level)
           const enrolledDate = new Date(member.enrolledAt);
           const now = new Date();
-          const monthsElapsed = Math.floor(
-            (now.getTime() - enrolledDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+          const daysElapsed = Math.floor(
+            (now.getTime() - enrolledDate.getTime()) / (1000 * 60 * 60 * 24)
           );
-          const currentMonth = Math.min(monthsElapsed + 1, cls.durationMonths);
+          const currentMonth = Math.min(Math.floor(daysElapsed / 21) + 1, cls.durationLevels);
 
           return {
             id: member.id,
@@ -848,7 +848,7 @@ export const mentorRouter = router({
             completedSessions,
             progressPercentage,
             currentMonth,
-            totalMonths: cls.durationMonths,
+            totalLevels: cls.durationLevels,
           };
         })
       );
@@ -1220,6 +1220,18 @@ export const mentorRouter = router({
         });
       }
 
+      // Check that the mentee has enabled diary sharing
+      const [menteeUser] = await ctx.db
+        .select({ shareDiaryWithMentor: users.shareDiaryWithMentor })
+        .from(users)
+        .where(eq(users.id, input.menteeId))
+        .limit(1);
+
+      if (!menteeUser?.shareDiaryWithMentor) {
+        // Return empty — diary not shared, don't reveal entries exist
+        return { entries: [], total: 0, hasMore: false, diaryNotShared: true };
+      }
+
       // Build query conditions
       const conditions = [eq(diaryEntries.userId, input.menteeId)];
 
@@ -1253,7 +1265,7 @@ export const mentorRouter = router({
         .limit(input.limit)
         .offset(input.offset);
 
-      return entries;
+      return { entries, total: entries.length, hasMore: false, diaryNotShared: false };
     }),
 
   /**
@@ -1303,6 +1315,17 @@ export const mentorRouter = router({
           code: 'FORBIDDEN',
           message: 'You do not have access to this mentee',
         });
+      }
+
+      // Check diary sharing permission
+      const [menteeUser] = await ctx.db
+        .select({ shareDiaryWithMentor: users.shareDiaryWithMentor })
+        .from(users)
+        .where(eq(users.id, input.menteeId))
+        .limit(1);
+
+      if (!menteeUser?.shareDiaryWithMentor) {
+        return {};
       }
 
       // Get entries in date range
@@ -1403,5 +1426,130 @@ export const mentorRouter = router({
         email: mentee.email,
         classes: classes_enrolled,
       };
+    }),
+
+  /**
+   * Get a mentee's tracking categories
+   */
+  getMenteeTrackingCategories: mentorProcedure
+    .input(z.object({ menteeId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const [user] = await ctx.db
+        .select({ trackingCategories: users.trackingCategories })
+        .from(users)
+        .where(eq(users.id, input.menteeId))
+        .limit(1);
+
+      return (user?.trackingCategories as Array<{ key: string; label: string; emoji: string }>) || null;
+    }),
+
+  /**
+   * Set tracking categories for a mentee
+   */
+  setMenteeTrackingCategories: mentorProcedure
+    .input(
+      z.object({
+        menteeId: z.string().uuid(),
+        categories: z.array(
+          z.object({
+            key: z.string().min(1).max(50),
+            label: z.string().min(1).max(100),
+            emoji: z.string().max(10).default('📌'),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(users)
+        .set({
+          trackingCategories: input.categories,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, input.menteeId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Get a mentee's tracking entries for a date range (for tracking curves)
+   */
+  getMenteeTracking: mentorProcedure
+    .input(
+      z.object({
+        menteeId: z.string().uuid(),
+        startDate: z.string(),
+        endDate: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const start = new Date(input.startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(input.endDate);
+      end.setHours(23, 59, 59, 999);
+
+      return ctx.db
+        .select({
+          id: trackingEntries.id,
+          entryDate: trackingEntries.entryDate,
+          category: trackingEntries.category,
+          value: trackingEntries.value,
+          recordedAt: trackingEntries.recordedAt,
+        })
+        .from(trackingEntries)
+        .where(
+          and(
+            eq(trackingEntries.userId, input.menteeId),
+            gte(trackingEntries.entryDate, start),
+            lte(trackingEntries.entryDate, end)
+          )
+        )
+        .orderBy(asc(trackingEntries.recordedAt));
+    }),
+
+  /**
+   * Get a mentee's submitted reflections
+   */
+  getMenteeReflections: mentorProcedure
+    .input(z.object({ menteeId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const entries = await ctx.db
+        .select({
+          id: reflectionEntries.id,
+          schwerpunktebeneId: reflectionEntries.schwerpunktebeneId,
+          responses: reflectionEntries.responses,
+          submittedAt: reflectionEntries.submittedAt,
+          mentorFeedback: reflectionEntries.mentorFeedback,
+          mentorFeedbackAt: reflectionEntries.mentorFeedbackAt,
+          moduleTitleDe: schwerpunktebenen.titleDe,
+          moduleTitleEn: schwerpunktebenen.titleEn,
+        })
+        .from(reflectionEntries)
+        .innerJoin(schwerpunktebenen, eq(reflectionEntries.schwerpunktebeneId, schwerpunktebenen.id))
+        .where(eq(reflectionEntries.userId, input.menteeId))
+        .orderBy(desc(reflectionEntries.createdAt));
+
+      return entries;
+    }),
+
+  /**
+   * Save mentor feedback on a reflection
+   */
+  saveReflectionFeedback: mentorProcedure
+    .input(z.object({
+      reflectionId: z.string().uuid(),
+      feedback: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(reflectionEntries)
+        .set({
+          mentorFeedback: input.feedback,
+          mentorFeedbackAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(reflectionEntries.id, input.reflectionId));
+
+      return { success: true };
     }),
 });

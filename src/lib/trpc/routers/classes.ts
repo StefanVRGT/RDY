@@ -1,8 +1,18 @@
 import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc';
-import { classes, classMembers, classCurriculum, users, schwerpunktebenen } from '@/lib/db/schema';
+import {
+  classes,
+  classMembers,
+  classCurriculum,
+  users,
+  schwerpunktebenen,
+  weeks,
+  weekExercises,
+  scheduledExercises,
+} from '@/lib/db/schema';
 import { eq, and, count, desc, asc, sql, inArray } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { DAYS_PER_LEVEL, MS_PER_DAY } from '@/lib/constants';
 
 // Input validation schemas
 const classIdSchema = z.object({ id: z.string().uuid() });
@@ -16,7 +26,7 @@ const createClassSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255),
   mentorId: z.string().uuid('Invalid mentor ID'),
   status: z.enum(['active', 'disabled']).default('active'),
-  durationMonths: z.number().int().positive().default(3),
+  durationLevels: z.number().int().positive().default(5),
   startDate: z.string().or(z.date()),
   endDate: z.string().or(z.date()),
   sessionConfig: sessionConfigSchema.optional(),
@@ -27,7 +37,7 @@ const updateClassSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   mentorId: z.string().uuid().optional(),
   status: z.enum(['active', 'disabled']).optional(),
-  durationMonths: z.number().int().positive().optional(),
+  durationLevels: z.number().int().positive().optional(),
   startDate: z.string().or(z.date()).optional(),
   endDate: z.string().or(z.date()).optional(),
   sessionConfig: sessionConfigSchema.optional(),
@@ -57,7 +67,7 @@ const removeMemberSchema = z.object({
 const assignCurriculumSchema = z.object({
   classId: z.string().uuid(),
   schwerpunktebeneId: z.string().uuid(),
-  monthNumber: z.number().int().positive(),
+  levelNumber: z.number().int().positive(),
   customTitleDe: z.string().max(255).optional().nullable(),
   customTitleEn: z.string().max(255).optional().nullable(),
   customDescriptionDe: z.string().optional().nullable(),
@@ -67,7 +77,7 @@ const assignCurriculumSchema = z.object({
 
 const removeCurriculumSchema = z.object({
   classId: z.string().uuid(),
-  monthNumber: z.number().int().positive(),
+  levelNumber: z.number().int().positive(),
 });
 
 /**
@@ -262,6 +272,15 @@ export const classesRouter = router({
    * Create a new class
    */
   create: adminProcedure.input(createClassSchema).mutation(async ({ ctx, input }) => {
+    // Validate Sunday start
+    const startDate = new Date(input.startDate);
+    if (startDate.getUTCDay() !== 0) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Class must start on a Sunday',
+      });
+    }
+
     // Verify mentor exists and belongs to tenant
     const [mentor] = await ctx.db
       .select({ id: users.id, role: users.role })
@@ -282,14 +301,29 @@ export const classesRouter = router({
       });
     }
 
+    // Auto-generate class number (YYNN format)
+    const yearPrefix = new Date().getFullYear().toString().slice(-2);
+    const existingClasses = await ctx.db
+      .select({ classNumber: classes.classNumber })
+      .from(classes)
+      .where(sql`${classes.classNumber} LIKE ${yearPrefix + '%'}`)
+      .orderBy(desc(classes.classNumber))
+      .limit(1);
+
+    const lastNum = existingClasses[0]?.classNumber
+      ? parseInt(existingClasses[0].classNumber.slice(2), 10)
+      : 0;
+    const classNumber = yearPrefix + String(lastNum + 1).padStart(2, '0');
+
     const [newClass] = await ctx.db
       .insert(classes)
       .values({
         tenantId: ctx.tenantId,
+        classNumber,
         name: input.name,
         mentorId: input.mentorId,
         status: input.status,
-        durationMonths: input.durationMonths,
+        durationLevels: input.durationLevels,
         startDate: new Date(input.startDate),
         endDate: new Date(input.endDate),
         sessionConfig: input.sessionConfig ?? {
@@ -319,6 +353,17 @@ export const classesRouter = router({
       throw new TRPCError({ code: 'NOT_FOUND', message: 'Class not found' });
     }
 
+    // Validate Sunday start if startDate is being updated
+    if (updateData.startDate) {
+      const newStartDate = new Date(updateData.startDate);
+      if (newStartDate.getUTCDay() !== 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Class must start on a Sunday',
+        });
+      }
+    }
+
     // If mentorId is being updated, verify the new mentor
     if (updateData.mentorId) {
       const [mentor] = await ctx.db
@@ -346,7 +391,7 @@ export const classesRouter = router({
     if (updateData.name !== undefined) updateValues.name = updateData.name;
     if (updateData.mentorId !== undefined) updateValues.mentorId = updateData.mentorId;
     if (updateData.status !== undefined) updateValues.status = updateData.status;
-    if (updateData.durationMonths !== undefined) updateValues.durationMonths = updateData.durationMonths;
+    if (updateData.durationLevels !== undefined) updateValues.durationLevels = updateData.durationLevels;
     if (updateData.startDate !== undefined) updateValues.startDate = new Date(updateData.startDate);
     if (updateData.endDate !== undefined) updateValues.endDate = new Date(updateData.endDate);
     if (updateData.sessionConfig !== undefined) updateValues.sessionConfig = updateData.sessionConfig;
@@ -578,7 +623,7 @@ export const classesRouter = router({
   getCurriculum: adminProcedure.input(classIdSchema).query(async ({ ctx, input }) => {
     // Verify class exists and belongs to tenant
     const [cls] = await ctx.db
-      .select({ id: classes.id, durationMonths: classes.durationMonths })
+      .select({ id: classes.id, durationLevels: classes.durationLevels })
       .from(classes)
       .where(and(eq(classes.id, input.id), eq(classes.tenantId, ctx.tenantId)))
       .limit(1);
@@ -593,7 +638,7 @@ export const classesRouter = router({
         id: classCurriculum.id,
         classId: classCurriculum.classId,
         schwerpunktebeneId: classCurriculum.schwerpunktebeneId,
-        monthNumber: classCurriculum.monthNumber,
+        levelNumber: classCurriculum.levelNumber,
         customTitleDe: classCurriculum.customTitleDe,
         customTitleEn: classCurriculum.customTitleEn,
         customDescriptionDe: classCurriculum.customDescriptionDe,
@@ -610,10 +655,10 @@ export const classesRouter = router({
       .from(classCurriculum)
       .innerJoin(schwerpunktebenen, eq(classCurriculum.schwerpunktebeneId, schwerpunktebenen.id))
       .where(eq(classCurriculum.classId, input.id))
-      .orderBy(asc(classCurriculum.monthNumber));
+      .orderBy(asc(classCurriculum.levelNumber));
 
     return {
-      durationMonths: cls.durationMonths,
+      durationLevels: cls.durationLevels,
       curriculum,
     };
   }),
@@ -624,7 +669,7 @@ export const classesRouter = router({
   assignCurriculum: adminProcedure.input(assignCurriculumSchema).mutation(async ({ ctx, input }) => {
     // Verify class exists and belongs to tenant
     const [cls] = await ctx.db
-      .select({ id: classes.id, durationMonths: classes.durationMonths })
+      .select({ id: classes.id, durationLevels: classes.durationLevels })
       .from(classes)
       .where(and(eq(classes.id, input.classId), eq(classes.tenantId, ctx.tenantId)))
       .limit(1);
@@ -633,11 +678,11 @@ export const classesRouter = router({
       throw new TRPCError({ code: 'NOT_FOUND', message: 'Class not found' });
     }
 
-    // Validate month number
-    if (input.monthNumber > cls.durationMonths) {
+    // Validate level number
+    if (input.levelNumber > cls.durationLevels) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: `Month number cannot exceed class duration (${cls.durationMonths} months)`,
+        message: `Level number cannot exceed class levels (${cls.durationLevels} levels)`,
       });
     }
 
@@ -664,7 +709,7 @@ export const classesRouter = router({
       .where(
         and(
           eq(classCurriculum.classId, input.classId),
-          eq(classCurriculum.monthNumber, input.monthNumber)
+          eq(classCurriculum.levelNumber, input.levelNumber)
         )
       )
       .limit(1);
@@ -694,7 +739,7 @@ export const classesRouter = router({
       .values({
         classId: input.classId,
         schwerpunktebeneId: input.schwerpunktebeneId,
-        monthNumber: input.monthNumber,
+        levelNumber: input.levelNumber,
         customTitleDe: input.customTitleDe,
         customTitleEn: input.customTitleEn,
         customDescriptionDe: input.customDescriptionDe,
@@ -728,7 +773,7 @@ export const classesRouter = router({
       .where(
         and(
           eq(classCurriculum.classId, input.classId),
-          eq(classCurriculum.monthNumber, input.monthNumber)
+          eq(classCurriculum.levelNumber, input.levelNumber)
         )
       )
       .limit(1);
@@ -751,14 +796,138 @@ export const classesRouter = router({
         id: schwerpunktebenen.id,
         titleDe: schwerpunktebenen.titleDe,
         titleEn: schwerpunktebenen.titleEn,
-        monthNumber: schwerpunktebenen.monthNumber,
+        levelNumber: schwerpunktebenen.levelNumber,
       })
       .from(schwerpunktebenen)
       .where(eq(schwerpunktebenen.tenantId, ctx.tenantId))
-      .orderBy(asc(schwerpunktebenen.monthNumber), asc(schwerpunktebenen.titleDe));
+      .orderBy(asc(schwerpunktebenen.levelNumber), asc(schwerpunktebenen.titleDe));
 
     return schwerpunktebenenList;
   }),
+
+  /**
+   * Generate scheduled exercises for all class members based on curriculum and day picker settings.
+   * Wipes and regenerates from scratch so it is safe to re-run after curriculum changes.
+   */
+  scheduleClassExercises: adminProcedure
+    .input(z.object({ classId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      // 1. Load class
+      const [cls] = await ctx.db
+        .select({
+          id: classes.id,
+          startDate: classes.startDate,
+          durationLevels: classes.durationLevels,
+        })
+        .from(classes)
+        .where(and(eq(classes.id, input.classId), eq(classes.tenantId, ctx.tenantId)))
+        .limit(1);
+
+      if (!cls) throw new TRPCError({ code: 'NOT_FOUND', message: 'Class not found' });
+
+      // 2. Load curriculum assignments
+      const curriculumEntries = await ctx.db
+        .select({
+          levelNumber: classCurriculum.levelNumber,
+          schwerpunktebeneId: classCurriculum.schwerpunktebeneId,
+        })
+        .from(classCurriculum)
+        .where(eq(classCurriculum.classId, input.classId))
+        .orderBy(asc(classCurriculum.levelNumber));
+
+      // 3. Load class members
+      const members = await ctx.db
+        .select({ userId: classMembers.userId })
+        .from(classMembers)
+        .where(eq(classMembers.classId, input.classId));
+
+      const memberIds = members.map((m) => m.userId);
+
+      // 4. Delete existing scheduled exercises for this class
+      await ctx.db
+        .delete(scheduledExercises)
+        .where(eq(scheduledExercises.classId, input.classId));
+
+      if (curriculumEntries.length === 0 || memberIds.length === 0) {
+        return { count: 0 };
+      }
+
+      // Build curriculum map: levelNumber → schwerpunktebeneId
+      const curriculumByLevel: Record<number, string> = {};
+      for (const entry of curriculumEntries) {
+        curriculumByLevel[entry.levelNumber] = entry.schwerpunktebeneId;
+      }
+
+      // 5. Generate rows for each month → week → exercise → day → member
+      const insertRows: Array<{
+        userId: string;
+        exerciseId: string;
+        classId: string;
+        scheduledAt: Date;
+      }> = [];
+
+      for (let level = 1; level <= cls.durationLevels; level++) {
+        const spId = curriculumByLevel[level];
+        if (!spId) continue; // level has no curriculum assigned
+
+        const levelStart = new Date(cls.startDate);
+        levelStart.setTime(levelStart.getTime() + (level - 1) * DAYS_PER_LEVEL * MS_PER_DAY);
+
+        // Load weeks for this schwerpunktebene (max 3 per level)
+        const levelWeeks = await ctx.db
+          .select({ id: weeks.id })
+          .from(weeks)
+          .where(eq(weeks.schwerpunktebeneId, spId))
+          .orderBy(asc(weeks.orderIndex));
+
+        for (let weekIdx = 0; weekIdx < Math.min(levelWeeks.length, 3); weekIdx++) {
+          const week = levelWeeks[weekIdx];
+          const weekStartMs = levelStart.getTime() + weekIdx * 7 * MS_PER_DAY;
+
+          // Load exercises for this week
+          const weekExercisesList = await ctx.db
+            .select({
+              exerciseId: weekExercises.exerciseId,
+              applicableDays: weekExercises.applicableDays,
+            })
+            .from(weekExercises)
+            .where(eq(weekExercises.weekId, week.id))
+            .orderBy(asc(weekExercises.orderIndex));
+
+          for (const we of weekExercisesList) {
+            const days = (we.applicableDays as number[] | null) ?? [1, 2, 3, 4, 5, 6, 7];
+
+            for (const d of days) {
+              const scheduledAt = new Date(weekStartMs + (d - 1) * MS_PER_DAY);
+              scheduledAt.setUTCHours(9, 0, 0, 0);
+
+              // Skip rest day (day 21 of each level, 0-indexed offset 20)
+              const dayWithinLevel = Math.floor(
+                (scheduledAt.getTime() - levelStart.getTime()) / MS_PER_DAY
+              );
+              if (dayWithinLevel >= DAYS_PER_LEVEL - 1) continue; // day 21+ is rest / out of level
+
+              for (const userId of memberIds) {
+                insertRows.push({
+                  userId,
+                  exerciseId: we.exerciseId,
+                  classId: input.classId,
+                  scheduledAt,
+                });
+              }
+            }
+          }
+        }
+      }
+
+      // 6. Batch insert (chunks of 500 to stay within DB limits)
+      const BATCH_SIZE = 500;
+      for (let i = 0; i < insertRows.length; i += BATCH_SIZE) {
+        await ctx.db.insert(scheduledExercises).values(insertRows.slice(i, i + BATCH_SIZE));
+      }
+
+      return { count: insertRows.length };
+    }),
 
   /**
    * Get all mentors for class creation/editing

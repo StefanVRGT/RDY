@@ -9,30 +9,38 @@ const exerciseTypeSchema = z.enum(['video', 'audio', 'text']);
 
 const createExerciseSchema = z.object({
   type: exerciseTypeSchema,
+  groupName: z.string().max(100).optional().nullable(),
   titleDe: z.string().min(1, 'German title is required').max(255),
   titleEn: z.string().max(255).optional().nullable(),
   descriptionDe: z.string().optional().nullable(),
   descriptionEn: z.string().optional().nullable(),
   durationMinutes: z.number().int().positive().optional().nullable(),
   videoUrl: z.string().url().optional().nullable(),
+  videoUrlDe: z.string().url().optional().nullable(),
+  videoUrlEn: z.string().url().optional().nullable(),
   audioUrl: z.string().url().optional().nullable(),
   contentDe: z.string().optional().nullable(),
   contentEn: z.string().optional().nullable(),
+  imageUrl: z.string().nullable().optional(),
   orderIndex: z.string().max(10).optional(),
 });
 
 const updateExerciseSchema = z.object({
   id: z.string().uuid(),
   type: exerciseTypeSchema.optional(),
+  groupName: z.string().max(100).optional().nullable(),
   titleDe: z.string().min(1).max(255).optional(),
   titleEn: z.string().max(255).optional().nullable(),
   descriptionDe: z.string().optional().nullable(),
   descriptionEn: z.string().optional().nullable(),
   durationMinutes: z.number().int().positive().optional().nullable(),
   videoUrl: z.string().url().optional().nullable(),
+  videoUrlDe: z.string().url().optional().nullable(),
+  videoUrlEn: z.string().url().optional().nullable(),
   audioUrl: z.string().url().optional().nullable(),
   contentDe: z.string().optional().nullable(),
   contentEn: z.string().optional().nullable(),
+  imageUrl: z.string().nullable().optional(),
   orderIndex: z.string().max(10).optional(),
 });
 
@@ -41,7 +49,7 @@ const listExercisesSchema = z.object({
   sortBy: z.enum(['titleDe', 'type', 'durationMinutes', 'createdAt']).optional().default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
   page: z.number().int().positive().optional().default(1),
-  limit: z.number().int().positive().max(100).optional().default(20),
+  limit: z.number().int().positive().max(500).optional().default(20),
 });
 
 const exerciseIdSchema = z.object({
@@ -167,15 +175,19 @@ export const exercisesRouter = router({
       .values({
         tenantId: ctx.tenantId,
         type: input.type,
+        groupName: input.groupName,
         titleDe: input.titleDe,
         titleEn: input.titleEn,
         descriptionDe: input.descriptionDe,
         descriptionEn: input.descriptionEn,
         durationMinutes: input.durationMinutes,
         videoUrl: input.videoUrl,
+        videoUrlDe: input.videoUrlDe,
+        videoUrlEn: input.videoUrlEn,
         audioUrl: input.audioUrl,
         contentDe: input.contentDe,
         contentEn: input.contentEn,
+        imageUrl: input.imageUrl,
         orderIndex: input.orderIndex ?? '0',
       })
       .returning();

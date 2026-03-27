@@ -11,9 +11,13 @@ import {
   classCurriculum,
   weeks,
   schwerpunktebenen,
+  experienceEntries,
+  trackingEntries,
+  reflectionEntries,
 } from '@/lib/db/schema';
 import { eq, and, gte, lte, inArray, asc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { MS_PER_WEEK, MS_PER_DAY, WEEKS_PER_LEVEL, DAYS_PER_LEVEL } from '@/lib/constants';
 
 /**
  * Mentee middleware - ensures user has mentee role and extracts mentee user info
@@ -66,20 +70,29 @@ export const menteeRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const targetDate = new Date(input.date);
-      const startOfDay = new Date(
-        targetDate.getFullYear(),
-        targetDate.getMonth(),
-        targetDate.getDate()
-      );
-      const endOfDay = new Date(
-        targetDate.getFullYear(),
-        targetDate.getMonth(),
-        targetDate.getDate(),
-        23,
-        59,
-        59,
-        999
-      );
+      // Use UTC methods so the date range is timezone-independent
+      const y = targetDate.getUTCFullYear();
+      const m = targetDate.getUTCMonth();
+      const d = targetDate.getUTCDate();
+      const startOfDay = new Date(Date.UTC(y, m, d, 0, 0, 0, 0));
+      const endOfDay = new Date(Date.UTC(y, m, d, 23, 59, 59, 999));
+
+      // Get class start date for rest day detection
+      const membershipForRestDay = await ctx.db
+        .select({ startDate: classes.startDate })
+        .from(classMembers)
+        .innerJoin(classes, eq(classMembers.classId, classes.id))
+        .where(eq(classMembers.userId, ctx.userId))
+        .limit(1);
+
+      let restDay = false;
+      if (membershipForRestDay.length > 0) {
+        const classStart = new Date(membershipForRestDay[0].startDate);
+        const daysSinceStart = Math.floor(
+          (targetDate.getTime() - classStart.getTime()) / MS_PER_DAY
+        );
+        restDay = daysSinceStart >= 0 && (daysSinceStart + 1) % DAYS_PER_LEVEL === 0;
+      }
 
       // Get scheduled exercises for this day
       const scheduled = await ctx.db
@@ -115,6 +128,8 @@ export const menteeRouter = router({
           descriptionEn: string | null;
           durationMinutes: number | null;
           videoUrl: string | null;
+          videoUrlDe: string | null;
+          videoUrlEn: string | null;
           audioUrl: string | null;
           contentDe: string | null;
           contentEn: string | null;
@@ -132,6 +147,8 @@ export const menteeRouter = router({
             descriptionEn: exercises.descriptionEn,
             durationMinutes: exercises.durationMinutes,
             videoUrl: exercises.videoUrl,
+            videoUrlDe: exercises.videoUrlDe,
+            videoUrlEn: exercises.videoUrlEn,
             audioUrl: exercises.audioUrl,
             contentDe: exercises.contentDe,
             contentEn: exercises.contentEn,
@@ -205,6 +222,7 @@ export const menteeRouter = router({
       return {
         scheduledExercises: enrichedScheduled,
         date: input.date,
+        isRestDay: restDay,
       };
     }),
 
@@ -276,6 +294,8 @@ export const menteeRouter = router({
         descriptionEn: exercises.descriptionEn,
         durationMinutes: exercises.durationMinutes,
         videoUrl: exercises.videoUrl,
+            videoUrlDe: exercises.videoUrlDe,
+            videoUrlEn: exercises.videoUrlEn,
         audioUrl: exercises.audioUrl,
         contentDe: exercises.contentDe,
         contentEn: exercises.contentEn,
@@ -285,6 +305,106 @@ export const menteeRouter = router({
 
     return optionalExercises;
   }),
+
+  /**
+   * Get the current user's full profile: user info, mentor, and enrolled classes.
+   */
+  getProfile: menteeProcedure.query(async ({ ctx }) => {
+    const [userRow] = await ctx.db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        mentorId: users.mentorId,
+      })
+      .from(users)
+      .where(eq(users.id, ctx.userId))
+      .limit(1);
+
+    if (!userRow) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+    }
+
+    // Load mentor details if assigned
+    let mentor: { id: string; name: string | null; email: string } | null = null;
+    if (userRow.mentorId) {
+      const [mentorRow] = await ctx.db
+        .select({ id: users.id, name: users.name, email: users.email })
+        .from(users)
+        .where(eq(users.id, userRow.mentorId))
+        .limit(1);
+      mentor = mentorRow ?? null;
+    }
+
+    // Load enrolled active classes
+    const enrolledClasses = await ctx.db
+      .select({ id: classes.id, name: classes.name, status: classes.status })
+      .from(classMembers)
+      .innerJoin(classes, eq(classMembers.classId, classes.id))
+      .where(eq(classMembers.userId, ctx.userId));
+
+    return {
+      id: userRow.id,
+      name: userRow.name,
+      email: userRow.email,
+      role: userRow.role,
+      mentor,
+      classes: enrolledClasses,
+    };
+  }),
+
+  /**
+   * Get exercises for a date range (used by weekly tracking view)
+   * Returns all scheduled exercises for the mentee within the range.
+   */
+  getWeeklyTracking: menteeProcedure
+    .input(
+      z.object({
+        startDate: z.string().datetime(),
+        endDate: z.string().datetime(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const startDate = new Date(input.startDate);
+      const endDate = new Date(input.endDate);
+
+      const scheduled = await ctx.db
+        .select({
+          id: scheduledExercises.id,
+          exerciseId: scheduledExercises.exerciseId,
+          scheduledAt: scheduledExercises.scheduledAt,
+          completed: scheduledExercises.completed,
+          completedAt: scheduledExercises.completedAt,
+        })
+        .from(scheduledExercises)
+        .where(
+          and(
+            eq(scheduledExercises.userId, ctx.userId),
+            gte(scheduledExercises.scheduledAt, startDate),
+            lte(scheduledExercises.scheduledAt, endDate)
+          )
+        )
+        .orderBy(asc(scheduledExercises.scheduledAt));
+
+      const exerciseIds = Array.from(new Set(scheduled.map(s => s.exerciseId)));
+      let exercisesMap: Record<string, { id: string; titleDe: string; type: string }> = {};
+
+      if (exerciseIds.length > 0) {
+        const exercisesList = await ctx.db
+          .select({ id: exercises.id, titleDe: exercises.titleDe, type: exercises.type })
+          .from(exercises)
+          .where(inArray(exercises.id, exerciseIds));
+        exercisesMap = Object.fromEntries(exercisesList.map(e => [e.id, e]));
+      }
+
+      return {
+        entries: scheduled.map(s => ({
+          ...s,
+          exercise: exercisesMap[s.exerciseId] ?? null,
+        })),
+      };
+    }),
 
   /**
    * Toggle exercise completion status
@@ -404,6 +524,8 @@ export const menteeRouter = router({
           descriptionEn: exercises.descriptionEn,
           durationMinutes: exercises.durationMinutes,
           videoUrl: exercises.videoUrl,
+            videoUrlDe: exercises.videoUrlDe,
+            videoUrlEn: exercises.videoUrlEn,
           audioUrl: exercises.audioUrl,
           contentDe: exercises.contentDe,
           contentEn: exercises.contentEn,
@@ -524,16 +646,15 @@ export const menteeRouter = router({
       const classStartDate = new Date(membership.startDate);
 
       // Calculate which week of the program this is (1-indexed)
-      const msPerWeek = 7 * 24 * 60 * 60 * 1000;
       const weeksSinceStart = Math.floor(
-        (weekStartDate.getTime() - classStartDate.getTime()) / msPerWeek
+        (weekStartDate.getTime() - classStartDate.getTime()) / MS_PER_WEEK
       );
       const weekNumber = Math.max(1, weeksSinceStart + 1);
 
-      // Calculate which month of the program (for curriculum lookup)
-      const monthNumber = Math.ceil(weekNumber / 4); // ~4 weeks per month
+      // Calculate which level of the program (for curriculum lookup)
+      const levelNumber = Math.ceil(weekNumber / WEEKS_PER_LEVEL);
 
-      // Get curriculum for this month
+      // Get curriculum for this level
       const [curriculum] = await ctx.db
         .select({
           id: classCurriculum.id,
@@ -545,7 +666,7 @@ export const menteeRouter = router({
         .where(
           and(
             eq(classCurriculum.classId, membership.classId),
-            eq(classCurriculum.monthNumber, monthNumber)
+            eq(classCurriculum.levelNumber, levelNumber)
           )
         )
         .limit(1);
@@ -567,6 +688,8 @@ export const menteeRouter = router({
           zielDe: schwerpunktebenen.zielDe,
           zielEn: schwerpunktebenen.zielEn,
           imageUrl: schwerpunktebenen.imageUrl,
+          reflectionQuestions: schwerpunktebenen.reflectionQuestions,
+          trackingCategories: schwerpunktebenen.trackingCategories,
         })
         .from(schwerpunktebenen)
         .where(eq(schwerpunktebenen.id, curriculum.schwerpunktebeneId))
@@ -576,8 +699,8 @@ export const menteeRouter = router({
         return null;
       }
 
-      // Calculate week within the month (1-4)
-      const weekWithinMonth = ((weekNumber - 1) % 4) + 1;
+      // Calculate week within the level (1-3)
+      const weekWithinMonth = ((weekNumber - 1) % WEEKS_PER_LEVEL) + 1;
 
       // Get week-specific theme if available
       const [weekTheme] = await ctx.db
@@ -614,6 +737,7 @@ export const menteeRouter = router({
           zielDe: schwerpunktebene.zielDe,
           zielEn: schwerpunktebene.zielEn,
           imageUrl: schwerpunktebene.imageUrl,
+          reflectionQuestions: schwerpunktebene.reflectionQuestions,
         },
         weekTheme: weekTheme
           ? {
@@ -630,7 +754,7 @@ export const menteeRouter = router({
             }
           : null,
         weekNumber,
-        monthNumber,
+        levelNumber,
       };
     }),
 
@@ -649,6 +773,18 @@ export const menteeRouter = router({
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 6);
       weekEnd.setHours(23, 59, 59, 999);
+
+      // Get class start date for rest day detection
+      const memberships = await ctx.db
+        .select({
+          startDate: classes.startDate,
+        })
+        .from(classMembers)
+        .innerJoin(classes, eq(classMembers.classId, classes.id))
+        .where(eq(classMembers.userId, ctx.userId))
+        .limit(1);
+
+      const classStartDate = memberships.length > 0 ? new Date(memberships[0].startDate) : null;
 
       // Get scheduled exercises for the entire week
       const scheduled = await ctx.db
@@ -683,6 +819,7 @@ export const menteeRouter = router({
           descriptionDe: string | null;
           descriptionEn: string | null;
           durationMinutes: number | null;
+          imageUrl: string | null;
         }
       > = {};
 
@@ -696,6 +833,7 @@ export const menteeRouter = router({
             descriptionDe: exercises.descriptionDe,
             descriptionEn: exercises.descriptionEn,
             durationMinutes: exercises.durationMinutes,
+            imageUrl: exercises.imageUrl,
           })
           .from(exercises)
           .where(inArray(exercises.id, exerciseIds));
@@ -760,6 +898,16 @@ export const menteeRouter = router({
         isObligatory: weekExercisesMap[s.exerciseId] ?? true,
       }));
 
+      // Helper: check if a date is a rest day (day 21 of each level)
+      function isRestDay(date: Date): boolean {
+        if (!classStartDate) return false;
+        const daysSinceStart = Math.floor(
+          (date.getTime() - classStartDate.getTime()) / MS_PER_DAY
+        );
+        // Day 21, 42, 63, 84, 105 are rest days (0-indexed: 20, 41, 62, 83, 104)
+        return daysSinceStart >= 0 && (daysSinceStart + 1) % DAYS_PER_LEVEL === 0;
+      }
+
       // Group by date (YYYY-MM-DD)
       const byDay: Record<
         string,
@@ -768,6 +916,7 @@ export const menteeRouter = router({
           exercises: typeof enriched;
           totalCount: number;
           completedCount: number;
+          isRestDay: boolean;
         }
       > = {};
 
@@ -781,6 +930,7 @@ export const menteeRouter = router({
           exercises: [],
           totalCount: 0,
           completedCount: 0,
+          isRestDay: isRestDay(date),
         };
       }
 
@@ -1194,6 +1344,8 @@ export const menteeRouter = router({
           descriptionEn: exercises.descriptionEn,
           durationMinutes: exercises.durationMinutes,
           videoUrl: exercises.videoUrl,
+            videoUrlDe: exercises.videoUrlDe,
+            videoUrlEn: exercises.videoUrlEn,
           audioUrl: exercises.audioUrl,
           contentDe: exercises.contentDe,
           contentEn: exercises.contentEn,
@@ -1303,5 +1455,317 @@ export const menteeRouter = router({
         .returning();
 
       return updated;
+    }),
+
+  /**
+   * Get privacy settings for the current mentee
+   */
+  getPrivacySettings: menteeProcedure.query(async ({ ctx }) => {
+    const [user] = await ctx.db
+      .select({
+        shareDiaryWithMentor: users.shareDiaryWithMentor,
+        shareWeeklySummaryWithMentor: users.shareWeeklySummaryWithMentor,
+      })
+      .from(users)
+      .where(eq(users.id, ctx.userId))
+      .limit(1);
+
+    return {
+      shareDiaryWithMentor: user?.shareDiaryWithMentor ?? false,
+      shareWeeklySummaryWithMentor: user?.shareWeeklySummaryWithMentor ?? false,
+    };
+  }),
+
+  /**
+   * Update privacy settings for the current mentee
+   */
+  updatePrivacySettings: menteeProcedure
+    .input(
+      z.object({
+        shareDiaryWithMentor: z.boolean().optional(),
+        shareWeeklySummaryWithMentor: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const updates: Record<string, unknown> = { updatedAt: new Date() };
+      if (input.shareDiaryWithMentor !== undefined)
+        updates.shareDiaryWithMentor = input.shareDiaryWithMentor;
+      if (input.shareWeeklySummaryWithMentor !== undefined)
+        updates.shareWeeklySummaryWithMentor = input.shareWeeklySummaryWithMentor;
+
+      await ctx.db
+        .update(users)
+        .set(updates)
+        .where(eq(users.id, ctx.userId));
+
+      return { success: true };
+    }),
+
+  // ── Program Timeline ─────────────────────────────────────────────
+
+  /**
+   * Get the full RDY Masterclass program timeline from class start date
+   * BASICS(day 0) → MODULE 1(+7) → MODULE 2(+28) → ... → END TALK(+112)
+   */
+  getProgramTimeline: menteeProcedure.query(async ({ ctx }) => {
+    const memberships = await ctx.db
+      .select({
+        classId: classMembers.classId,
+        startDate: classes.startDate,
+        className: classes.name,
+      })
+      .from(classMembers)
+      .innerJoin(classes, eq(classMembers.classId, classes.id))
+      .where(eq(classMembers.userId, ctx.userId))
+      .limit(1);
+
+    if (memberships.length === 0) return null;
+
+    const { startDate, className } = memberships[0];
+    const start = new Date(startDate);
+
+    const offsets = [
+      { type: 'basics', label: 'BASICS', dayOffset: 0 },
+      { type: 'module', label: 'MODUL 1', dayOffset: 7 },
+      { type: 'module', label: 'MODUL 2', dayOffset: 28 },
+      { type: 'module', label: 'MODUL 3', dayOffset: 49 },
+      { type: 'module', label: 'MODUL 4', dayOffset: 70 },
+      { type: 'module', label: 'MODUL 5', dayOffset: 91 },
+      { type: 'endtalk', label: 'END TALK', dayOffset: 112 },
+    ];
+
+    const events = offsets.map((o) => ({
+      type: o.type,
+      label: o.label,
+      date: new Date(start.getTime() + o.dayOffset * 24 * 60 * 60 * 1000).toISOString(),
+    }));
+
+    return { className, startDate: start.toISOString(), events };
+  }),
+
+  // ── Tracking Categories ──────────────────────────────────────────
+
+  /**
+   * Get the mentee's tracking categories (mentor-assigned or defaults)
+   */
+  getTrackingCategories: menteeProcedure.query(async ({ ctx }) => {
+    // 1. Try to get categories from the user's current module (schwerpunktebene)
+    const memberships = await ctx.db
+      .select({
+        classId: classMembers.classId,
+        startDate: classes.startDate,
+      })
+      .from(classMembers)
+      .innerJoin(classes, eq(classMembers.classId, classes.id))
+      .where(eq(classMembers.userId, ctx.userId))
+      .limit(1);
+
+    if (memberships.length > 0) {
+      const membership = memberships[0];
+      const now = new Date();
+      const classStartDate = new Date(membership.startDate);
+      const weeksSinceStart = Math.floor(
+        (now.getTime() - classStartDate.getTime()) / MS_PER_WEEK
+      );
+      const weekNumber = Math.max(1, weeksSinceStart + 1);
+      const levelNumber = Math.ceil(weekNumber / WEEKS_PER_LEVEL);
+
+      const [curriculum] = await ctx.db
+        .select({
+          schwerpunktebeneId: classCurriculum.schwerpunktebeneId,
+        })
+        .from(classCurriculum)
+        .where(
+          and(
+            eq(classCurriculum.classId, membership.classId),
+            eq(classCurriculum.levelNumber, levelNumber)
+          )
+        )
+        .limit(1);
+
+      if (curriculum) {
+        const [sp] = await ctx.db
+          .select({ trackingCategories: schwerpunktebenen.trackingCategories })
+          .from(schwerpunktebenen)
+          .where(eq(schwerpunktebenen.id, curriculum.schwerpunktebeneId))
+          .limit(1);
+
+        if (sp?.trackingCategories && Array.isArray(sp.trackingCategories) && sp.trackingCategories.length > 0) {
+          return sp.trackingCategories as Array<{ key: string; label: string; emoji: string }>;
+        }
+      }
+    }
+
+    // 2. Fall back to user's personal tracking categories (mentor-assigned)
+    const [user] = await ctx.db
+      .select({ trackingCategories: users.trackingCategories })
+      .from(users)
+      .where(eq(users.id, ctx.userId))
+      .limit(1);
+
+    if (user?.trackingCategories && Array.isArray(user.trackingCategories) && (user.trackingCategories as Array<unknown>).length > 0) {
+      return user.trackingCategories as Array<{ key: string; label: string; emoji: string }>;
+    }
+
+    // 3. System defaults
+    return [
+      { key: 'stress', label: 'Stresslevel', emoji: '🔥' },
+      { key: 'breathing', label: 'Atmung', emoji: '🌬️' },
+      { key: 'body', label: 'Körper', emoji: '🧘' },
+      { key: 'thoughts', label: 'Gedanken', emoji: '💭' },
+    ];
+  }),
+
+  // ── Daily Tracking ──────────────────────────────────────────────
+
+  /**
+   * Get tracking entries for a specific date (all entries, with timestamps)
+   */
+  getTrackingForDate: menteeProcedure
+    .input(z.object({ date: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const entryDate = new Date(input.date);
+      entryDate.setHours(0, 0, 0, 0);
+
+      return ctx.db
+        .select({
+          id: trackingEntries.id,
+          category: trackingEntries.category,
+          value: trackingEntries.value,
+          recordedAt: trackingEntries.recordedAt,
+        })
+        .from(trackingEntries)
+        .where(
+          and(
+            eq(trackingEntries.userId, ctx.userId),
+            eq(trackingEntries.entryDate, entryDate)
+          )
+        )
+        .orderBy(asc(trackingEntries.recordedAt));
+    }),
+
+  /**
+   * Get tracking entries for a date range (for mentor curves)
+   */
+  getTrackingForRange: menteeProcedure
+    .input(z.object({ startDate: z.string(), endDate: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const start = new Date(input.startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(input.endDate);
+      end.setHours(23, 59, 59, 999);
+
+      return ctx.db
+        .select({
+          id: trackingEntries.id,
+          entryDate: trackingEntries.entryDate,
+          category: trackingEntries.category,
+          value: trackingEntries.value,
+          recordedAt: trackingEntries.recordedAt,
+        })
+        .from(trackingEntries)
+        .where(
+          and(
+            eq(trackingEntries.userId, ctx.userId),
+            gte(trackingEntries.entryDate, start),
+            lte(trackingEntries.entryDate, end)
+          )
+        )
+        .orderBy(asc(trackingEntries.recordedAt));
+    }),
+
+  /**
+   * Log a tracking value — always inserts (multiple per day per category)
+   */
+  saveTracking: menteeProcedure
+    .input(
+      z.object({
+        category: z.string().min(1).max(50),
+        value: z.number().int().min(0).max(10).optional().default(0),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const now = new Date();
+      const entryDate = new Date(now);
+      entryDate.setHours(0, 0, 0, 0);
+
+      await ctx.db.insert(trackingEntries).values({
+        userId: ctx.userId,
+        entryDate,
+        category: input.category,
+        value: input.value,
+        recordedAt: now,
+      });
+
+      return { success: true };
+    }),
+
+  // ── Reflection Sheets ───────────────────────────────────────────────
+
+  /**
+   * Get reflection entry for a module
+   */
+  getReflection: menteeProcedure
+    .input(z.object({ schwerpunktebeneId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const [entry] = await ctx.db
+        .select()
+        .from(reflectionEntries)
+        .where(
+          and(
+            eq(reflectionEntries.userId, ctx.userId),
+            eq(reflectionEntries.schwerpunktebeneId, input.schwerpunktebeneId)
+          )
+        )
+        .limit(1);
+
+      return entry || null;
+    }),
+
+  /**
+   * Save reflection responses (upsert)
+   */
+  saveReflection: menteeProcedure
+    .input(
+      z.object({
+        schwerpunktebeneId: z.string().uuid(),
+        responses: z.array(z.object({
+          question: z.string(),
+          answer: z.string(),
+        })),
+        submit: z.boolean().default(false),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [existing] = await ctx.db
+        .select({ id: reflectionEntries.id })
+        .from(reflectionEntries)
+        .where(
+          and(
+            eq(reflectionEntries.userId, ctx.userId),
+            eq(reflectionEntries.schwerpunktebeneId, input.schwerpunktebeneId)
+          )
+        )
+        .limit(1);
+
+      if (existing) {
+        await ctx.db
+          .update(reflectionEntries)
+          .set({
+            responses: input.responses,
+            submittedAt: input.submit ? new Date() : undefined,
+            updatedAt: new Date(),
+          })
+          .where(eq(reflectionEntries.id, existing.id));
+      } else {
+        await ctx.db.insert(reflectionEntries).values({
+          userId: ctx.userId,
+          schwerpunktebeneId: input.schwerpunktebeneId,
+          responses: input.responses,
+          submittedAt: input.submit ? new Date() : undefined,
+        });
+      }
+
+      return { success: true };
     }),
 });

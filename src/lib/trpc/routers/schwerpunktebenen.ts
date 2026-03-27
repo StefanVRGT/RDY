@@ -5,9 +5,15 @@ import { eq, and, count, desc, asc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 // Input validation schemas
+const trackingCategorySchema = z.object({
+  key: z.string(),
+  label: z.string(),
+  emoji: z.string(),
+});
+
 const createSchwerpunktebeneSchema = z.object({
-  monthNumber: z.enum(['1', '2', '3'], {
-    message: 'Month number must be 1, 2, or 3',
+  levelNumber: z.enum(['1', '2', '3', '4', '5'], {
+    message: 'Level number must be 1-5',
   }),
   titleDe: z.string().min(1, 'German title is required').max(255),
   titleEn: z.string().max(255).optional().nullable(),
@@ -18,11 +24,12 @@ const createSchwerpunktebeneSchema = z.object({
   zielDe: z.string().optional().nullable(),
   zielEn: z.string().optional().nullable(),
   imageUrl: z.string().url().optional().nullable(),
+  trackingCategories: z.array(trackingCategorySchema).optional().nullable(),
 });
 
 const updateSchwerpunktebeneSchema = z.object({
   id: z.string().uuid(),
-  monthNumber: z.enum(['1', '2', '3']).optional(),
+  levelNumber: z.enum(['1', '2', '3', '4', '5']).optional(),
   titleDe: z.string().min(1).max(255).optional(),
   titleEn: z.string().max(255).optional().nullable(),
   descriptionDe: z.string().optional().nullable(),
@@ -32,11 +39,12 @@ const updateSchwerpunktebeneSchema = z.object({
   zielDe: z.string().optional().nullable(),
   zielEn: z.string().optional().nullable(),
   imageUrl: z.string().url().optional().nullable(),
+  trackingCategories: z.array(trackingCategorySchema).optional().nullable(),
 });
 
 const listSchwerpunktebenenSchema = z.object({
-  monthNumber: z.enum(['1', '2', '3', 'all']).optional().default('all'),
-  sortBy: z.enum(['monthNumber', 'titleDe', 'createdAt']).optional().default('monthNumber'),
+  levelNumber: z.enum(['1', '2', '3', '4', '5', 'all']).optional().default('all'),
+  sortBy: z.enum(['levelNumber', 'titleDe', 'createdAt']).optional().default('levelNumber'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
   page: z.number().int().positive().optional().default(1),
   limit: z.number().int().positive().max(100).optional().default(20),
@@ -90,14 +98,14 @@ export const schwerpunktebenenRouter = router({
    * List schwerpunktebenen with filter and pagination
    */
   list: adminProcedure.input(listSchwerpunktebenenSchema).query(async ({ ctx, input }) => {
-    const { monthNumber, sortBy, sortOrder, page, limit } = input;
+    const { levelNumber, sortBy, sortOrder, page, limit } = input;
     const offset = (page - 1) * limit;
 
     // Build where conditions
     const conditions = [eq(schwerpunktebenen.tenantId, ctx.tenantId)];
 
-    if (monthNumber !== 'all') {
-      conditions.push(eq(schwerpunktebenen.monthNumber, monthNumber));
+    if (levelNumber !== 'all') {
+      conditions.push(eq(schwerpunktebenen.levelNumber, levelNumber));
     }
 
     // Build sort order
@@ -106,7 +114,7 @@ export const schwerpunktebenenRouter = router({
         ? schwerpunktebenen.titleDe
         : sortBy === 'createdAt'
           ? schwerpunktebenen.createdAt
-          : schwerpunktebenen.monthNumber;
+          : schwerpunktebenen.levelNumber;
     const orderDirection = sortOrder === 'asc' ? asc : desc;
 
     const whereClause = and(...conditions);
@@ -162,7 +170,7 @@ export const schwerpunktebenenRouter = router({
       .insert(schwerpunktebenen)
       .values({
         tenantId: ctx.tenantId,
-        monthNumber: input.monthNumber,
+        levelNumber: input.levelNumber,
         titleDe: input.titleDe,
         titleEn: input.titleEn,
         descriptionDe: input.descriptionDe,
@@ -172,6 +180,7 @@ export const schwerpunktebenenRouter = router({
         zielDe: input.zielDe,
         zielEn: input.zielEn,
         imageUrl: input.imageUrl,
+        trackingCategories: input.trackingCategories,
       })
       .returning();
 
