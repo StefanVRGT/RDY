@@ -21,9 +21,9 @@ export const GEMINI_API_BASE_URL = (model: string, apiKey: string) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
 /** Default model used when tenant ai_settings are not yet configured */
-export const GEMINI_DEFAULT_MODEL = 'gemini-1.5-flash';
+export const GEMINI_DEFAULT_MODEL = 'gemini-2.5-flash-preview-04-17';
 /** Fast/cheap model used for connectivity pings and prompt test calls */
-export const GEMINI_TEST_MODEL = 'gemini-1.5-flash';
+export const GEMINI_TEST_MODEL = 'gemini-2.5-flash-preview-04-17';
 
 // ---------------------------------------------------------------------------
 // Token limits (per task type)

@@ -736,7 +736,7 @@ export async function analyzeSentiment(
   const provider = analysisConfig?.provider || aiConfig.defaultProvider;
   const model =
     analysisConfig?.model ||
-    (provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' : 'gemini-1.5-flash');
+    (provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' : 'gemini-2.5-flash-preview-04-17');
 
   // Get the API key for the selected provider
   const apiKey = provider === 'anthropic' ? aiConfig.anthropicApiKey : aiConfig.geminiApiKey;

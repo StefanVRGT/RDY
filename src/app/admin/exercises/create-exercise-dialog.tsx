@@ -60,6 +60,16 @@ export function CreateExerciseDialog({ open, onOpenChange, onSuccess }: CreateEx
 
   const handleSubmit = async () => {
     if (!titleDe.trim()) { setErrorMessage('German title is required'); return; }
+    const urlFields: { value: string; label: string }[] = [
+      { value: videoUrlDe.trim(), label: 'Video URL (DE)' },
+      { value: videoUrlEn.trim(), label: 'Video URL (EN)' },
+      { value: audioUrl.trim(), label: 'Audio URL' },
+    ];
+    for (const { value, label } of urlFields) {
+      if (value) {
+        try { new URL(value); } catch { setErrorMessage(`${label} is not a valid URL`); return; }
+      }
+    }
     setErrorMessage(null);
     await createMutation.mutateAsync({
       type:            detectType(),
@@ -82,7 +92,10 @@ export function CreateExerciseDialog({ open, onOpenChange, onSuccess }: CreateEx
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[640px]">
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-[640px]"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Create Exercise</DialogTitle>
           <DialogDescription>

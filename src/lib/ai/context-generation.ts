@@ -440,7 +440,7 @@ export async function generateContext(config: ContextGenerationConfig): Promise<
   const provider = contentGenerationConfig?.provider || aiConfig.defaultProvider;
   const model =
     contentGenerationConfig?.model ||
-    (provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' : 'gemini-1.5-flash');
+    (provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' : 'gemini-2.5-flash-preview-04-17');
 
   // Get the API key for the selected provider
   const apiKey = provider === 'anthropic' ? aiConfig.anthropicApiKey : aiConfig.geminiApiKey;

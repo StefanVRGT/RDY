@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
-import { invitations, users } from '@/lib/db/schema';
-import { eq, and, count, desc, asc, or, ilike, lt } from 'drizzle-orm';
+import { router, protectedProcedure, publicProcedure } from '../trpc';
+import { invitations, users, tenants } from '@/lib/db/schema';
+import { eq, and, count, desc, asc, or, ilike, lt, gt } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 import crypto from 'crypto';
 import { INVITATION_DEFAULT_EXPIRY_DAYS, INVITATION_MAX_EXPIRY_DAYS } from '@/lib/constants';
@@ -116,6 +116,7 @@ export const invitationsRouter = router({
           email: invitations.email,
           role: invitations.role,
           status: invitations.status,
+          token: invitations.token,
           expiresAt: invitations.expiresAt,
           createdAt: invitations.createdAt,
           invitedBy: invitations.invitedBy,
@@ -369,4 +370,95 @@ export const invitationsRouter = router({
 
     return { expiredCount: result.length };
   }),
+
+  /**
+   * Validate an invitation token (public — no auth required)
+   * Used by the accept-invite page to check token validity before showing sign-in
+   */
+  validateToken: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const now = new Date();
+
+      const [invitation] = await ctx.db
+        .select({
+          id: invitations.id,
+          email: invitations.email,
+          role: invitations.role,
+          status: invitations.status,
+          expiresAt: invitations.expiresAt,
+          tenantId: invitations.tenantId,
+        })
+        .from(invitations)
+        .where(
+          and(
+            eq(invitations.token, input.token),
+            eq(invitations.status, 'pending'),
+            gt(invitations.expiresAt, now)
+          )
+        )
+        .limit(1);
+
+      if (!invitation) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Invitation not found or has expired',
+        });
+      }
+
+      // Fetch tenant name
+      const [tenant] = await ctx.db
+        .select({ name: tenants.name })
+        .from(tenants)
+        .where(eq(tenants.id, invitation.tenantId))
+        .limit(1);
+
+      return {
+        valid: true as const,
+        email: invitation.email,
+        role: invitation.role,
+        tenantName: tenant?.name ?? '',
+      };
+    }),
+
+  /**
+   * Accept an invitation token (public — no auth required)
+   * Called after successful Keycloak sign-in to mark the invitation as accepted
+   */
+  acceptToken: publicProcedure
+    .input(z.object({ token: z.string(), userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const now = new Date();
+
+      const [invitation] = await ctx.db
+        .select()
+        .from(invitations)
+        .where(
+          and(
+            eq(invitations.token, input.token),
+            eq(invitations.status, 'pending'),
+            gt(invitations.expiresAt, now)
+          )
+        )
+        .limit(1);
+
+      if (!invitation) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Invitation not found or has expired',
+        });
+      }
+
+      const [updated] = await ctx.db
+        .update(invitations)
+        .set({
+          status: 'accepted',
+          acceptedBy: input.userId,
+          updatedAt: now,
+        })
+        .where(eq(invitations.id, invitation.id))
+        .returning();
+
+      return updated;
+    }),
 });

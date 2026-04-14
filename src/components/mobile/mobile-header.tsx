@@ -26,7 +26,8 @@ export function MobileHeader({
   return (
     <header
       className={cn(
-        'fixed left-0 right-0 top-0 z-50 border-b border-rdy-gray-200 bg-background/95 backdrop-blur-sm safe-area-inset-top',
+        'fixed left-0 right-0 top-0 z-30 border-b border-rdy-gray-200 bg-background/95 backdrop-blur-sm safe-area-inset-top',
+        'lg:sticky lg:z-10',
         className
       )}
     >

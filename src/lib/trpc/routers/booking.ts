@@ -315,7 +315,7 @@ export const bookingRouter = router({
       if (bookedCount >= monthlyLimit) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: `You have reached your monthly session limit of ${monthlyLimit} sessions for ${scheduledAt.toLocaleString('default', { month: 'long', year: 'numeric' })}`,
+          message: `You have reached your monthly session limit of ${monthlyLimit} ${monthlyLimit === 1 ? 'session' : 'sessions'} for ${scheduledAt.toLocaleString('default', { month: 'long', year: 'numeric' })}`,
         });
       }
 
@@ -579,11 +579,11 @@ export const bookingRouter = router({
           )
         );
 
-      // Get the highest monthly limit from all classes
+      // Get the monthly limit from the class config (use configured value, fallback to 2)
       let monthlyLimit = 2; // default
       for (const membership of memberships) {
         const config = membership.sessionConfig as { monthlySessionCount?: number } | null;
-        if (config?.monthlySessionCount && config.monthlySessionCount > monthlyLimit) {
+        if (config?.monthlySessionCount) {
           monthlyLimit = config.monthlySessionCount;
         }
       }

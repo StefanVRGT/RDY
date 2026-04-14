@@ -32,6 +32,8 @@ import {
   isSameMonth,
   isSameDay,
   isToday,
+  isBefore,
+  startOfDay,
   addMonths,
   subMonths,
 } from 'date-fns';
@@ -194,11 +196,14 @@ export default function MentorCalendarPage() {
     setShowSessionList(true);
   }, []);
 
-  // Day tap handler
+  const today = startOfDay(new Date());
+
+  // Day tap handler — only allow future/today dates for new sessions
   const handleDayTap = useCallback((day: Date) => {
+    if (isBefore(day, today)) return;
     setSelectedDate(day);
     setShowSessionList(true);
-  }, []);
+  }, [today]);
 
   // Swipe handlers for month navigation
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -349,6 +354,7 @@ export default function MentorCalendarPage() {
             const isCurrentMonth = isSameMonth(day, currentMonth);
             const isSelected = selectedDate && isSameDay(day, selectedDate);
             const isTodayDate = isToday(day);
+            const isPastDate = isBefore(day, today);
 
             // Get availability slots for this day
             const dayAvailability = availabilityData
@@ -364,16 +370,19 @@ export default function MentorCalendarPage() {
               <button
                 key={dateKey}
                 onClick={() => handleDayTap(day)}
+                disabled={isPastDate}
                 className={`relative flex aspect-square flex-col items-center justify-center rounded-lg p-1 transition-colors ${
-                  !isCurrentMonth
-                    ? 'text-rdy-gray-400'
-                    : isSelected
-                      ? 'bg-rdy-orange-500 text-white'
-                      : isTodayDate
-                        ? 'bg-rdy-orange-500/10 text-rdy-orange-500'
-                        : hasAvailability
-                          ? 'bg-cyan-900/30 text-rdy-black hover:bg-cyan-900/50'
-                          : 'bg-rdy-gray-100 text-rdy-black hover:bg-rdy-gray-200'
+                  isPastDate
+                    ? 'text-rdy-gray-300 cursor-not-allowed'
+                    : !isCurrentMonth
+                      ? 'text-rdy-gray-400'
+                      : isSelected
+                        ? 'bg-rdy-orange-500 text-white'
+                        : isTodayDate
+                          ? 'bg-rdy-orange-500/10 text-rdy-orange-500'
+                          : hasAvailability
+                            ? 'bg-cyan-900/30 text-rdy-black hover:bg-cyan-900/50'
+                            : 'bg-rdy-gray-100 text-rdy-black hover:bg-rdy-gray-200'
                 }`}
                 data-testid={`calendar-day-${dateKey}`}
                 data-has-sessions={daySessions.length > 0}
@@ -563,17 +572,6 @@ export default function MentorCalendarPage() {
             ) : selectedDateAvailability.length === 0 ? (
               <div className="py-8 text-center text-rdy-gray-400">
                 <p>No sessions or availability for this day</p>
-                <Button
-                  onClick={() => {
-                    setShowSessionList(false);
-                    setShowCreateSession(true);
-                  }}
-                  variant="ghost"
-                  className="mt-2 text-rdy-orange-500 hover:text-rdy-orange-500"
-                >
-                  <Plus className="mr-1 h-4 w-4" />
-                  Add Session
-                </Button>
               </div>
             ) : null}
           </div>

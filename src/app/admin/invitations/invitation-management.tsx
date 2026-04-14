@@ -37,6 +37,7 @@ export function InvitationManagement() {
     id: string;
     email: string;
     status: 'pending' | 'accepted' | 'expired' | 'revoked';
+    token: string;
   } | null>(null);
 
   const utils = trpc.useUtils();
@@ -243,6 +244,7 @@ export function InvitationManagement() {
                               id: invitation.id,
                               email: invitation.email,
                               status: invitation.isExpired ? 'expired' : invitation.status,
+                              token: invitation.token,
                             })
                           }
                           className="text-rdy-gray-400 hover:text-rdy-black"
@@ -308,7 +310,6 @@ export function InvitationManagement() {
         invitation={selectedInvitation}
         onSuccess={() => {
           utils.invitations.list.invalidate();
-          setSelectedInvitation(null);
         }}
       />
     </div>

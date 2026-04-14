@@ -7,7 +7,7 @@ import { MobileLayout } from '@/components/mobile';
 import { RdyFooter } from '@/components/rdy-footer';
 import { VoiceRecorder } from '@/components/voice-recorder/voice-recorder';
 import { cn } from '@/lib/utils';
-import { Mic, Flame, Wind, Activity, Brain } from 'lucide-react';
+import { Mic, Flame, Wind, Activity, Brain, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -40,6 +40,10 @@ export default function ReflectPage() {
   const utils = trpc.useUtils();
 
   const saveMutation = trpc.mentee.saveTracking.useMutation({
+    onSuccess: () => utils.mentee.getTrackingForDate.invalidate({ date: dateStr }),
+  });
+
+  const deleteMutation = trpc.mentee.deleteTracking.useMutation({
     onSuccess: () => utils.mentee.getTrackingForDate.invalidate({ date: dateStr }),
   });
 
@@ -199,7 +203,15 @@ export default function ReflectPage() {
                           const Icon = cat ? ICON_MAP[cat.key] : null;
                           return Icon ? <Icon className="h-3 w-3 text-rdy-gray-500" /> : null;
                         })()}
-                        <span className="text-rdy-gray-600">{cat?.label || entry.category}</span>
+                        <span className="flex-1 text-rdy-gray-600">{cat?.label || entry.category}</span>
+                        <button
+                          onClick={() => deleteMutation.mutate({ id: entry.id })}
+                          disabled={deleteMutation.isPending}
+                          className="ml-auto p-1 rounded text-rdy-gray-300 hover:text-red-400 transition-colors"
+                          aria-label="Eintrag löschen"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
                       </div>
                     );
                   })}
@@ -233,8 +245,8 @@ export default function ReflectPage() {
                   onChange={(e) => setDiaryText(e.target.value)}
                   onBlur={handleSaveDiary}
                   placeholder="Notizen..."
-                  rows={2}
-                  className="flex-1 p-3 rounded-xl bg-rdy-gray-100 border-none text-sm text-rdy-gray-600 placeholder:text-rdy-gray-300 focus:outline-none focus:ring-2 focus:ring-rdy-orange-500/30 resize-none"
+                  rows={4}
+                  className="flex-1 p-3 rounded-xl bg-rdy-gray-100 border-none text-sm text-rdy-gray-600 placeholder:text-rdy-gray-300 focus:outline-none focus:ring-2 focus:ring-rdy-orange-500/30 resize-none overflow-y-auto max-h-40"
                 />
 
                 <button

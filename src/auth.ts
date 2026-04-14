@@ -3,6 +3,9 @@ import Keycloak from 'next-auth/providers/keycloak';
 import type { JWT } from 'next-auth/jwt';
 import type { Session } from 'next-auth';
 import { ALL_ROLES, SESSION_MAX_AGE_SECONDS } from '@/lib/constants';
+import { db } from '@/lib/db';
+import { invitations, users } from '@/lib/db/schema';
+import { eq, and, gt } from 'drizzle-orm';
 
 // Define the user roles
 export type UserRole = 'superadmin' | 'admin' | 'mentor' | 'mentee';
@@ -80,6 +83,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ profile }): Promise<boolean> {
+      // After Keycloak sign-in, auto-accept any pending invitation for this email.
+      if (profile?.email) {
+        try {
+          const email = (profile.email as string).toLowerCase();
+          const now = new Date();
+          const [invitation] = await db
+            .select({ id: invitations.id })
+            .from(invitations)
+            .where(and(eq(invitations.email, email), eq(invitations.status, 'pending'), gt(invitations.expiresAt, now)))
+            .limit(1);
+
+          if (invitation) {
+            const [user] = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
+            await db.update(invitations).set({ status: 'accepted', acceptedBy: user?.id ?? null, updatedAt: now }).where(eq(invitations.id, invitation.id));
+          }
+        } catch (err) {
+          console.error('[auth] Failed to accept invitation:', err);
+        }
+      }
+      return true;
+    },
+
     async jwt({ token, account, profile }): Promise<JWT> {
       // Initial sign in
       if (account && profile) {

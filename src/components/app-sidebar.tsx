@@ -27,9 +27,10 @@ import {
   Eye,
   HelpCircle,
   Smartphone,
+  Layers,
 } from 'lucide-react';
 import { useInstallPrompt } from '@/lib/hooks/use-install-prompt';
-import { signOut } from 'next-auth/react';
+
 import { cn } from '@/lib/utils';
 import { useSidebarContext } from '@/components/providers/sidebar-context';
 import { useViewContext, type ViewMode } from '@/components/providers/view-context';
@@ -55,6 +56,7 @@ const adminSections: NavSection[] = [
     label: 'CONTENT',
     items: [
       { href: '/admin/program-builder', label: 'RDY Program', icon: BookOpen },
+      { href: '/admin/levels', label: 'Modules', icon: Layers },
       { href: '/admin/exercises', label: 'Exercises', icon: Dumbbell },
       { href: '/admin/classes', label: 'Classes', icon: GraduationCap },
     ],
@@ -287,7 +289,7 @@ export function AppSidebar({ role, userEmail }: AppSidebarProps) {
             <>
               <p className="text-xs text-rdy-gray-400 truncate">{userEmail}</p>
               <button
-                onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+                onClick={() => { window.location.href = '/api/auth/signout'; }}
                 className="w-full rounded-lg border border-rdy-gray-200 px-3 py-1.5 text-sm text-rdy-gray-500 transition-colors hover:bg-rdy-gray-100 text-left"
               >
                 Sign Out
@@ -301,14 +303,16 @@ export function AppSidebar({ role, userEmail }: AppSidebarProps) {
 
   return (
     <>
-      {/* Mobile: floating hamburger button (always visible, outside drawer) */}
-      <button
-        className="fixed top-4 left-4 z-40 p-2 rounded-lg bg-background/90 backdrop-blur-sm shadow-sm border border-rdy-gray-200 lg:hidden"
-        onClick={toggleSidebar}
-        aria-label="Open navigation menu"
-      >
-        <Menu className="h-5 w-5 text-rdy-black" />
-      </button>
+      {/* Mobile: floating hamburger button (hidden when drawer is open) */}
+      {!sidebarOpen && (
+        <button
+          className="fixed top-4 left-4 z-40 p-2 rounded-lg bg-background/90 backdrop-blur-sm shadow-sm border border-rdy-gray-200 lg:hidden"
+          onClick={toggleSidebar}
+          aria-label="Open navigation menu"
+        >
+          <Menu className="h-5 w-5 text-rdy-black" />
+        </button>
+      )}
 
       {/* Mobile: overlay drawer */}
       {sidebarOpen && (

@@ -109,7 +109,10 @@ export function EditExerciseDialog({ open, onOpenChange, exercise, onSuccess }: 
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) setErrorMessage(null); onOpenChange(o); }}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[640px]">
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-[640px]"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Edit Exercise</DialogTitle>
           <DialogDescription>

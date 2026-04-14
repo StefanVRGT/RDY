@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { trpc } from '@/lib/trpc/client';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,7 @@ interface InvitationActionsDialogProps {
     id: string;
     email: string;
     status: 'pending' | 'accepted' | 'expired' | 'revoked';
+    token: string;
   } | null;
   onSuccess: () => void;
 }
@@ -30,10 +32,32 @@ export function InvitationActionsDialog({
   onSuccess,
 }: InvitationActionsDialogProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [newToken, setNewToken] = useState<string | null>(null);
+
+  const getInviteLink = (token: string) =>
+    `${window.location.origin}/auth/accept-invite?token=${token}`;
+
+  const handleCopy = async (token: string) => {
+    const link = getInviteLink(token);
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = link;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const resendMutation = trpc.invitations.resend.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       setErrorMessage(null);
+      setNewToken(data.token);
       onSuccess();
     },
     onError: (error) => {
@@ -45,6 +69,8 @@ export function InvitationActionsDialog({
     onSuccess: () => {
       setErrorMessage(null);
       onSuccess();
+      // Close the dialog after revoking since no further actions are possible
+      onOpenChange(false);
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -66,6 +92,8 @@ export function InvitationActionsDialog({
   const handleClose = (open: boolean) => {
     if (!open) {
       setErrorMessage(null);
+      setNewToken(null);
+      setCopied(false);
     }
     onOpenChange(open);
   };
@@ -92,11 +120,37 @@ export function InvitationActionsDialog({
             </p>
           </div>
 
+          {/* Copy Link section for pending invitations */}
+          {canRevoke && invitation && (
+            <div className="rounded-lg bg-rdy-gray-100 p-4">
+              <h4 className="mb-2 font-medium text-rdy-black">Copy Invitation Link</h4>
+              <p className="mb-3 text-sm text-rdy-gray-400">
+                Share this link with the invited user so they can create their account.
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  readOnly
+                  value={getInviteLink(newToken ?? invitation.token)}
+                  className="flex-1 border-rdy-gray-200 bg-background text-xs text-rdy-black"
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                />
+                <Button
+                  onClick={() => handleCopy(newToken ?? invitation.token)}
+                  variant="outline"
+                  className="shrink-0 border-rdy-gray-200 text-rdy-gray-600 hover:bg-rdy-gray-200"
+                >
+                  {copied ? 'Copied!' : 'Copy'}
+                </Button>
+              </div>
+            </div>
+          )}
+
           {canResend && (
             <div className="rounded-lg bg-rdy-orange-500/10 p-4">
-              <h4 className="mb-2 font-medium text-rdy-orange-500">Resend Invitation</h4>
+              <h4 className="mb-2 font-medium text-rdy-orange-500">Regenerate Link</h4>
               <p className="mb-3 text-sm text-rdy-gray-400">
-                This will generate a new invitation link and extend the expiry by 7 days.
+                This will generate a new invitation link and extend the expiry by 7 days. The old
+                link will no longer work.
               </p>
               <Button
                 onClick={handleResend}
@@ -104,7 +158,7 @@ export function InvitationActionsDialog({
                 variant="outline"
                 className="border-rdy-orange-500 text-rdy-orange-500 hover:bg-rdy-orange-500/10"
               >
-                {resendMutation.isPending ? 'Resending...' : 'Resend Invitation'}
+                {resendMutation.isPending ? 'Regenerating...' : 'Regenerate Link'}
               </Button>
             </div>
           )}

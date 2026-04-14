@@ -420,9 +420,9 @@ export const aiSettingsRouter = router({
           { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', description: 'Fastest, best for simple tasks' },
         ],
         gemini: [
-          { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', description: 'Advanced reasoning and understanding' },
-          { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', description: 'Fast and efficient' },
-          { id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash (Experimental)', description: 'Latest experimental model' },
+          { id: 'gemini-2.5-flash-preview-04-17', name: 'Gemini 2.5 Flash', description: 'Latest fast model — best balance of speed and capability' },
+          { id: 'gemini-2.5-pro-preview-03-25', name: 'Gemini 2.5 Pro', description: 'Most capable Gemini model for complex tasks' },
+          { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', description: 'Previous generation fast model' },
         ],
       };
 

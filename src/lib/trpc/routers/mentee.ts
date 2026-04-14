@@ -1795,6 +1795,18 @@ export const menteeRouter = router({
       return { success: true };
     }),
 
+  /**
+   * Delete a tracking entry (only the entry owner can delete)
+   */
+  deleteTracking: menteeProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .delete(trackingEntries)
+        .where(and(eq(trackingEntries.id, input.id), eq(trackingEntries.userId, ctx.userId)));
+      return { success: true };
+    }),
+
   // ── Reflection Sheets ───────────────────────────────────────────────
 
   /**
