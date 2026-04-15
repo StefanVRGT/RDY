@@ -23,6 +23,9 @@ coverage/
 
 # Misc
 .DS_Store
+
+# PM2 config (contains production secrets — keep only on server)
+ecosystem.config.js
 *.tsbuildinfo
 .ralph-backups/
 .ralph-last-branch
