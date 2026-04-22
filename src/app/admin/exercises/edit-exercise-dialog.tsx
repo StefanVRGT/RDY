@@ -175,7 +175,8 @@ export function EditExerciseDialog({ open, onOpenChange, exercise, onSuccess }: 
                   accept="video/*"
                   endpoint="/api/upload/video"
                   label="Upload video"
-                  hint="MP4, WebM, MOV — max 500 MB"
+                  hint="MP4, WebM, MOV"
+                  maxSizeMB={500}
                   value={videoUrlDe}
                   onChange={setVideoUrlDe}
                   onError={setErrorMessage}
@@ -188,7 +189,8 @@ export function EditExerciseDialog({ open, onOpenChange, exercise, onSuccess }: 
                   accept="video/*"
                   endpoint="/api/upload/video"
                   label="Upload video"
-                  hint="MP4, WebM, MOV — max 500 MB"
+                  hint="MP4, WebM, MOV"
+                  maxSizeMB={500}
                   value={videoUrlEn}
                   onChange={setVideoUrlEn}
                   onError={setErrorMessage}
@@ -208,7 +210,8 @@ export function EditExerciseDialog({ open, onOpenChange, exercise, onSuccess }: 
               accept="audio/*"
               endpoint="/api/upload/audio"
               label="Upload audio"
-              hint="MP3, WAV, OGG, WebM — max 50 MB"
+              hint="MP3, WAV, OGG, WebM"
+              maxSizeMB={50}
               value={audioUrl}
               onChange={setAudioUrl}
               onError={setErrorMessage}
@@ -245,7 +248,8 @@ export function EditExerciseDialog({ open, onOpenChange, exercise, onSuccess }: 
               accept="image/*"
               endpoint="/api/upload/image"
               label="Upload image"
-              hint="JPG, PNG, WebP, SVG — max 10 MB"
+              hint="JPG, PNG, WebP, SVG"
+              maxSizeMB={10}
               value={imageUrl}
               onChange={setImageUrl}
               onError={setErrorMessage}

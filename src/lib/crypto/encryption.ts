@@ -67,7 +67,7 @@ export function decrypt(encryptedBase64: string): string {
 
   const key = deriveKey(password, salt);
 
-  const decipher = createDecipheriv(ALGORITHM, key, iv);
+  const decipher = createDecipheriv(ALGORITHM, key, iv, { authTagLength: TAG_LENGTH });
   decipher.setAuthTag(tag);
 
   const decrypted = Buffer.concat([

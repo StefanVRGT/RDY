@@ -31,3 +31,11 @@ ecosystem.config.js
 .ralph-last-branch
 prd.json.backup.*
 progress.txt
+
+# Uploaded user files
+public/uploads/
+
+# Test / CI artefacts
+results/
+test-results/
+documents/

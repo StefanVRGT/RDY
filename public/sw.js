@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rdy-cache-v6';
+const CACHE_NAME = 'rdy-cache-v7';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -65,8 +65,8 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(() => {
-        // Fallback to cache
-        return caches.match(event.request);
+        // Fallback to cache; return error response if not cached (avoids TypeError from undefined)
+        return caches.match(event.request).then(cached => cached || Response.error());
       })
   );
 });

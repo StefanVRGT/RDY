@@ -4,6 +4,15 @@ import { exercises, users } from '@/lib/db/schema';
 import { eq, and, count, desc, asc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
+// Accepts absolute URLs (https://...) and relative upload paths (/uploads/...)
+const urlField = z
+  .string()
+  .refine((v) => v.startsWith('/') || z.string().url().safeParse(v).success, {
+    message: 'Invalid URL',
+  })
+  .optional()
+  .nullable();
+
 // Input validation schemas
 const exerciseTypeSchema = z.enum(['video', 'audio', 'text']);
 
@@ -15,10 +24,10 @@ const createExerciseSchema = z.object({
   descriptionDe: z.string().optional().nullable(),
   descriptionEn: z.string().optional().nullable(),
   durationMinutes: z.number().int().positive().optional().nullable(),
-  videoUrl: z.string().url().optional().nullable(),
-  videoUrlDe: z.string().url().optional().nullable(),
-  videoUrlEn: z.string().url().optional().nullable(),
-  audioUrl: z.string().url().optional().nullable(),
+  videoUrl: urlField,
+  videoUrlDe: urlField,
+  videoUrlEn: urlField,
+  audioUrl: urlField,
   contentDe: z.string().optional().nullable(),
   contentEn: z.string().optional().nullable(),
   imageUrl: z.string().nullable().optional(),
@@ -34,10 +43,10 @@ const updateExerciseSchema = z.object({
   descriptionDe: z.string().optional().nullable(),
   descriptionEn: z.string().optional().nullable(),
   durationMinutes: z.number().int().positive().optional().nullable(),
-  videoUrl: z.string().url().optional().nullable(),
-  videoUrlDe: z.string().url().optional().nullable(),
-  videoUrlEn: z.string().url().optional().nullable(),
-  audioUrl: z.string().url().optional().nullable(),
+  videoUrl: urlField,
+  videoUrlDe: urlField,
+  videoUrlEn: urlField,
+  audioUrl: urlField,
   contentDe: z.string().optional().nullable(),
   contentEn: z.string().optional().nullable(),
   imageUrl: z.string().nullable().optional(),

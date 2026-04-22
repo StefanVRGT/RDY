@@ -11,8 +11,10 @@ interface FileDropZoneProps {
   onChange: (url: string) => void;
   onError?: (message: string) => void;
   disabled?: boolean;
-  /** e.g. "MP4, WebM, MOV — max 500 MB" */
+  /** e.g. "MP4, WebM, MOV" — size is appended automatically from maxSizeMB */
   hint?: string;
+  /** Client-side size limit in MB — shown in hint and validated before upload */
+  maxSizeMB?: number;
 }
 
 export function FileDropZone({
@@ -24,21 +26,30 @@ export function FileDropZone({
   onError,
   disabled,
   hint,
+  maxSizeMB,
 }: FileDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const fullHint = hint
+    ? maxSizeMB ? `${hint} — max ${maxSizeMB} MB` : hint
+    : maxSizeMB ? `max ${maxSizeMB} MB` : undefined;
+
   const upload = useCallback(
     async (file: File) => {
+      if (maxSizeMB && file.size > maxSizeMB * 1024 * 1024) {
+        onError?.(`File too large. Maximum size is ${maxSizeMB} MB.`);
+        return;
+      }
+
       setIsUploading(true);
       setProgress(0);
       try {
         const fd = new FormData();
         fd.append('file', file);
 
-        // Use XMLHttpRequest for progress tracking
         const url = await new Promise<string>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open('POST', endpoint);
@@ -63,7 +74,7 @@ export function FileDropZone({
             }
           });
 
-          xhr.addEventListener('error', () => reject(new Error('Network error')));
+          xhr.addEventListener('error', () => reject(new Error('Network error — check file size and connection')));
           xhr.addEventListener('abort', () => reject(new Error('Upload cancelled')));
 
           xhr.send(fd);
@@ -77,7 +88,7 @@ export function FileDropZone({
         setProgress(0);
       }
     },
-    [endpoint, onChange, onError],
+    [endpoint, maxSizeMB, onChange, onError],
   );
 
   const handleFiles = useCallback(
@@ -114,14 +125,12 @@ export function FileDropZone({
     [handleFiles],
   );
 
-  // Extract filename from URL for display
   const displayName = value
     ? value.startsWith('/uploads/')
       ? decodeURIComponent(value.split('/').pop() || value)
       : value
     : '';
 
-  // If a file is already uploaded, show compact state
   if (value && !isUploading) {
     return (
       <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50/50 px-3 py-2">
@@ -188,8 +197,8 @@ export function FileDropZone({
               <span className="font-medium text-rdy-orange-500">{label}</span>
               {' '}or drag & drop
             </p>
-            {hint && (
-              <p className="mt-0.5 text-xs text-rdy-gray-400">{hint}</p>
+            {fullHint && (
+              <p className="mt-0.5 text-xs text-rdy-gray-400">{fullHint}</p>
             )}
           </div>
         </>
